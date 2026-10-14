@@ -1,0 +1,281 @@
+@model AlertEditViewModel
+@{
+    ViewData["Title"] = "記録を直す";
+
+    var a = Model.Alert;
+    var ins = Model.Inspection;
+
+    // 行き先の頭に付ける文字。
+    // ふだんは空。デモ画面から開かれたときだけ "/Demo" が入る。
+    var 頭 = (ViewData["DemoPrefix"] as string) ?? "";
+}
+
+<h1 class="app-title">記録を直す</h1>
+
+@if (a is null)
+{
+    <div class="app-card app-card-error">
+        <h2>この記録は見つかりませんでした</h2>
+        <p class="app-error-text">@Model.ErrorMessage</p>
+    </div>
+    <p><a href="@(頭)/Audit" class="dash-button">点検記録簿へ戻る</a></p>
+}
+else
+{
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="app-card app-card-error">
+            <h2>直せませんでした</h2>
+            <p class="app-error-text">@Model.ErrorMessage</p>
+        </div>
+    }
+
+    @* ============================================================
+       どの記録を直すのか
+       ============================================================ *@
+    <div class="app-card">
+        <h2>@a.SiteName</h2>
+        <table class="app-table edit-facts">
+            <tbody>
+                <tr>
+                    <th>事象</th>
+                    <td>
+                        @DisplaySettings.Event(a.EventType)
+                        @(a.TriggerValue?.ToString("0.#") ?? a.TriggerText)
+                        @DisplaySettings.Unit(a.EventType)
+                    </td>
+                </tr>
+                <tr>
+                    <th>事象発生日時</th>
+                    <td>@a.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+                <tr>
+                    <th>住所</th>
+                    <td>@a.Address</td>
+                </tr>
+                <tr>
+                    <th>現場所長</th>
+                    <td>@a.ManagerName</td>
+                </tr>
+                <tr>
+                    <th>いまの状態</th>
+                    <td>
+                        <strong>@DisplaySettings.Status(a.AlertStatus)</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.NothingToEdit)
+    {
+        <div class="app-card app-card-error">
+            <h2>この記録には、まだ直すところがありません</h2>
+            <p>
+                指示も点検もまだ記録されていません。
+                <strong>アラート対応</strong>の画面から記録してください。
+            </p>
+        </div>
+        <p>
+            <a href="@(頭)/Alert?id=@a.AlertId" class="dash-button dash-button-on">
+                アラート対応の画面へ
+            </a>
+            <a href="@(頭)/Audit" class="dash-button">点検記録簿へ戻る</a>
+        </p>
+    }
+    else
+    {
+        <p class="dash-hint">
+            <strong>指示</strong>と<strong>点検</strong>は別々に直します。
+            片方を直しても、もう片方はそのまま残ります。
+            直した日時は記録に残り、点検記録簿の詳細に出ます。
+        </p>
+
+        @* ============================================================
+           ① 指示（対象外のときは、その理由）
+           ============================================================ *@
+        @if (Model.CanEditInstruction)
+        {
+            <form method="post" action="@(頭)/Alert/Update" class="app-card">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="alertId" value="@a.AlertId" />
+                <input type="hidden" name="block" value="instruction" />
+
+                <h2>
+                    @(Model.IsNotRequired ? "① 対象外とした理由を直す"
+                                          : "① 指示の内容を直す")
+                </h2>
+
+                <p class="dash-hint">
+                    記録した日時（@a.InstructedAt?.ToString("yyyy-MM-dd HH:mm")）
+                    は変わりません。
+                    書き間違いを直したり、内容を書き足したりするためのものです。
+                </p>
+
+                <div class="form-group">
+                    <label for="who">
+                        @(Model.IsNotRequired ? "判断者名（必須）"
+                                              : "指示者名（必須）")
+                    </label>
+                    <input type="text" id="who" name="who"
+                           value="@a.InstructedBy" />
+                </div>
+
+                <div class="form-group">
+                    <label for="note">
+                        @(Model.IsNotRequired ? "対象外とした理由（必須）"
+                                              : "指示内容メモ")
+                    </label>
+                    <textarea id="note" name="note" rows="4">@(Model.IsNotRequired ? Model.SkipReason : a.InstructionNote)</textarea>
+                </div>
+
+                @if (Model.IsNotRequired)
+                {
+                    <div class="app-card app-card-error">
+                        <h3>臨検で理由を問われることがあります</h3>
+                        <p>
+                            「なぜ点検しなかったのか」に答えられる内容に
+                            してください。
+                            例：足場は事象発生前に撤去済み／試験用の現場
+                        </p>
+                    </div>
+                }
+
+                <div class="button-row">
+                    <a href="@(頭)/Audit" class="cancel-btn">やめる</a>
+                    <button type="submit" class="save-btn">
+                        指示の内容を直す
+                    </button>
+                </div>
+            </form>
+        }
+
+        @* ============================================================
+           ② 点検記録
+           ============================================================
+           指示を出しても、すぐに点検ができるとは限らない。
+           日を置いてから点検し、あとから
+             ・補修が終わったので結果を変える
+             ・指摘事項を書き足す
+           といった加筆が要る。
+           ============================================================ *@
+        @if (Model.CanEditInspection && ins is not null)
+        {
+            <form method="post" action="@(頭)/Alert/Update" class="app-card">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="alertId" value="@a.AlertId" />
+                <input type="hidden" name="block" value="inspection" />
+
+                <h2>② 点検記録を直す</h2>
+
+                <p class="dash-hint">
+                    登録日時 @ins.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+                    @if (ins.Edited)
+                    {
+                        <text>／ 最終更新
+                        @ins.UpdatedAt.ToString("yyyy-MM-dd HH:mm")
+                        （あとから直されています）</text>
+                    }
+                </p>
+
+                <div class="task-form-row">
+                    <div class="form-group">
+                        <label for="inspectedDate">点検実施日</label>
+                        <input type="date" id="inspectedDate"
+                               name="inspectedDate"
+                               value="@ins.InspectedAt.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="form-group">
+                        <label for="inspectedTime">点検実施時刻</label>
+                        <input type="time" id="inspectedTime"
+                               name="inspectedTime"
+                               value="@ins.InspectedAt.ToString("HH:mm")" />
+                    </div>
+                </div>
+
+                <div class="task-form-row">
+                    <div class="form-group">
+                        <label for="name">点検実施者氏名（必須）</label>
+                        <input type="text" id="name" name="name"
+                               value="@ins.InspectorName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="qualify">点検者の資格</label>
+                        <input type="text" id="qualify" name="qualify"
+                               placeholder="足場の組立て等作業主任者 など"
+                               value="@ins.InspectorQualify" />
+                    </div>
+                </div>
+
+                <div class="task-form-row">
+                    <div class="form-group">
+                        <label for="scaffoldType">足場種類</label>
+                        <select id="scaffoldType" name="scaffoldType">
+                            @foreach (var t in InspectionChoices.ScaffoldTypes)
+                            {
+                                <option value="@t"
+                                        selected="@(ins.ScaffoldType == t)">
+                                    @t
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="result">点検結果</label>
+                        <select id="result" name="result">
+                            @foreach (var r in InspectionChoices.Results)
+                            {
+                                <option value="@r.Key"
+                                        selected="@(ins.InspectionResult == r.Value)">
+                                    @r.Key
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="finding">指摘事項・補修内容</label>
+                    <textarea id="finding" name="finding" rows="4">@ins.FindingNote</textarea>
+                    <p class="dash-hint">
+                        あとから分かったことは、消さずに書き足してください。
+                        例：9/3 補修完了。手すりを再設置し、写真を台帳へ添付。
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="registeredBy">登録者名（必須）</label>
+                    <input type="text" id="registeredBy" name="registeredBy"
+                           value="@ins.RegisteredBy" />
+                    <p class="dash-hint">
+                        直した人の名前に書き換えてかまいません。
+                        誰が最後に手を入れたのかが残ります。
+                    </p>
+                </div>
+
+                <div class="button-row">
+                    <a href="@(頭)/Audit" class="cancel-btn">やめる</a>
+                    <button type="submit" class="save-btn">
+                        点検記録を直す
+                    </button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="app-card">
+                <h2>② 点検記録</h2>
+                <p class="dash-hint">
+                    まだ点検記録がありません。
+                    点検が済んだら、<strong>アラート対応</strong>の画面から
+                    登録してください。登録したあとは、ここで直せるようになります。
+                </p>
+                <p>
+                    <a href="@(頭)/Alert?id=@a.AlertId" class="dash-button">
+                        アラート対応の画面へ
+                    </a>
+                </p>
+            </div>
+        }
+    }
+}

@@ -1,0 +1,96 @@
+/* ============================================================
+   上のメニュー（＜参考＞のプルダウン）
+   ============================================================
+   メニューバーそのものの見た目は header.css (StandardCSS) にある。
+   ここでは、そこに無い「押すと開く一覧」だけを足す。
+
+   動きは js/menu_上のメニュー.js にある。
+   ============================================================ */
+
+/* 押すボタンと、開く一覧の入れ物。
+   position: relative にしておくと、
+   開く一覧をこのボタンの真下に置ける。 */
+.top-menu-more {
+    position: relative;
+}
+
+/* 開いているときの矢印を回す。 */
+.top-menu-arrow {
+    display: inline-block;
+    transition: transform var(--transition-fast);
+}
+
+.top-menu-more.open .top-menu-arrow {
+    transform: rotate(180deg);
+}
+
+/* ---------- 押すと開く一覧 ---------- */
+.top-menu-list {
+    /* ボタンの真下に浮かせる。
+       まわりの並びに影響しないよう、position: absolute にする。 */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: var(--z-panel);
+
+    min-width: 200px;          /* ★一覧の幅 */
+    margin-top: 4px;
+    padding: var(--space-xs);
+
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-panel);
+}
+
+/* 一覧の中の項目。
+   メニューバーの中にあるが、白い紙の上に置くので
+   文字の色はメニューバーのものを引き継がない。 */
+.top-menu-list a {
+    display: block;
+    padding: 8px 12px;         /* ★項目の大きさ */
+    border-radius: var(--radius-sm);
+
+    color: var(--text-main);
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.top-menu-list a:hover {
+    background: var(--surface-hover);
+}
+
+/* ============================================================
+   いま開いている画面のボタン
+   ============================================================
+   header.css (StandardCSS) では、マウスを乗せたときと
+   開いているときが同じ見た目になっている。
+   それだと「乗せているだけ」なのか「いま開いている」のかが
+   区別できないため、開いているほうを濃く塗って分ける。
+
+   header.css は直さず、ここで上書きしている。
+   ============================================================ */
+.top-menu nav button.active {
+    background-color: var(--color-primary);   /* ★点灯の色 */
+    color: var(--text-inverse);
+    font-weight: 600;
+
+    /* 大きさは変えない。
+       開いているあいだ ずっと拡大したままだと落ち着かないため。
+       拡大するのは、マウスを乗せたときだけにする。 */
+    transform: none;
+    box-shadow: var(--shadow-card);
+}
+
+/* 開いている画面のボタンに、マウスを乗せたとき。
+   色はそのままで、少しだけ持ち上げる。 */
+.top-menu nav button.active:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-hover);
+}
+
+/* ＜参考＞の中の画面を開いているときは、
+   プルダウンを閉じていても点灯したままになる。
+   どこを見ているのかが分かるようにするため。 */

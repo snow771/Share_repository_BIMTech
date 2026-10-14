@@ -1,0 +1,308 @@
+/* css/app/layout_画面レイアウト.css
+   全体の骨格: ヘッダー / 3カラム（左:絞込・中央:主要情報・右:補足とAI）/ ステータスバー。
+*/
+
+body {
+    font-size: var(--font-size-base);
+}
+
+/* =========================================================
+ * ヘッダー（.top-menu を土台に、検索バーを中央に置く）
+ * =======================================================*/
+.app-header {
+    gap: var(--space-lg);
+    min-height: var(--header-height);
+    padding: var(--space-sm) var(--space-lg);
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+
+    .brand h1 {
+        margin: 0;
+        font-size: var(--font-size-title);
+        font-weight: 700;
+        color: var(--text-inverse);
+        white-space: nowrap;
+    }
+
+    .brand span {
+        color: var(--text-muted);
+        font-family: var(--title-font);
+        font-size: var(--font-size-xs);
+        letter-spacing: 0.08em;
+    }
+
+.ai-search {
+    display: flex;
+    flex: 1;
+    max-width: 720px;
+    min-width: 280px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+    .ai-search input {
+        flex: 1;
+        min-width: 0;
+        padding: 0 var(--space-md);
+        border: none;
+        font-family: var(--main-font);
+        font-size: var(--font-size-base);
+        color: var(--text-main);
+        background: var(--surface-card);
+    }
+
+        .ai-search input:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -2px;
+        }
+
+    .ai-search button {
+        padding: 0 var(--space-lg);
+        border: none;
+        background: var(--color-primary);
+        color: var(--text-inverse);
+        font-family: var(--button-font);
+        font-size: var(--font-size-base);
+        font-weight: bold;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background-color var(--transition-fast);
+    }
+
+        .ai-search button:hover {
+            background: var(--color-primary-hover);
+        }
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+}
+
+    /* header.css の nav button を少し小さく */
+    .top-menu nav.header-actions button {
+        margin-right: 0;
+        padding: 8px 14px;
+        font-size: var(--font-size-base);
+    }
+
+.db-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 3px var(--space-md);
+    border-radius: var(--radius-pill);
+    background: var(--color-muted-weak);
+    color: var(--text-inverse);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+}
+
+    .db-badge::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--surface-disabled);
+    }
+
+    .db-badge.connected {
+        background: var(--color-success);
+    }
+
+        .db-badge.connected::before {
+            background: var(--surface-card);
+        }
+
+.structure-toggle .segmented-btn {
+    padding: 4px var(--space-md);
+    font-size: var(--font-size-sm);
+}
+
+/* =========================================================
+ * 3カラム本体
+ * =======================================================*/
+.app-body {
+    display: grid;
+    grid-template-columns: var(--filter-pane-width) minmax(0, 1fr) var(--side-pane-width);
+    flex: 1;
+    min-height: 0;
+}
+
+.pane {
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.filter-pane {
+    background: var(--surface-card);
+    border-right: 1px solid var(--border-color);
+}
+
+.main-pane {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    background: var(--surface-app);
+}
+
+.side-pane {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--surface-app);
+    border-left: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+/* =========================================================
+ * 共通カード
+ * =======================================================*/
+.card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+    .card-header h2 {
+        margin: 0;
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        color: var(--text-heading);
+    }
+
+.card-hint {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.card-body {
+    padding: var(--space-md) var(--space-lg);
+}
+
+.empty-state {
+    padding: var(--space-xl);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: var(--font-size-md);
+}
+
+/* =========================================================
+ * 列幅の変更（js/columnResize_列幅調整.js）
+ * =======================================================*/
+table.fixed-cols {
+    table-layout: fixed;
+}
+
+    table.fixed-cols th,
+    table.fixed-cols td {
+        max-width: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+/* 見出しの右端の取っ手（ドラッグで幅変更・ダブルクリックで自動調整） */
+.col-resizer {
+    position: absolute;
+    top: 0;
+    right: -4px;
+    z-index: 3;
+    width: 8px;
+    height: 100%;
+    cursor: col-resize;
+}
+
+    .col-resizer:hover {
+        background: var(--color-primary-weak);
+    }
+
+body.col-resizing,
+body.col-resizing * {
+    cursor: col-resize !important;
+    user-select: none;
+}
+
+/* =========================================================
+ * ステータスバー・トースト
+ * =======================================================*/
+.status-bar {
+    flex-shrink: 0;
+    padding: 4px var(--space-lg);
+    background: var(--menu-background);
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toast-area {
+    position: fixed;
+    right: var(--space-xl);
+    bottom: 40px;
+    z-index: var(--z-tooltip);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: 420px;
+}
+
+.toast {
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    background: var(--menu-background);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-panel);
+    font-size: var(--font-size-md);
+    white-space: pre-wrap;
+    animation: toast-in var(--transition-base);
+}
+
+    .toast.error {
+        background: var(--color-danger);
+    }
+
+    .toast.success {
+        background: var(--color-success);
+    }
+
+    .toast a {
+        color: var(--text-inverse);
+        font-weight: bold;
+        margin-left: var(--space-sm);
+        cursor: pointer;
+    }
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+.loading-overlay p {
+    margin: 0;
+    color: var(--text-heading);
+    font-size: var(--font-size-lg);
+}

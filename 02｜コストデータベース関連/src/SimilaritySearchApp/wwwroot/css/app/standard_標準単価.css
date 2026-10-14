@@ -1,0 +1,319 @@
+/* css/app/standard_標準単価.css
+   中央: 【単価分析】【標準単価】のタブと、標準単価（建築材料マスタ）の工種コード別一覧。
+*/
+
+/* ── タブ ── */
+.main-tabs {
+    display: flex;
+    gap: var(--space-xs);
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: calc(var(--space-lg) * -0.5);
+}
+
+.main-tab {
+    position: relative;
+    bottom: -2px;
+    padding: var(--space-sm) var(--space-xl);
+    border: 1px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: none;
+    color: var(--text-sub);
+    font-family: var(--main-font);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+}
+
+    .main-tab:hover {
+        background: var(--surface-hover);
+    }
+
+    .main-tab.active {
+        border-color: var(--border-color);
+        border-bottom: 3px solid var(--color-primary);
+        background: var(--surface-card);
+        color: var(--text-heading);
+        font-weight: 700;
+    }
+
+.tab-badge {
+    margin-left: var(--space-sm);
+    padding: 0 7px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: var(--text-inverse);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    vertical-align: 2px;
+}
+
+.main-tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+/* ── ツールバー ── */
+.standard-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+}
+
+.standard-scope-label {
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.standard-scope-text {
+    color: var(--text-heading);
+    font-weight: 700;
+}
+
+.standard-project {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-xs);
+    padding: 2px 4px 2px var(--space-md);
+    border-radius: var(--radius-pill);
+    background: var(--color-primary-faint);
+    color: var(--text-heading);
+    font-size: var(--font-size-sm);
+}
+
+    .standard-project button {
+        padding: 0 var(--space-sm);
+        border: none;
+        background: none;
+        color: var(--color-primary);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+    }
+
+        .standard-project button:hover {
+            text-decoration: underline;
+        }
+
+.standard-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+    .standard-controls input[type="search"] {
+        width: 260px;
+        height: 32px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+        font-size: var(--font-size-md);
+    }
+
+        .standard-controls input[type="search"]:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+.standard-check {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+}
+
+.standard-summary {
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+}
+
+    .standard-summary strong {
+        color: var(--color-primary);
+        font-size: var(--font-size-lg);
+    }
+
+/* ── 工種コード別グループ ── */
+.standard-groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.std-group > summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    cursor: pointer;
+    list-style: none;
+}
+
+    .std-group > summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .std-group > summary:hover {
+        background: var(--surface-hover);
+    }
+
+.std-group[open] > summary {
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+.std-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-xs) var(--space-md);
+}
+
+    .std-title::before {
+        content: "▸";
+        color: var(--text-muted);
+        transition: transform var(--transition-fast);
+    }
+
+.std-group[open] .std-title::before {
+    transform: rotate(90deg);
+}
+
+.std-code {
+    color: var(--text-muted);
+    font-family: var(--mono-font);
+    font-size: var(--font-size-sm);
+}
+
+.std-name {
+    color: var(--text-heading);
+    font-weight: 700;
+}
+
+.std-count {
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+}
+
+/* 実績（査定・修正）との比較 */
+.std-actuals {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.std-actual {
+    min-width: 128px;
+    padding: 2px var(--space-sm);
+    border-left: 3px solid var(--actual-color, var(--color-primary));
+    background: var(--surface-subtle);
+    font-family: var(--mono-font);
+    line-height: 1.35;
+}
+
+    .std-actual.assess { --actual-color: var(--series-assess); }
+    .std-actual.revise { --actual-color: var(--series-revise); }
+    .std-actual.median { --actual-color: var(--color-muted); }
+
+    .std-actual .label {
+        display: block;
+        color: var(--text-muted);
+        font-family: var(--main-font);
+        font-size: var(--font-size-xs);
+    }
+
+    .std-actual .value {
+        color: var(--text-heading);
+        font-size: var(--font-size-md);
+        font-weight: 700;
+    }
+
+    .std-actual .sub {
+        color: var(--text-sub);
+        font-size: var(--font-size-xs);
+    }
+
+/* 材料テーブル */
+.std-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-md);
+}
+
+    .std-table th {
+        padding: var(--space-xs) var(--space-md);
+        border-bottom: 1px solid var(--border-color);
+        background: var(--surface-header);
+        color: var(--text-heading);
+        font-size: var(--font-size-sm);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .std-table td {
+        padding: 5px var(--space-md);
+        border-bottom: 1px solid var(--border-color-subtle);
+        vertical-align: top;
+    }
+
+    .std-table tr:hover td {
+        background: var(--surface-hover);
+    }
+
+    .std-table .num {
+        text-align: right;
+        font-family: var(--mono-font);
+        white-space: nowrap;
+    }
+
+    .std-table .mcode {
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-sm);
+        white-space: nowrap;
+    }
+
+    .std-table .spec,
+    .std-table .notes {
+        color: var(--text-sub);
+        font-size: var(--font-size-sm);
+        white-space: pre-wrap;
+    }
+
+    .std-table .notes {
+        max-width: 280px;
+    }
+
+    .std-table .price-assess {
+        color: var(--series-assess);
+    }
+
+    .std-table .price-revise {
+        color: var(--series-revise);
+        font-weight: 700;
+    }
+
+    .std-table .unset {
+        color: var(--text-muted);
+        font-weight: normal;
+    }
+
+.badge-review {
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--badge-caution-bg);
+    color: var(--badge-caution-text);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+}
+
+mark {
+    background: var(--color-primary-faint);
+    color: inherit;
+    border-radius: 2px;
+}

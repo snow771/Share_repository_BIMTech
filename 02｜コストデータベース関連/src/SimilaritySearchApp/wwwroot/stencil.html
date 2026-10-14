@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stencile変換</title>
+
+    <!-- StandardCSS（トークン → 下地 → 部品） -->
+    <link rel="stylesheet" href="css/standard/variables.css">
+    <link rel="stylesheet" href="css/standard/base.css">
+    <link rel="stylesheet" href="css/standard/button.css">
+    <link rel="stylesheet" href="css/standard/modal.css">
+    <link rel="stylesheet" href="css/standard/panel.css">
+    <link rel="stylesheet" href="css/standard/switch.css">
+    <link rel="stylesheet" href="css/standard/header.css">
+
+    <!-- アプリ固有（メイン画面と共通のトークン・レイアウト部品） -->
+    <link rel="stylesheet" href="css/app/tokens_アプリ色.css">
+    <link rel="stylesheet" href="css/app/layout_画面レイアウト.css">
+    <link rel="stylesheet" href="css/app/stencil_Stencile変換.css">
+</head>
+<body>
+<div class="container">
+
+    <header class="top-menu app-header">
+        <div class="brand">
+            <h1>🧰 Stencile変換</h1>
+            <span>STENCILE → PROJECT INFO / UNIT PRICE → DATABASE</span>
+        </div>
+        <div class="st-steps" aria-label="手順">
+            <span class="st-step active" data-step="1">① 元データを選ぶ</span>
+            <span class="st-step" data-step="2">② 読み込んで確認</span>
+            <span class="st-step" data-step="3">③ DB登録・Excel保存</span>
+        </div>
+        <span class="db-badge" id="st-db" title="登録先（メイン画面の設定 → DB接続）">接続先 未確認</span>
+    </header>
+
+    <div class="st-body">
+        <!-- ============ 左: 入力 ============ -->
+        <aside class="pane st-input-pane">
+            <section class="st-section">
+                <h2>元データ（Stencile）</h2>
+                <div class="st-path">
+                    <input type="text" id="st-folder" placeholder="Stencile（.xlsm / .xlsx）が入ったフォルダ" readonly>
+                    <button type="button" class="small-btn edit-btn" id="st-folder-pick">📁 選択</button>
+                </div>
+                <label class="st-check"><input type="checkbox" id="st-subfolders" checked> サブフォルダも含める</label>
+            </section>
+
+            <section class="st-section">
+                <h2>処理する内容</h2>
+                <label class="st-check big"><input type="checkbox" id="st-do-info" checked> ① 物件諸情報（物件情報テーブル）</label>
+                <label class="st-check big"><input type="checkbox" id="st-do-price" checked> ② 査定・修正単価（単価テーブル）</label>
+            </section>
+
+            <section class="st-section">
+                <h2>マッピング YAML <span class="st-hint">（①のセル位置の定義）</span></h2>
+                <div class="st-path">
+                    <input type="text" id="st-mapping" placeholder="自動（元データフォルダ内 → 同梱の既定）" readonly>
+                    <button type="button" class="small-btn edit-btn" id="st-mapping-pick">📄 選択</button>
+                    <button type="button" class="small-btn edit-btn" id="st-mapping-auto" title="自動検出に戻す">自動</button>
+                </div>
+            </section>
+
+            <section class="st-section" id="st-template-section">
+                <h2>単価テンプレート <span class="st-hint">（②の工種コード一覧）</span></h2>
+                <div class="st-path">
+                    <input type="text" id="st-template" placeholder="〇〇期RC造_〇〇単価.xlsx" readonly>
+                    <button type="button" class="small-btn edit-btn" id="st-template-pick">📄 選択</button>
+                </div>
+                <p class="st-hint">B列=工種コード、C〜E列=工種項目・工事項目・項目（2行目から空行まで）</p>
+            </section>
+
+            <div class="st-run">
+                <button type="button" class="active-btn" id="st-scan">🔍 読み込む</button>
+                <div class="st-progress hidden" id="st-progress"><div class="bar" id="st-progress-bar"></div><span id="st-progress-text"></span></div>
+            </div>
+
+            <section class="st-log-wrap">
+                <div class="st-log-head">
+                    <h2>ログ</h2>
+                    <button type="button" class="chip-clear" id="st-log-clear">クリア</button>
+                </div>
+                <div class="st-log" id="st-log"></div>
+            </section>
+        </aside>
+
+        <!-- ============ 中央: 確認・実行 ============ -->
+        <main class="pane st-main">
+            <section class="st-summary" id="st-summary">
+                <div class="st-empty">左で元データフォルダなどを選び、「🔍 読み込む」を押してください。</div>
+            </section>
+
+            <section class="card st-table-card">
+                <div class="st-toolbar">
+                    <div class="segmented" id="st-filter">
+                        <button type="button" class="segmented-btn active" data-value="all">すべて</button>
+                        <button type="button" class="segmented-btn" data-value="new">新規</button>
+                        <button type="button" class="segmented-btn" data-value="existing">既存あり</button>
+                        <button type="button" class="segmented-btn" data-value="warn">警告</button>
+                        <button type="button" class="segmented-btn" data-value="error">エラー</button>
+                    </div>
+                    <input type="search" id="st-search" placeholder="project_id・物件名・ファイル名で検索">
+                </div>
+                <div class="st-table-wrap">
+                    <table class="project-table st-table" id="st-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="card st-actions">
+                <div class="st-actions-info" id="st-actions-info">登録対象: 0 件</div>
+                <div class="st-actions-buttons">
+                    <label class="st-check"><input type="checkbox" id="st-reg-info" checked> ① 物件情報</label>
+                    <label class="st-check"><input type="checkbox" id="st-reg-price" checked> ② 査定・修正単価</label>
+                    <button type="button" class="small-btn edit-btn" id="st-export" disabled>💾 Excelに保存…</button>
+                    <button type="button" class="active-btn" id="st-register" disabled>🗄 DBに登録</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- ============ 右: 選択ファイルの詳細 ============ -->
+        <aside class="pane st-detail-pane hidden" id="st-detail">
+            <div class="st-detail-head">
+                <h2 id="st-detail-title">詳細</h2>
+                <button type="button" class="close-btn" id="st-detail-close" title="閉じる">&times;</button>
+            </div>
+            <div id="st-detail-body"></div>
+        </aside>
+    </div>
+
+    <footer class="status-bar" id="status-bar">準備完了</footer>
+</div>
+
+<div class="loading-overlay hidden" id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">処理中...</p>
+</div>
+<div class="toast-area" id="toast-area"></div>
+
+<script type="module" src="js/stencil_Stencile変換.js"></script>
+</body>
+</html>

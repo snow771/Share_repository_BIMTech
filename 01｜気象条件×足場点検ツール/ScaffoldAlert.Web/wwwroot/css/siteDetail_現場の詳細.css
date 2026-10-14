@@ -1,0 +1,99 @@
+/* ============================================================
+   現場の詳細（ダッシュボードの地図の丸を押すと開くモーダル）
+   ============================================================
+   中身は js/siteDetail_現場の詳細.js が組み立てている。
+   骨組み・色・角丸・影は modal.css (StandardCSS) に任せ、
+   ここでは並べ方と、この画面だけの大きさを決める。
+   ============================================================ */
+
+/* フルHD (1920x1080) で2列がゆったり収まる幅。
+   modal.css の .wide (1000px) では2列に足りない。 */
+.detail-content {
+    max-width: 1500px;      /* ★モーダルの最大の幅 */
+    width: 88vw;            /* ★画面に対する幅の割合 */
+}
+
+/* 左に現場の情報、右に観測所。常に2列で出す。 */
+.detail-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* ★左右の割合 */
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+/* 画面が狭いときは縦に並べる。横に潰れて読めなくなるより良い。 */
+@media (max-width: 1100px) {
+    .detail-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- 見出し ---------- */
+.detail-heading {
+    margin: var(--space-lg) 0 var(--space-sm);
+    font-size: var(--font-size-md);
+    color: var(--text-heading);
+}
+
+/* 右の列の先頭の見出しには上の余白を付けない。
+   左の列の先頭と高さがそろわず、浮いて見えるため。 */
+#detail-right .detail-heading:first-child {
+    margin-top: 0;
+}
+
+/* ---------- 現場の情報 ---------- */
+.detail-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-xs) var(--space-lg);
+    margin: 0;
+}
+
+.detail-list dt {
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.detail-list dd {
+    margin: 0;
+}
+
+/* ---------- 表 ---------- */
+.detail-table {
+    width: 100%;
+}
+
+/* 補足の説明。読み飛ばせるよう小さくする。 */
+.detail-note {
+    margin: var(--space-xs) 0;
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* データが無いときの案内 */
+.detail-empty {
+    margin: var(--space-sm) 0;
+    color: var(--text-muted);
+}
+
+/* 気をつけてほしいこと */
+.detail-error {
+    margin: var(--space-sm) 0;
+    color: var(--color-danger);
+}
+
+/* ---------- 観測所の表 ---------- */
+.detail-stations tbody tr {
+    cursor: pointer;
+}
+
+.detail-row-selected {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+/* 24行あってもモーダルが縦に伸びないよう、表の中だけで縦に送る。 */
+.detail-scroll {
+    max-height: 300px;      /* ★推移の表の高さ */
+    overflow-y: scroll;
+}

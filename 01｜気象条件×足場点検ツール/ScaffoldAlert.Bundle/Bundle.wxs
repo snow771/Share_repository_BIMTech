@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ============================================================
+     setup.exe の設計図
+
+     .msi を包んで setup.exe にするだけのもの。
+
+     ★本来の setup.exe の役目
+       .NET などの前提ソフトが入っているか確認し、
+       無ければ先に入れてから .msi を実行する。
+
+     ★今回、前提ソフトはありません
+       アプリに .NET を同梱しているため、入れるものが無い。
+       それでも setup.exe を作るのは、社内の配布が
+       「.msi と setup.exe の2点セット」を前提にしているため。
+
+       つまり中身は「.msi をそのまま実行するだけ」。
+
+     ★UpgradeCode は .msi のものとは別番号
+       同じ番号にすると Windows が混同する。
+     ============================================================ -->
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+
+  <Bundle Name="ScaffoldAlert 足場点検義務管理"
+          Manufacturer="社内試作"
+          Version="1.0.0"
+          UpgradeCode="A77863E2-03D3-415B-9111-10BA868C4063">
+
+    <!-- インストール中に出す画面。
+         RtfLicense は「使用許諾を出す型」だが、
+         社内ツールなので出さない型(HyperlinkSidebarLicense +
+         ライセンス無し)にしている。 -->
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication
+          Theme="hyperlinkSidebarLicense"
+          LicenseUrl=""
+          SuppressOptionsUI="yes" />
+    </BootstrapperApplication>
+
+    <!-- 入れるものの並び。今回は .msi ひとつだけ。
+         前提ソフトがある場合は、この上に並べる。 -->
+    <Chain>
+      <MsiPackage Id="ScaffoldAlertMsi"
+                  SourceFile="$(var.MsiPath)"
+                  Vital="yes"
+                  Compressed="yes" />
+    </Chain>
+  </Bundle>
+
+</Wix>

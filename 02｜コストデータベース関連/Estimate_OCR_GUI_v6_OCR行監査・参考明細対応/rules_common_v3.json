@@ -1,0 +1,145 @@
+{
+  "rule_version": "0.4",
+  "rule_scope": "建設見積_共通",
+  "description": "全ページ統合OCRに対応した共通ルール。見積ヘッダ（物件名・協力業者名）の抽出を強化する。",
+  "ignore_values": [
+    ":unselected:",
+    ":selected:"
+  ],
+  "column_aliases": {
+    "item_name": [
+      "名称",
+      "品名",
+      "項目",
+      "内訳名"
+    ],
+    "material": [
+      "仕様",
+      "材料",
+      "規格",
+      "仕様・規格"
+    ],
+    "dimension": [
+      "寸法",
+      "材料・寸法",
+      "材料･寸法",
+      "材料・規格",
+      "サイズ"
+    ],
+    "quantity": [
+      "数量",
+      "数 量",
+      "数量(A)",
+      "出来高数量"
+    ],
+    "unit": [
+      "単位",
+      "単 位"
+    ],
+    "unit_price": [
+      "単価",
+      "単 価",
+      "見積単価"
+    ],
+    "amount": [
+      "金額",
+      "見積金額",
+      "金 額",
+      "金額(B)"
+    ],
+    "remarks": [
+      "備考",
+      "摘要",
+      "注記",
+      "備 考"
+    ]
+  },
+  "detail_table": {
+    "required_columns": [
+      "item_name",
+      "quantity",
+      "unit_price",
+      "amount"
+    ],
+    "header_search_rows": 5
+  },
+  "row_classification": {
+    "section_patterns": [
+      "^\\(.*\\)$",
+      "^（.*）$"
+    ],
+    "ignore_name_patterns": [
+      "^名称$",
+      "^品名$",
+      "^項目$",
+      "^合計$",
+      "^小計$",
+      "^Page\\s*\\d+",
+      "^\\d+/\\d+$"
+    ],
+    "remark_review_patterns": [
+      "�",
+      "[灌調鴻湯]"
+    ]
+  },
+  "normalization": {
+    "unit_aliases": {
+      "m2": "㎡",
+      "M2": "㎡",
+      "㎡": "㎡",
+      "m²": "㎡",
+      "M²": "㎡",
+      "m3": "㎥",
+      "M3": "㎥",
+      "m³": "㎥",
+      "M³": "㎥",
+      "ヶ": "ヶ所"
+    }
+  },
+  "header_fields": {
+    "table_labels": {
+      "project_name": [
+        "件名",
+        "件 名",
+        "現場名",
+        "現 場 名",
+        "工事名",
+        "工 事 名"
+      ],
+      "supplier_name": [
+        "会社名",
+        "会 社 名",
+        "見積会社",
+        "取引業者名",
+        "取 引 業 者 名",
+        "施工会社"
+      ],
+      "estimate_id": [
+        "見積番号",
+        "見積No",
+        "見積NO",
+        "見積書No"
+      ],
+      "header_estimate_amount": [
+        "見積金額",
+        "御見積金額",
+        "合計金額",
+        "見積総額"
+      ]
+    },
+    "content_patterns": {
+      "project_name": [
+        "(?:件\\s*名)\\s*[：:]?\\s*([^\\n]+)",
+        "(?:現\\s*場\\s*名)\\s*[：:]?\\s*([^\\n]+)",
+        "(?:工\\s*事\\s*名)\\s*[：:]?\\s*([^\\n]+)"
+      ],
+      "supplier_name": [
+        "(?:会\\s*社\\s*名|見積会社|取引業者名)\\s*[：:]?\\s*([^\\n]+)"
+      ]
+    },
+    "exclude_supplier_patterns": [
+      "スターツ\\s*CAM",
+      "スターツCAM株式会社"
+    ]
+  }
+}

@@ -1,0 +1,242 @@
+/* css/app/history_変更履歴.css
+   DB編集の「📜 変更履歴」: 左に操作の一覧、右に選んだ操作の中身（列: 前 → 後）と取り消しボタン。
+*/
+
+.db-history-entry {
+    padding: var(--space-sm) var(--space-lg) 0;
+}
+
+    .db-history-entry .small-btn {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+.history-modal {
+    max-width: 1280px;
+    height: 88vh;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.history-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-sub);
+}
+
+    .history-filters input,
+    .history-filters select {
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+    }
+
+    .history-filters .small-btn {
+        max-width: none;
+        margin: 0;
+    }
+
+.history-spacer {
+    flex: 1;
+}
+
+.history-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: var(--space-md);
+}
+
+.history-list-wrap,
+.history-detail {
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.history-list td {
+    font-size: var(--font-size-sm);
+}
+
+    .history-list td.summary {
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.history-list tr.reverted td {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+    .history-list tr.reverted td.state {
+        text-decoration: none;
+    }
+
+/* 種類のバッジ */
+.hs-badge {
+    display: inline-block;
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    white-space: nowrap;
+    background: var(--surface-hover-weak);
+    color: var(--text-sub);
+}
+
+    .hs-badge.edit { background: var(--color-primary-faint); color: var(--color-primary); }
+    .hs-badge.import { background: var(--grid-new-bg); color: var(--color-success); }
+    .hs-badge.stencil { background: var(--badge-caution-bg); color: var(--badge-caution-text); }
+    .hs-badge.revert { background: var(--color-danger-faint); color: var(--color-danger); }
+    .hs-badge.done { background: var(--surface-hover-weak); color: var(--text-muted); text-decoration: none; }
+
+/* 右: 明細 */
+.history-detail {
+    padding: var(--space-md) var(--space-lg);
+}
+
+.hd-head h3 {
+    margin: 0 0 var(--space-xs);
+    color: var(--text-heading);
+    font-size: var(--font-size-lg);
+}
+
+.hd-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px var(--space-md);
+    margin: 0 0 var(--space-md);
+    font-size: var(--font-size-sm);
+}
+
+    .hd-meta dt {
+        color: var(--text-muted);
+    }
+
+    .hd-meta dd {
+        margin: 0;
+        word-break: break-all;
+    }
+
+.hd-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+    .hd-actions .small-btn {
+        max-width: none;
+        margin: 0;
+        padding: 6px 12px;
+    }
+
+        .hd-actions .small-btn:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+
+.hd-note {
+    margin: 0 0 var(--space-md);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--surface-subtle);
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+}
+
+    .hd-note.warn {
+        background: var(--badge-caution-bg);
+        color: var(--badge-caution-text);
+    }
+
+    .hd-note.error {
+        background: var(--color-danger-faint);
+        color: var(--color-danger);
+    }
+
+    .hd-note ul {
+        margin: var(--space-xs) 0 0;
+        padding-left: 1.2em;
+    }
+
+.hd-row {
+    margin-bottom: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border-left: 4px solid var(--op-color, var(--color-muted));
+    background: var(--surface-subtle);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: var(--font-size-sm);
+}
+
+    .hd-row.INSERT { --op-color: var(--color-success); }
+    .hd-row.UPDATE { --op-color: var(--color-warning); }
+    .hd-row.DELETE { --op-color: var(--color-danger); }
+
+.hd-row-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-sm);
+    align-items: baseline;
+}
+
+    .hd-row-head .op {
+        color: var(--op-color);
+        font-weight: bold;
+    }
+
+    .hd-row-head .tbl {
+        color: var(--text-heading);
+        font-weight: bold;
+    }
+
+    .hd-row-head .key {
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+    }
+
+.hd-diff {
+    display: grid;
+    grid-template-columns: minmax(8em, auto) 1fr;
+    gap: 0 var(--space-md);
+    margin: 2px 0 0;
+    font-family: var(--mono-font);
+    font-size: var(--font-size-xs);
+}
+
+    .hd-diff dt {
+        color: var(--text-muted);
+    }
+
+    .hd-diff dd {
+        margin: 0;
+        word-break: break-all;
+    }
+
+    .hd-diff .before {
+        color: var(--grid-deleted-text);
+        text-decoration: line-through;
+    }
+
+    .hd-diff .after {
+        color: var(--color-success);
+        font-weight: bold;
+    }
+
+    .hd-diff .null {
+        color: var(--text-muted);
+        font-style: italic;
+    }

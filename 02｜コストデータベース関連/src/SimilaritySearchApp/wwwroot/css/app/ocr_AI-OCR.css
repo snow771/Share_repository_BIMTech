@@ -1,0 +1,430 @@
+/* css/app/ocr_AI-OCR.css
+   見積AI-OCRウィンドウ。入力・ログ・一覧の部品は stencil_Stencile変換.css を共用し、ここではOCR固有の部分だけ定義する。
+     ・ヘッダーの利用枚数メーター（～注意値=緑 / 注意値超=黄 / 警告値超=赤 / 上限=赤の点滅）
+     ・PDF 一覧、処理結果の一覧、明細プレビュー
+*/
+
+.ocr-body {
+    grid-template-columns: 360px minmax(0, 1fr);
+}
+
+/* ── 利用枚数メーター ── */
+.ocr-meter {
+    --meter-color: var(--ocr-meter-safe);
+    min-width: 260px;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    background: var(--ocr-meter-track);
+    border: 2px solid var(--meter-color);
+    color: var(--text-inverse);
+    line-height: 1.25;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+    .ocr-meter.caution { --meter-color: var(--ocr-meter-caution); }
+    .ocr-meter.danger,
+    .ocr-meter.over { --meter-color: var(--ocr-meter-danger); }
+
+    .ocr-meter.caution { background: var(--ocr-meter-caution-bg); color: var(--ocr-meter-caution-text); }
+    .ocr-meter.danger,
+    .ocr-meter.over { background: var(--ocr-meter-danger-bg); color: var(--ocr-meter-danger-text); }
+
+    .ocr-meter.over {
+        animation: ocr-meter-blink 1.2s ease-in-out infinite;
+    }
+
+@keyframes ocr-meter-blink {
+    50% { box-shadow: 0 0 0 4px var(--ocr-meter-danger); }
+}
+
+.ocr-meter-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    font-size: var(--font-size-xs);
+}
+
+.ocr-meter-state {
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    background: var(--meter-color);
+    color: var(--text-inverse);
+    font-weight: bold;
+}
+
+.ocr-meter-value {
+    font-family: var(--mono-font);
+    font-size: var(--font-size-sm);
+}
+
+    .ocr-meter-value strong {
+        font-size: 22px;
+    }
+
+.ocr-meter-track {
+    position: relative;
+    height: 8px;
+    margin: 3px 0 2px;
+    border-radius: var(--radius-pill);
+    background: var(--ocr-meter-track);
+    overflow: hidden;
+}
+
+.ocr-meter.caution .ocr-meter-track,
+.ocr-meter.danger .ocr-meter-track,
+.ocr-meter.over .ocr-meter-track {
+    background: var(--surface-hover-weak);
+}
+
+.ocr-meter-bar {
+    height: 100%;
+    width: 0;
+    background: var(--meter-color);
+    transition: width var(--transition-fast);
+}
+
+/* 注意値・警告値の目盛り */
+.ocr-meter-mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+}
+
+    .ocr-meter-mark.warn { background: var(--ocr-meter-caution); }
+    .ocr-meter-mark.danger { background: var(--ocr-meter-danger); }
+
+.ocr-meter-sub {
+    font-size: var(--font-size-xs);
+    opacity: 0.85;
+}
+
+/* ── 左: PDF 一覧 ── */
+.ocr-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+    .ocr-section-head h2 {
+        margin: 0 0 var(--space-sm);
+    }
+
+.ocr-pdf-buttons {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+    .ocr-pdf-buttons .small-btn {
+        max-width: none;
+        margin: 0;
+    }
+
+.ocr-pdf-list {
+    max-height: 190px;
+    margin: var(--space-sm) 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    border: 1px solid var(--border-color-subtle);
+    border-radius: var(--radius-sm);
+}
+
+    .ocr-pdf-list:empty::before {
+        content: "PDF が選ばれていません";
+        display: block;
+        padding: var(--space-sm);
+        color: var(--text-muted);
+        font-size: var(--font-size-xs);
+        text-align: center;
+    }
+
+    .ocr-pdf-list li {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 3px var(--space-sm);
+        border-bottom: 1px solid var(--border-color-subtle);
+        font-size: var(--font-size-sm);
+    }
+
+        .ocr-pdf-list li:last-child {
+            border-bottom: none;
+        }
+
+        .ocr-pdf-list li .name {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ocr-pdf-list li .pages {
+            color: var(--text-muted);
+            font-family: var(--mono-font);
+            font-size: var(--font-size-xs);
+            white-space: nowrap;
+        }
+
+        .ocr-pdf-list li.error .pages {
+            color: var(--color-danger);
+        }
+
+        .ocr-pdf-list li button {
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--font-size-md);
+            line-height: 1;
+        }
+
+            .ocr-pdf-list li button:hover {
+                color: var(--color-danger);
+            }
+
+/* 実行した場合の見込み（上限を超えそうなら色を変える） */
+.ocr-forecast {
+    margin: var(--space-sm) 0 0;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--ocr-meter-safe-bg);
+    color: var(--text-sub);
+    font-size: var(--font-size-xs);
+}
+
+    .ocr-forecast:empty {
+        display: none;
+    }
+
+    .ocr-forecast.caution { background: var(--ocr-meter-caution-bg); color: var(--ocr-meter-caution-text); }
+    .ocr-forecast.danger,
+    .ocr-forecast.over { background: var(--ocr-meter-danger-bg); color: var(--ocr-meter-danger-text); font-weight: bold; }
+
+.ocr-field-label {
+    display: block;
+    margin: var(--space-xs) 0 2px;
+    color: var(--text-sub);
+    font-size: var(--font-size-xs);
+}
+
+.ocr-cancel {
+    width: 100%;
+    max-width: none;
+    margin: var(--space-sm) 0 0;
+}
+
+/* ── 中央 ── */
+.ocr-alert {
+    padding: var(--space-sm) var(--space-lg);
+    border-left: 6px solid var(--ocr-meter-caution);
+    border-radius: var(--radius-md);
+    background: var(--ocr-meter-caution-bg);
+    color: var(--ocr-meter-caution-text);
+    font-weight: bold;
+}
+
+    .ocr-alert.danger,
+    .ocr-alert.over {
+        border-left-color: var(--ocr-meter-danger);
+        background: var(--ocr-meter-danger-bg);
+        color: var(--ocr-meter-danger-text);
+    }
+
+.ocr-results-card .st-toolbar .small-btn {
+    max-width: none;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.ocr-card-title {
+    margin: 0;
+    color: var(--text-heading);
+    font-size: var(--font-size-md);
+}
+
+.ocr-results-card {
+    flex: 1;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ocr-detail-card {
+    flex: 1.4;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+    .ocr-detail-card .close-btn {
+        margin-left: auto;
+    }
+
+.ocr-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    padding: var(--space-xs) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+}
+
+    .ocr-detail-meta b {
+        color: var(--text-heading);
+    }
+
+.ocr-table td.num,
+.ocr-table th.num {
+    text-align: right;
+    font-family: var(--mono-font);
+}
+
+.ocr-table td.wrap {
+    max-width: 320px;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.ocr-table td.actions {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+    .ocr-table td.actions button {
+        padding: 2px 8px;
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        background: var(--surface-card);
+        color: var(--text-main);
+        font-size: var(--font-size-xs);
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+        .ocr-table td.actions button:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+#ocr-results tbody tr[data-index] {
+    cursor: pointer;
+}
+
+.ocr-table tr.review td {
+    background: var(--ocr-review-bg);
+}
+
+.ocr-table tr.reference td {
+    background: var(--ocr-reference-bg);
+    color: var(--text-sub);
+}
+
+.ocr-table tr.canceled td {
+    color: var(--text-muted);
+}
+
+.ocr-diff-ng {
+    color: var(--color-danger);
+    font-weight: bold;
+}
+
+.st-badge.ok { background: var(--grid-new-bg); color: var(--color-success); }
+.st-badge.warn { background: var(--badge-caution-bg); color: var(--badge-caution-text); }
+.st-badge.canceled { background: var(--surface-hover-weak); color: var(--text-muted); }
+
+.ocr-settings-content {
+    max-width: 720px;
+}
+
+/* ── 見積DB連携の入口（取込確認ダイアログ・ボタン）── */
+.ocr-toolbar-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+}
+
+    .ocr-toolbar-buttons .small-btn {
+        max-width: none;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+.ocr-review-btn {
+    margin: 0 0 0 auto;
+    padding: 6px 14px;
+}
+
+    .ocr-review-btn:disabled {
+        background: var(--color-muted);
+        cursor: default;
+        box-shadow: none;
+        transform: none;
+    }
+
+.ocr-import-content {
+    max-width: 760px;
+}
+
+.ocr-import-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px var(--space-md);
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-sm);
+}
+
+    .ocr-import-summary dt {
+        color: var(--text-muted);
+    }
+
+    .ocr-import-summary dd {
+        margin: 0;
+    }
+
+.ocr-import-files tr.missing td {
+    color: var(--text-muted);
+}
+
+.ocr-import-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-sm);
+}
+
+    .ocr-import-options .small-btn {
+        max-width: none;
+        margin: 0;
+    }
+
+#ocr-import-modal .er-ok,
+#ocr-import-modal .er-warnings {
+    margin: var(--space-xs) 0;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+}
+
+#ocr-import-modal .er-ok {
+    background: var(--grid-new-bg);
+    color: var(--color-success);
+    font-weight: bold;
+}
+
+#ocr-import-modal .er-warnings {
+    background: var(--badge-caution-bg);
+    color: var(--badge-caution-text);
+}
+
+    #ocr-import-modal .er-warnings ul {
+        margin: 0;
+        padding-left: 1.2em;
+    }
+
+#ocr-import-modal .er-muted {
+    color: var(--text-muted);
+}

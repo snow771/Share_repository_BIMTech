@@ -1,0 +1,116 @@
+@model BatchResult
+@{
+    ViewData["Title"] = "取得と判定";
+}
+
+@* この画面だけに効く指定を書けるようにするための印。
+   (batch_取得と判定.css の .batch-page) *@
+<div class="batch-page">
+
+<h1 class="app-title">取得と判定</h1>
+
+<div class="app-card">
+    <h2>この画面はデータベースに書き込みます</h2>
+    <p>
+        気象庁からデータを取ってきて保存し、点検義務を判定します。
+        ふだんは決まった時刻に自動で動かすので、
+        この画面は<strong>いま取り直したいとき</strong>と、
+        <strong>動きを確かめるとき</strong>に使います。
+    </p>
+    <p class="dash-hint">
+        気象庁の観測値は1時間ごとにしか更新されません。
+        続けて押しても、結果はほとんど変わりません。
+    </p>
+</div>
+
+<div class="dash-toolbar">
+    <form method="post" action="/Batch/All">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="save-btn" id="run-all">
+            取得して判定まで実行
+        </button>
+    </form>
+
+    <form method="post" action="/Batch/Fetch">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="dash-button" id="run-fetch">
+            気象データだけ取得
+        </button>
+    </form>
+</div>
+
+<p class="dash-hint" id="running" hidden>
+    実行しています。1〜2分ほどかかります。このまま画面を開いたままにしてください。
+</p>
+
+@if (Model.Steps.Count > 0)
+{
+    @if (Model.Succeeded)
+    {
+        <div class="app-card app-card-ok">
+            <h2>完了しました</h2>
+            <p>
+                かかった時間 @Model.Seconds.ToString("0.0") 秒
+                @if (Model.NewAlerts > 0)
+                {
+                    <text>／ 新しいアラート @Model.NewAlerts 件</text>
+                }
+            </p>
+            @if (Model.NewAlerts > 0)
+            {
+                <p><a href="/" class="dash-button dash-button-on">
+                    ダッシュボードで確認する
+                </a></p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="app-card app-card-error">
+            <h2>途中で止まりました</h2>
+            <p>
+                下の内容を担当者にお伝えください。
+                取れていないデータで判定まで進めると、
+                古いデータで判定したように見えてしまうため、
+                失敗した時点で止めています。
+            </p>
+        </div>
+    }
+
+    <h2 class="app-section-title">実行した結果</h2>
+
+    @foreach (var step in Model.Steps)
+    {
+        <div class="app-card @(step.Succeeded ? "app-card-ok" : "app-card-error")">
+            <h3>
+                @(step.Succeeded ? "✅" : "⚠") @step.Name
+                @if (!string.IsNullOrEmpty(step.Summary))
+                {
+                    <text>— @step.Summary</text>
+                }
+            </h3>
+
+            @if (!string.IsNullOrEmpty(step.ErrorMessage))
+            {
+                <p class="app-error-text">@step.ErrorMessage</p>
+            }
+
+            @if (step.Details.Count > 0)
+            {
+                <details>
+                    <summary>詳しい中身</summary>
+                    <ul class="batch-details">
+                        @foreach (var line in step.Details)
+                        {
+                            <li>@line</li>
+                        }
+                    </ul>
+                </details>
+            }
+        </div>
+    }
+}
+
+<script src="~/js/batch_取得と判定.js" asp-append-version="true"></script>
+
+</div>

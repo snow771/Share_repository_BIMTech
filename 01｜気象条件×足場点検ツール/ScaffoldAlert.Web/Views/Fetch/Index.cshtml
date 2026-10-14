@@ -1,0 +1,300 @@
+@model FetchViewModel
+@{
+    ViewData["Title"] = "取得情報確認";
+}
+
+<h1 class="app-title">取得情報確認</h1>
+
+<div class="app-card">
+    <h2>この画面では気象条件の記録を残しません</h2>
+    <p>
+        気象庁から<strong>いまデータが取れているか</strong>を確かめる画面です。
+        取ってきた内容を表示するだけで、記録は残しません。
+    </p>
+    <p class="dash-hint">
+        実際に記録するには「取得と判定」の画面から実行してください。
+    </p>
+</div>
+
+@* ============================================================
+   A. 雨・風・雪
+   ============================================================ *@
+<h2 class="app-section-title">A. 雨・風・雪</h2>
+
+@if (Model.Weather.Errors.Count > 0)
+{
+    <div class="app-card app-card-error">
+        <h2>取れなかったものがあります</h2>
+        <p>
+            気象庁の配信は取得先ごとに別々なので、
+            1つ失敗しても残りは取れています。
+        </p>
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>取得先</th>
+                    <th>理由</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.Weather.Errors)
+                {
+                    <tr>
+                        <td>@e.Key</td>
+                        <td class="app-error-text">@e.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="app-metrics">
+    <div class="app-metric">
+        <div class="app-metric-label">監視対象の観測所</div>
+        <div class="app-metric-value">@Model.Weather.TargetStationCount</div>
+        <div class="app-metric-unit">地点</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">降水量が取れた</div>
+        <div class="app-metric-value">@Model.Weather.Precip.Count</div>
+        <div class="app-metric-unit">地点</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">最大風速の値あり</div>
+        <div class="app-metric-value">@Model.Weather.WindCount</div>
+        <div class="app-metric-unit">地点</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">最大瞬間風速の値あり</div>
+        <div class="app-metric-value">@Model.Weather.GustCount</div>
+        <div class="app-metric-unit">地点</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">24時間降雪量あり</div>
+        <div class="app-metric-value">@Model.Weather.Snow24hCount</div>
+        <div class="app-metric-unit">地点</div>
+    </div>
+</div>
+
+<h3 class="app-section-title">起時（実際に吹いた時刻）が取れているか</h3>
+<table class="app-table">
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th class="app-num">値あり</th>
+            <th class="app-num">起時あり</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>最大風速</td>
+            <td class="app-num">@Model.Weather.WindCount</td>
+            <td class="app-num">@Model.Weather.WindAtCount</td>
+        </tr>
+        <tr>
+            <td>最大瞬間風速</td>
+            <td class="app-num">@Model.Weather.GustCount</td>
+            <td class="app-num">@Model.Weather.GustAtCount</td>
+        </tr>
+    </tbody>
+</table>
+<p class="dash-hint">
+    <strong>値が0地点</strong>のときは、気象庁CSVの値の書き方が
+    変わった可能性があります。
+    <strong>起時が0地点</strong>のときは、起時の列名の書き方が
+    変わった可能性があります。どちらも担当者へお知らせください。
+</p>
+<p class="dash-hint">
+    雨が降っていない時間帯は降水量が 0 のまま、
+    雪の降らない季節は降雪量が 0 地点のままになります。これは正常です。
+</p>
+
+<h3 class="app-section-title">取得した時刻</h3>
+<table class="app-table">
+    <tbody>
+        <tr>
+            <td>風速CSVが示していた現在時刻</td>
+            <td>
+                @(Model.Weather.WindCurrentAt?.ToString("yyyy-MM-dd HH:mm")
+                  ?? "取れていません")
+            </td>
+            <td>降水量が取れなかった観測所の観測時刻に使う値です</td>
+        </tr>
+        <tr>
+            <td>雪を取った観測時刻</td>
+            <td>
+                @(Model.Weather.SnowObservedAt?.ToString("yyyy-MM-dd HH:mm")
+                  ?? "取れていません")
+            </td>
+            <td>雪の欄は正時のデータにしか入らないため、分は必ず 00 になります</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 class="app-section-title">観測所ごとの値（先頭30地点）</h3>
+<p>
+    取ってきた中身をそのまま並べています。
+    値が「-」の欄は、その観測所がその項目を測っていないか、欠測です。
+</p>
+<div class="app-table-scroll">
+<table class="app-table">
+    <thead>
+        <tr>
+            <th>観測所</th>
+            <th>観測時刻</th>
+            <th class="app-num">12h雨量</th>
+            <th class="app-num">1h雨量</th>
+            <th class="app-num">最大風速</th>
+            <th>その起時</th>
+            <th class="app-num">最大瞬間風速</th>
+            <th>その起時</th>
+            <th class="app-num">24h降雪</th>
+            <th class="app-num">積雪深</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            // 監視対象のうち、何かしら値が取れたものを番号順に並べる。
+            var ids = Model.Weather.Precip.Keys
+                .Union(Model.Weather.Wind.Keys)
+                .Union(Model.Weather.Gust.Keys)
+                .Union(Model.Weather.Snow.Keys)
+                .OrderBy(x => x)
+                .Take(30);
+        }
+        @foreach (var id in ids)
+        {
+            var p = Model.Weather.Precip.GetValueOrDefault(id);
+            var w = Model.Weather.Wind.GetValueOrDefault(id);
+            var g = Model.Weather.Gust.GetValueOrDefault(id);
+            var s = Model.Weather.Snow.GetValueOrDefault(id);
+            var name = Model.StationNames.GetValueOrDefault(id, id);
+
+            <tr>
+                <td>@name<br /><small>@id</small></td>
+                <td>@(p?.ObservedAt?.ToString("MM-dd HH:mm") ?? "-")</td>
+                <td class="app-num">@(p?.Precip12h?.ToString("0.0") ?? "-")</td>
+                <td class="app-num">@(p?.Precip1h?.ToString("0.0") ?? "-")</td>
+                <td class="app-num">@(w?.Speed?.ToString("0.0") ?? "-")</td>
+                <td>@(w?.At?.ToString("MM-dd HH:mm") ?? "-")</td>
+                <td class="app-num">@(g?.Speed?.ToString("0.0") ?? "-")</td>
+                <td>@(g?.At?.ToString("MM-dd HH:mm") ?? "-")</td>
+                <td class="app-num">@(s?.Snow24h?.ToString("0.0") ?? "-")</td>
+                <td class="app-num">@(s?.SnowDepth?.ToString("0.0") ?? "-")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+
+@* ============================================================
+   B. 地震
+   ============================================================ *@
+<h2 class="app-section-title">B. 地震</h2>
+
+@if (!Model.Succeeded)
+{
+    <div class="app-card app-card-error">
+        <h2>取得できませんでした</h2>
+        <p class="app-error-text">@Model.ErrorMessage</p>
+        <h3>確認すること</h3>
+        <ul>
+            <li>このPCからインターネットに出られるか</li>
+            <li>気象庁のサイトが応答しているか</li>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="app-card app-card-ok">
+        <h2>取得できました</h2>
+        <p>この画面全体でかかった時間 @Model.Seconds.ToString("0.0") 秒</p>
+    </div>
+
+    <div class="app-metrics">
+        <div class="app-metric">
+            <div class="app-metric-label">気象庁が配信していた件数</div>
+            <div class="app-metric-value">@Model.Quake.DeliveredCount</div>
+            <div class="app-metric-unit">件</div>
+        </div>
+        <div class="app-metric">
+            <div class="app-metric-label">取り込みの対象</div>
+            <div class="app-metric-value">@Model.Quake.TargetCount</div>
+            <div class="app-metric-unit">件</div>
+        </div>
+        <div class="app-metric">
+            <div class="app-metric-label">地域別震度の合計</div>
+            <div class="app-metric-value">@Model.TotalIntensities</div>
+            <div class="app-metric-unit">件</div>
+        </div>
+    </div>
+
+    <h3 class="app-section-title">対象から外したもの</h3>
+    <table class="app-table">
+        <tbody>
+            <tr>
+                <td>震度の情報が無い</td>
+                <td class="app-num">@Model.Quake.SkippedNoIntensity 件</td>
+                <td>海外の地震など、国内の震度が発表されないもの</td>
+            </tr>
+            <tr>
+                <td>取り込み済みで更新もない</td>
+                <td class="app-num">@Model.Quake.SkippedKnown 件</td>
+                <td>@EarthquakeFetcher.RefreshHours 時間より前に発生し、既に取り込み済みのもの</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 class="app-section-title">取り込みの対象（先頭20件）</h3>
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th>地震ID</th>
+                <th>発生日時</th>
+                <th>震源地</th>
+                <th class="app-num">M</th>
+                <th class="app-num">深さ</th>
+                <th class="app-num">最大震度</th>
+                <th class="app-num">地域数</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in Model.Quake.Targets.Take(20))
+            {
+                <tr>
+                    <td>@q.EventId</td>
+                    <td>@(q.OccurredAt?.ToString("yyyy-MM-dd HH:mm") ?? "不明")</td>
+                    <td>@q.Hypocenter</td>
+                    <td class="app-num">@q.Magnitude</td>
+                    <td class="app-num">@(q.DepthKm.HasValue ? q.DepthKm + "km" : "")</td>
+                    <td class="app-num">@q.MaxIntensity</td>
+                    <td class="app-num">@q.CityIntensities.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3 class="app-section-title">いまデータベースに入っている直近の地震</h3>
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th>発生日時</th>
+                <th>震源地</th>
+                <th class="app-num">M</th>
+                <th class="app-num">最大震度</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var q in Model.Stored)
+            {
+                <tr>
+                    <td>@q.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@q.Hypocenter</td>
+                    <td class="app-num">@q.Magnitude</td>
+                    <td class="app-num">@q.MaxIntensity</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

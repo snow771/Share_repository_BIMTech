@@ -1,0 +1,16 @@
+<Window x:Class="SimilaritySearchApp.EstimateReviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="見積確認・取決め"
+        Width="1500" Height="940" MinWidth="1100" MinHeight="680"
+        WindowStartupLocation="CenterOwner"
+        Loaded="OnLoaded" Closing="OnClosing" Closed="OnClosed">
+    <Grid>
+        <wv2:WebView2 x:Name="WebView" />
+        <TextBlock x:Name="StartupMessage"
+                   Text="画面を準備しています..."
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="14" />
+    </Grid>
+</Window>

@@ -1,0 +1,350 @@
+/* css/app.css
+   このアプリだけの見た目。共通CSS(variables.css など)は触らず、
+   足りないものだけをここに書く。
+
+   ★決まり
+     ・色は必ず var(--...) で参照する。#4EA1D5 のような直値は書かない。
+     ・共通CSSに無い色は、まずこの :root に「トークン」として名前を付ける。
+*/
+
+:root {
+    /* ---------------------------------------------------
+     * 文字サイズ
+     * 共通CSSの基準は 14px だが、この画面は現場所長(50〜60代)が
+     * 一目で状況を把握するためのもの。読みやすさを優先して大きくする。
+     * 小さくしたい場合はこの1行を 14px に戻す。
+     * --------------------------------------------------- */
+    --app-font-size: 16px;
+
+    /* ---------------------------------------------------
+     * アラートの状況の色
+     * 意味が共通CSSと同じなので、そのままトークンを参照する。
+     *   未対応 = 危険 = 赤 / 指示済 = 注意 = 橙 / なし = 中立 = グレー
+     * --------------------------------------------------- */
+    --alert-open: var(--color-danger);
+    --alert-instructed: var(--color-warning);
+    --alert-none: var(--color-muted);
+
+    /* ---------------------------------------------------
+     * ★部署ごとの地図の色 (8色)
+     *
+     * ここだけは共通トークンを使わない。
+     * 色覚特性のある方でも8部署すべてを区別できるよう検証した
+     * 組み合わせで、共通の青・赤・グレーに寄せると地図上で
+     * 部署を見分けられなくなるため。
+     * 値を変えるときは、区別できるかを再検証すること。
+     * --------------------------------------------------- */
+    --dept-1: #4269d0;
+    --dept-2: #efb118;
+    --dept-3: #ff725c;
+    --dept-4: #6cc5b0;
+    --dept-5: #3ca951;
+    --dept-6: #ff8ab7;
+    --dept-7: #a463f2;
+    --dept-8: #9c6b4e;
+    --dept-other: #898781;
+}
+
+/* =====================================================
+ * 全体
+ * ===================================================*/
+body {
+    margin: 0;
+    background-color: var(--surface-app);
+    color: var(--text-main);
+    font-family: var(--main-font);
+    font-size: var(--app-font-size);
+}
+
+/* =====================================================
+ * 画面の骨組み
+ * =====================================================
+ * base.css で html と body に overflow: hidden が指定されている。
+ * そのままだと画面に収まらない分が切れて見えなくなるため、
+ * ここで「上のメニュー + 中身」の縦積みにし、
+ * 中身の場所(.app-main)だけをスクロールさせる。
+ *
+ * こうすると、どの画面でも上のメニューが常に見える。
+ * ===================================================*/
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 上のメニューは縮めない。中身が多くても押し潰されないように。 */
+.top-menu {
+    flex: none;
+}
+
+.app-main {
+    /* ★画面のまわりの余白。
+       フルHD(1920×1080)で見たときに、表と地図が
+       画面の端にくっついて窮屈に見えないようにする。
+         24px 28px … 既定（上下 24px、左右 28px）
+         16px      … 詰める
+         32px 40px … もっと広く */
+    padding: 24px 28px;
+
+    /* デモ画面のときだけ、上に帯が入る。
+       その分だけ、下の2列の高さを減らす必要がある。
+       (使っているのは dashboard_ダッシュボード.css の .dash-board) */
+    --demo-banner: 0px;
+
+    /* 残りの高さをすべて使い、その中だけを送る。
+       min-height: 0 が要る。これが無いと中身の大きさに
+       引っ張られて伸び続け、スクロールバーが出ない。 */
+    flex: 1;
+    min-height: 0;
+
+    /* ★上下左右とも、常にスクロールバーを出す。
+       auto にすると中身が収まっているときは出ないため、
+       「送れるのかどうか」が見た目で分からない。
+       出したくない場合は scroll を auto に変える。 */
+    overflow: scroll;
+}
+
+/* =====================================================
+ * 上のメニューの右はし（題名・版・作成者）
+ * =====================================================
+ * どの版を触っているのかが分かると、意見をもらったときに
+ * 「どの版に対する意見か」がはっきりする。
+ *
+ * 中身は appsettings.json の App から読んでいる。
+ * ===================================================*/
+.app-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.3;
+}
+
+.app-brand h4 {
+    margin: 0;
+}
+
+/* 版と作成者。題名より小さく、控えめにする。
+   ふだんは意識せず、必要なときだけ読めればよい。 */
+.app-stamp {
+    font-size: 11px;        /* ★版と作成者の文字の大きさ */
+    opacity: 0.75;          /* ★どれくらい控えめにするか（1で通常）*/
+    white-space: nowrap;
+}
+
+.app-stamp-sep {
+    margin: 0 2px;
+}
+
+/* デモ画面のときは、上に帯が入るぶん高さが要る。 */
+.app-main-demo {
+    --demo-banner: 96px;    /* ★デモの帯の高さ */
+}
+
+/* =====================================================
+ * スクロールバーの見た目
+ * =====================================================
+ * 細くて見えにくいことがあるので、幅と色をはっきり決める。
+ * 色は variables.css のものを使う。
+ * ===================================================*/
+html {
+    /* Firefox 向け。この指定は下の要素へ受け継がれるので、
+       根元に1つ書けば全体に効く。 */
+    scrollbar-color: var(--color-muted) var(--surface-subtle);
+}
+
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface-subtle);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-muted);
+    border-radius: var(--radius-sm);
+
+    /* つまみの周りに余白を作り、細く見せる。 */
+    border: 3px solid var(--surface-subtle);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-sub);
+}
+
+/* 縦と横が交わる角 */
+::-webkit-scrollbar-corner {
+    background: var(--surface-subtle);
+}
+
+.app-title {
+    font-family: var(--title-font);
+    font-size: var(--font-size-title);
+    color: var(--text-heading);
+    margin: 0 0 var(--space-lg) 0;
+}
+
+.app-section-title {
+    font-size: var(--font-size-lg);
+    color: var(--text-heading);
+    margin: var(--space-xl) 0 var(--space-md) 0;
+}
+
+/* =====================================================
+ * カード (お知らせの枠)
+ * ===================================================*/
+.app-card {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+}
+
+    .app-card h2 {
+        margin: 0 0 var(--space-sm) 0;
+        font-size: var(--font-size-lg);
+        color: var(--text-heading);
+    }
+
+    .app-card h3 {
+        margin: var(--space-md) 0 var(--space-xs) 0;
+        font-size: var(--font-size-base);
+        color: var(--text-heading);
+    }
+
+/* 左端の線で状態を表す。色はトークンから取る。 */
+.app-card-ok {
+    border-left: 4px solid var(--color-success);
+}
+
+.app-card-error {
+    border-left: 4px solid var(--color-danger);
+}
+
+.app-error-text {
+    font-family: monospace;
+    font-size: var(--font-size-sm);
+    color: var(--text-sub);
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border-color-subtle);
+    border-radius: var(--radius-sm);
+    padding: var(--space-md);
+    overflow-x: auto;
+}
+
+/* =====================================================
+ * 数値の表示 (件数)
+ * ===================================================*/
+.app-metrics {
+    display: flex;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-lg);
+}
+
+.app-metric {
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--space-lg) var(--space-xl);
+    min-width: 160px;
+}
+
+.app-metric-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+}
+
+.app-metric-value {
+    font-family: var(--title-font);
+    font-size: 32px;
+    color: var(--text-heading);
+    line-height: 1.1;
+    display: inline-block;
+}
+
+.app-metric-unit {
+    display: inline-block;
+    margin-left: var(--space-xs);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+}
+
+/* =====================================================
+ * 表
+ * ===================================================*/
+.app-table {
+    border-collapse: collapse;
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    min-width: 320px;
+
+    /* overflow: hidden は指定しない。
+       角を丸めるためのものだが、列の多い表では
+       右端が切れて見えなくなってしまう。
+       角の丸めは下の指定で代わりに行う。 */
+}
+
+/* 角の丸め。overflow: hidden を使わずに行う。 */
+.app-table thead tr:first-child th:first-child {
+    border-top-left-radius: var(--radius-md);
+}
+
+.app-table thead tr:first-child th:last-child {
+    border-top-right-radius: var(--radius-md);
+}
+
+    .app-table th,
+    .app-table td {
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--border-color-subtle);
+        text-align: left;
+    }
+
+    .app-table th {
+        background-color: var(--surface-header);
+        color: var(--text-heading);
+        font-size: var(--font-size-sm);
+        white-space: nowrap;
+    }
+
+    .app-table tbody tr:hover {
+        background-color: var(--surface-hover);
+    }
+
+    .app-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+/* 数字は右寄せにし、桁をそろえる。 */
+.app-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+ * 上部メニューのリンク
+ * 共通CSSの .top-menu nav button をそのまま使いたいので、
+ * 囲んでいるリンクの飾り(下線・色)だけを消す。
+ * ===================================================*/
+.top-menu-link {
+    text-decoration: none;
+}
+
+/* =====================================================
+ * 横に長い表
+ * =====================================================
+ * 列が多い表は、画面の幅に収まらないことがある。
+ * 表そのものを縮めると読めなくなるので、
+ * 表の場所だけを横に送れるようにする。
+ * ===================================================*/
+.app-table-scroll {
+    /* 横は常に出す。列が多い表は、送れることが分かるほうがよい。 */
+    overflow-x: scroll;
+}

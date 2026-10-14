@@ -1,0 +1,38 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+
+  <!-- ============================================================
+       インストーラー（.msi）を作るプロジェクト
+
+       Visual Studio で「ビルド」すると
+         bin\Release\ScaffoldAlert.msi
+       ができる。
+
+       ★先に publish を済ませておくこと
+         下の WebPublishDir / BatchPublishDir にあるものを
+         そのまま包むので、publish していないと失敗する。
+         または古い中身が入る。
+
+         共有PC移設用\5_インストーラーを作る_開発PCで実行.bat
+         を使えば、publish からまとめて行う。
+       ============================================================ -->
+
+  <PropertyGroup>
+    <OutputName>ScaffoldAlert</OutputName>
+    <OutputType>Package</OutputType>
+  </PropertyGroup>
+
+  <!-- 設計図(.wxs)へ渡す値。
+       publish の出来上がりがどこにあるかを教える。 -->
+  <PropertyGroup>
+    <WebPublishDir>$(MSBuildThisFileDirectory)..\共有PC移設用\publish\web</WebPublishDir>
+    <BatchPublishDir>$(MSBuildThisFileDirectory)..\共有PC移設用\publish\batch</BatchPublishDir>
+    <DefineConstants>WebPublishDir=$(WebPublishDir);BatchPublishDir=$(BatchPublishDir)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ファイアウォールの穴を開けるための追加部品。
+         これが無いと firewall:FirewallException が使えない。 -->
+    <PackageReference Include="WixToolset.Firewall.wixext" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>

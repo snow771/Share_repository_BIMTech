@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ============================================================
+     インストーラーの設計図
+
+     何をどこへ置き、何を登録するかを書いてある。
+     この XML から ScaffoldAlert.msi が作られる。
+
+     ★ここには「アプリ」のことしか書いていない
+       データベースの復元は行わない。SQL Server の権限が要るので、
+       システム担当者に依頼する。
+
+     ★定期実行タスクも、ここでは登録しない
+       1時間ごとに外部通信するタスクは、中身を確認したうえで
+       登録してもらうほうがよいため。
+       手順は A4_定期実行の時刻を変える.md にある。
+
+     ★UpgradeCode について（下の Package にある番号）
+       「このソフトの背番号」。絶対に変えない。
+       変えると Windows が別のソフトだと判断し、
+       古い版が残ったまま二重に入る。
+     ============================================================ -->
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:firewall="http://wixtoolset.org/schemas/v4/wxs/firewall">
+
+  <Package Name="ScaffoldAlert 足場点検義務管理"
+           Manufacturer="社内試作"
+           Version="1.0.0"
+           UpgradeCode="F4CB8102-2EDF-4592-A352-AF739FC4E107"
+           Scope="perMachine"
+           Compressed="yes">
+
+    <!-- 版を上げたときに、古い版を消してから入れる。
+         この1行が無いと二重に入る。 -->
+    <MajorUpgrade
+        DowngradeErrorMessage="すでに新しい版がインストールされています。" />
+
+    <!-- ファイルを .msi の中に埋め込む。1ファイルで配れるようにする。 -->
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- インストールする中身。
+         Feature を分けておくと、あとで「画面だけ」「バッチだけ」を
+         選べるようにできる。いまは両方まとめて入れる。 -->
+    <Feature Id="Main" Title="ScaffoldAlert">
+      <ComponentGroupRef Id="WebFiles" />
+      <ComponentGroupRef Id="WebService" />
+      <ComponentGroupRef Id="BatchFiles" />
+    </Feature>
+  </Package>
+
+  <!-- ============================================================
+       置き場所
+
+       C:\Program Files\ScaffoldAlert\
+       ├ web\      画面（サービスとして動く）
+       └ batch\    取得と判定（タスクから動かす）
+
+       web と batch を分けるのは、どちらにも appsettings.json が
+       あり、同じ場所に置くとぶつかるため。
+       ============================================================ -->
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="ScaffoldAlert">
+        <Directory Id="WEBFOLDER" Name="web" />
+        <Directory Id="BATCHFOLDER" Name="batch" />
+      </Directory>
+    </StandardDirectory>
+  </Fragment>
+
+  <!-- ============================================================
+       画面のファイル
+
+       publish\web\ の中身をすべて入れる。
+       .NET を同梱しているので数百個になるが、
+       ** で「その下ぜんぶ」を指定できる。
+
+       ScaffoldAlert.Web.exe だけは除いている。
+       サービスとして登録するには、その exe を単独の
+       Component にする必要があるため（下の WebService）。
+       ============================================================ -->
+  <Fragment>
+    <ComponentGroup Id="WebFiles" Directory="WEBFOLDER">
+      <Files Include="$(var.WebPublishDir)\**">
+        <Exclude Files="$(var.WebPublishDir)\ScaffoldAlert.Web.exe" />
+      </Files>
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- ============================================================
+       画面をサービスとして登録する
+
+       3_アプリを登録_共有PCで実行.bat が sc create で
+       やっていたことと同じ。
+
+       アンインストールすると、サービスの登録も
+       ファイアウォールの穴も自動で消える。
+       ============================================================ -->
+  <Fragment>
+    <ComponentGroup Id="WebService">
+      <Component Id="WebServiceExe" Directory="WEBFOLDER"
+                 Guid="96228E92-59D5-4482-9319-5451CC5DB216">
+
+        <File Id="WebExe"
+              Source="$(var.WebPublishDir)\ScaffoldAlert.Web.exe"
+              KeyPath="yes" />
+
+        <ServiceInstall Id="WebServiceInstall"
+                        Name="ScaffoldAlert"
+                        DisplayName="ScaffoldAlert (足場点検義務管理)"
+                        Description="足場点検義務管理ツールの画面。ブラウザから http://この端末名:5080/ で開きます。"
+                        Type="ownProcess"
+                        Start="auto"
+                        ErrorControl="normal"
+                        Account="LocalSystem"
+                        Vital="yes" />
+
+        <ServiceControl Id="WebServiceControl"
+                        Name="ScaffoldAlert"
+                        Start="install"
+                        Stop="both"
+                        Remove="uninstall"
+                        Wait="yes" />
+
+        <firewall:FirewallException
+            Id="Port5080"
+            Name="ScaffoldAlert (足場点検義務管理)"
+            Description="足場点検義務管理ツールの画面 (TCP 5080)"
+            Port="5080"
+            Protocol="tcp"
+            Scope="localSubnet" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- ============================================================
+       取得と判定のファイル
+
+       置くだけで、登録はしない。
+       タスクスケジューラへの登録は、中身を確認してもらった
+       うえで別途行う。
+       ============================================================ -->
+  <Fragment>
+    <ComponentGroup Id="BatchFiles" Directory="BATCHFOLDER">
+      <Files Include="$(var.BatchPublishDir)\**" />
+    </ComponentGroup>
+  </Fragment>
+
+</Wix>

@@ -1,0 +1,188 @@
+/* css/app/chart_グラフ.css
+   中央: 指標タブ × 表示切替（箱ひげ図/散布図）の単価分布グラフ（自前SVG）。
+*/
+
+.chart-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+.metric-tabs {
+    display: flex;
+    gap: 2px;
+}
+
+.metric-tab {
+    padding: 6px 14px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+    color: var(--text-sub);
+    font-family: var(--main-font);
+    font-size: var(--font-size-md);
+    cursor: pointer;
+}
+
+    .metric-tab:hover {
+        background: var(--surface-hover);
+    }
+
+    .metric-tab.active {
+        border-bottom-color: var(--tab-color, var(--color-primary));
+        color: var(--text-heading);
+        font-weight: 700;
+    }
+
+    .metric-tab[data-key="assess"] { --tab-color: var(--series-assess); }
+    .metric-tab[data-key="revise"] { --tab-color: var(--series-revise); }
+    .metric-tab[data-key="temp"] { --tab-color: var(--series-temp); }
+    .metric-tab[data-key="formwork"] { --tab-color: var(--series-formwork); }
+    .metric-tab[data-key="rebar"] { --tab-color: var(--series-rebar); }
+
+.chart-area {
+    position: relative;
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+}
+
+.chart-svg {
+    display: block;
+    width: 100%;
+    height: 340px;
+}
+
+/* 上段の右側に置くので、カードの高さいっぱいに広げる */
+.chart-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+    .chart-card .chart-area {
+        flex: 1;
+    }
+
+    .chart-svg .plot-bg {
+        fill: var(--chart-plot-bg);
+    }
+
+    .chart-svg .grid-line {
+        stroke: var(--chart-grid);
+        stroke-width: 1;
+    }
+
+    .chart-svg .axis-text {
+        fill: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: 11px;
+    }
+
+    .chart-svg .axis-title {
+        fill: var(--text-sub);
+        font-size: 12px;
+    }
+
+    .chart-svg .box {
+        stroke-width: 1.5;
+        fill-opacity: 0.55;
+    }
+
+    .chart-svg .whisker {
+        stroke: var(--text-sub);
+        stroke-width: 1.2;
+    }
+
+    .chart-svg .median-line {
+        stroke: var(--stat-median);
+        stroke-width: 2.5;
+    }
+
+    .chart-svg .q-line {
+        stroke: var(--stat-quartile);
+        stroke-width: 1.2;
+        stroke-dasharray: 5 4;
+    }
+
+    .chart-svg .stat-text {
+        font-family: var(--mono-font);
+        font-size: 11px;
+    }
+
+        .chart-svg .stat-text.med {
+            fill: var(--stat-median);
+            font-weight: bold;
+        }
+
+        .chart-svg .stat-text.q {
+            fill: var(--stat-quartile);
+        }
+
+    .chart-svg .point {
+        cursor: pointer;
+        stroke: var(--surface-card);
+        stroke-width: 1;
+        transition: r var(--transition-fast);
+    }
+
+        .chart-svg .point:hover {
+            stroke: var(--text-heading);
+            stroke-width: 2;
+        }
+
+        .chart-svg .point.selected {
+            stroke: var(--text-heading);
+            stroke-width: 2.5;
+            fill: var(--chart-selected);
+        }
+
+    .chart-svg .no-data {
+        fill: var(--text-muted);
+        font-size: 14px;
+    }
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    padding: 0 var(--space-lg) var(--space-md);
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+}
+
+    .chart-legend .swatch {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin-right: 4px;
+        border-radius: 2px;
+        vertical-align: -1px;
+    }
+
+    .chart-legend .line {
+        display: inline-block;
+        width: 16px;
+        height: 0;
+        margin-right: 4px;
+        vertical-align: 3px;
+        border-top: 2px solid var(--stat-median);
+    }
+
+        .chart-legend .line.q {
+            border-top: 2px dashed var(--stat-quartile);
+        }
+
+.chart-tooltip {
+    position: absolute;
+    z-index: var(--z-panel);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--menu-background);
+    color: var(--text-inverse);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+    pointer-events: none;
+}

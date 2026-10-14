@@ -1,0 +1,239 @@
+/* ============================================================
+   点検記録簿の画面
+   ============================================================
+   動きは js/audit_点検記録簿.js にある。
+   列が多いので、表の中で横にも縦にも送れるようにする。
+
+   ★印の付いている数字が、よく変えるところ。
+   ============================================================ */
+
+/* ============================================================
+   1. 表の入れ物
+   ============================================================ */
+.audit-scroll {
+    max-height: 70vh;       /* ★表の高さ */
+    overflow: scroll;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+/* 枠は .audit-scroll が持つので、表からは外す。 */
+.audit-scroll .app-table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* 見出しを上に貼り付ける。
+   縦に送っても、どの列が何なのかが分かるようにするため。 */
+.audit-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* ============================================================
+   2. 行の高さ・文字の大きさ
+   ============================================================
+   ★ここが「行間を変えたい」ときに触るところ。
+
+   行の高さは、上下の余白(padding)と行間(line-height)の
+   2つで決まる。
+     余白を増やす   … 行と行のあいだが空く
+     行間を増やす   … 文字の上下が空く（1行なので効きは小さい）
+   ============================================================ */
+.audit-scroll .app-table th,
+.audit-scroll .app-table td {
+    padding-top: 5px;       /* ★行の高さ（上）ゆったり=10px 詰める=2px */
+    padding-bottom: 5px;    /* ★行の高さ（下） */
+    padding-left: var(--space-md);    /* ★列と列のあいだ（左） */
+    padding-right: var(--space-md);   /* ★列と列のあいだ（右） */
+    line-height: 1.5;       /* ★行間 */
+
+    /* 1行で表示する。はみ出す分は「…」で切る。
+       折り返して2段になると行の高さがまちまちになり、
+       目で追いにくくなるため。 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 16em;        /* ★文字が切れる位置 */
+}
+
+.audit-scroll .app-table td {
+    font-size: 13px;        /* ★行の文字 */
+}
+
+.audit-scroll .app-table th {
+    font-size: 12px;        /* ★見出しの文字 */
+}
+
+/* ============================================================
+   3. 対応状況による行の色
+   ============================================================
+   対応状況の列はいちばん右にあり、行が増えると
+   1つずつ読むことになる。行そのものに色を付けて、
+   ぱっと見て分かるようにする。
+
+   色は薄くする。文字が読めなくなっては意味がない。
+   ============================================================ */
+
+/* ★色は「急ぎ具合」を表している
+
+     未対応(薄い赤) … 指示すら出していない。いちばん急ぐ
+     指示済(薄い青) … 連絡は済み、点検結果を待っている
+     点検完了(白)   … 済んでいる
+
+   ★赤と青にしている理由
+     赤と黄は隣り合った色で、薄くすると見分けにくい。
+     とくに色覚によっては、ほとんど同じに見える。
+     赤と青なら、どんな見え方でも対比がはっきりする。
+
+     色だけが手がかりにならないよう、
+     「対応状況」の列も必ず一緒に出している。 */
+
+/* 未対応 … まだ指示も出していない。いちばん急ぐ。 */
+.audit-table tbody tr[data-status="OPEN"] {
+    background: #fdeaea;    /* ★未対応の行の色（薄い赤） */
+}
+
+/* 指示済 … 連絡は済んだが、点検結果を待っている。 */
+.audit-table tbody tr[data-status="INSTRUCTED"] {
+    background: #e4f0fa;    /* ★指示済の行の色（薄い青） */
+}
+
+/* 点検完了 … 済んでいるので色を付けない（白のまま）。 */
+
+/* ---------- 行を押せることを示す ---------- */
+.audit-table tbody tr {
+    cursor: pointer;
+}
+
+.audit-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+/* 色の付いた行にマウスを乗せたとき。
+   ふつうの行と同じ色にすると色が消えて、
+   「押したら状態が変わったのか」と思われてしまう。
+   同じ色のまま、少しだけ濃くする。 */
+.audit-table tbody tr[data-status="OPEN"]:hover {
+    background: #f9d9d9;    /* ★未対応にマウスを乗せたとき */
+}
+
+.audit-table tbody tr[data-status="INSTRUCTED"]:hover {
+    background: #d0e5f6;    /* ★指示済にマウスを乗せたとき */
+}
+
+/* いま開いている行。 */
+.audit-row-selected {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+/* ============================================================
+   4. 並べ替え
+   ============================================================ */
+/* 押せる見出しであることを示す。 */
+.audit-sortable {
+    cursor: pointer;
+    user-select: none;      /* 続けて押したときに文字が選ばれないように */
+}
+
+.audit-sortable:hover {
+    text-decoration: underline;
+}
+
+/* いま並べ替えに使っている列に、向きの印を付ける。
+   どの列で並んでいるのかが分からないと、
+   並び順を見ても意味が読み取れない。 */
+.audit-sort-asc::after {
+    content: " ▲";
+    font-size: 10px;
+}
+
+.audit-sort-desc::after {
+    content: " ▼";
+    font-size: 10px;
+}
+
+/* ============================================================
+   5. 対象外の折りたたみ
+   ============================================================ */
+.audit-skipped {
+    margin-top: var(--space-xl);    /* ★上の表とのあいだ */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+}
+
+/* 押すところ。折りたたみだと分かるようにする。 */
+.audit-skipped > summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: var(--space-sm) 0;     /* ★押すところの高さ */
+}
+
+/* 中の表は、上の表より低くしておく。
+   ふだん見ないものが画面を占めないようにする。 */
+.audit-scroll-skipped {
+    max-height: 40vh;       /* ★対象外の表の高さ */
+    margin-top: var(--space-sm);
+}
+
+/* ============================================================
+   6. 詳細（モーダル）
+   ============================================================ */
+/* 「事象」「指示」「点検」の見出し。 */
+.audit-detail-head {
+    margin-top: var(--space-lg);    /* ★かたまりのあいだ */
+    margin-bottom: var(--space-sm);
+}
+
+/* 中の表。左に項目名、右に中身。 */
+.audit-detail-table th {
+    width: 10em;            /* ★項目名の幅 */
+    text-align: left;
+    white-space: nowrap;
+}
+
+.audit-detail-table th,
+.audit-detail-table td {
+    padding-top: 6px;       /* ★詳細の行の高さ（上） */
+    padding-bottom: 6px;    /* ★詳細の行の高さ（下） */
+    line-height: 1.6;       /* ★詳細の行間 */
+}
+
+/* 中身が長いことがあるので、こちらは折り返す。 */
+.audit-detail-table td {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* 「まだ記録がありません」などの言葉。 */
+.audit-detail-empty {
+    margin: var(--space-sm) 0;
+    color: var(--text-muted);
+}
+
+/* 点検が未実施のときの注意。こちらは目立たせる。 */
+.audit-detail-warn {
+    color: var(--color-danger);
+    font-weight: 600;
+}
+
+/* ============================================================
+   7. 記録を直す画面
+   ============================================================ */
+/* どの記録を直すのかを出す表。 */
+.edit-facts th {
+    width: 10em;            /* ★項目名の幅 */
+    text-align: left;
+    white-space: nowrap;
+}
+
+.edit-facts th,
+.edit-facts td {
+    padding-top: 6px;       /* ★行の高さ（上） */
+    padding-bottom: 6px;    /* ★行の高さ（下） */
+    line-height: 1.6;       /* ★行間 */
+}

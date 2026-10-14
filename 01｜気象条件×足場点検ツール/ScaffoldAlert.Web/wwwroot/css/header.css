@@ -1,0 +1,70 @@
+/* css/components/header.css
+   画面上部のメニューバーとフィルタ。
+   色は variables.css のトークンを参照する（旧 --negative-color / --default-color は使わない）。
+*/
+
+.top-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    min-height: 60px;
+    padding: var(--space-md) var(--space-xl);
+    background-color: var(--menu-background);
+    color: var(--text-inverse);
+    box-shadow: var(--shadow-card);
+}
+
+    .top-menu nav {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+    }
+
+        .top-menu nav button {
+            font-family: var(--button-font);
+            font-size: var(--font-size-lg);
+            color: var(--text-inverse);
+            background-color: var(--color-primary-faint);
+            border: none;
+            padding: 10px 20px;
+            margin-right: var(--space-md);
+            border-radius: var(--radius-lg);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color var(--transition-base), transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .top-menu nav button:hover,
+            .top-menu nav button.active {
+                background-color: var(--color-primary-weak);
+                transform: scale(1.05);
+                box-shadow: var(--shadow-hover);
+            }
+
+    .top-menu h4 {
+        margin: 0;
+        color: var(--text-muted);
+        font-family: var(--main-font);
+        font-weight: 100;
+    }
+
+/* フィルタ行 */
+.top-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+}
+
+    .top-filters .filter-section h4 {
+        margin: 0 0 3px 0;
+        font-size: var(--font-size-sm);
+    }
+
+    .top-filters .filter-section select {
+        min-width: 120px;
+        padding: 5px;
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+    }

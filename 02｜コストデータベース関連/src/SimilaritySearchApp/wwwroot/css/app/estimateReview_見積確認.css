@@ -1,0 +1,598 @@
+/* css/app/estimateReview_見積確認.css
+   見積確認・取決めウィンドウ。左に 紐づけ・集計・明細／取決めのタブ、右に原資料（PDF）。
+   一覧・バッジ・KPI・ログの部品は stencil_Stencile変換.css を共用し、ここではこの画面に固有の部分だけ定義する。
+*/
+
+.er-header-badges {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    justify-content: center;
+}
+
+.er-badge-text {
+    color: var(--text-inverse);
+    font-size: var(--font-size-xs);
+    opacity: 0.85;
+}
+
+.er-muted {
+    color: var(--text-muted);
+}
+
+/* ── 一覧モード ── */
+.er-list-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    padding: var(--space-lg);
+    background: var(--surface-app);
+}
+
+.er-list-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.er-list-toolbar input[type="search"] {
+    flex: 1;
+    min-width: 240px;
+}
+
+.er-list-toolbar .small-btn {
+    max-width: none;
+    margin: 0;
+}
+
+#er-list-table tbody tr {
+    cursor: pointer;
+}
+
+/* ── 詳細モード ── */
+.er-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr);
+}
+
+.er-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    overflow-y: auto;
+    background: var(--surface-app);
+}
+
+.er-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+    .er-card-head h2 {
+        margin: 0;
+        color: var(--text-heading);
+        font-size: var(--font-size-md);
+    }
+
+    .er-card-head .small-btn {
+        max-width: none;
+        margin: 0;
+    }
+
+.er-save-link {
+    margin-left: auto;
+}
+
+    .er-save-link:disabled {
+        background: var(--color-muted);
+        cursor: default;
+    }
+
+.er-link-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-lg) var(--space-md);
+}
+
+.er-link-current {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px var(--space-sm);
+    min-height: 2.6em;
+    font-size: var(--font-size-sm);
+}
+
+    .er-link-current small {
+        flex-basis: 100%;
+        color: var(--text-muted);
+        font-size: var(--font-size-xs);
+    }
+
+.er-label {
+    padding: 0 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: var(--text-inverse);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+}
+
+.er-changed {
+    color: var(--color-warning);
+}
+
+.er-locked {
+    color: var(--badge-caution-text);
+    font-weight: bold;
+}
+
+.er-search {
+    display: flex;
+    gap: var(--space-xs);
+    margin: var(--space-xs) 0;
+}
+
+    .er-search input {
+        flex: 1;
+        min-width: 0;
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+    }
+
+    .er-search .small-btn {
+        max-width: none;
+        margin: 0;
+    }
+
+.er-candidates {
+    max-height: 150px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    border: 1px solid var(--border-color-subtle);
+    border-radius: var(--radius-sm);
+}
+
+    .er-candidates:empty {
+        display: none;
+    }
+
+    .er-candidates li {
+        padding: 4px var(--space-sm);
+        border-bottom: 1px solid var(--border-color-subtle);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+    }
+
+        .er-candidates li:hover {
+            background: var(--surface-hover-weak);
+        }
+
+        .er-candidates li.chosen {
+            background: var(--color-primary-faint);
+            box-shadow: inset 4px 0 0 var(--color-primary);
+        }
+
+        .er-candidates li small {
+            display: block;
+            color: var(--text-muted);
+            font-size: var(--font-size-xs);
+        }
+
+        .er-candidates li.er-none {
+            color: var(--text-muted);
+            cursor: default;
+        }
+
+.er-match {
+    margin-right: var(--space-xs);
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-hover-weak);
+    color: var(--text-sub);
+    font-size: var(--font-size-xs);
+}
+
+.er-summary {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.er-tab-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+}
+
+.er-tab {
+    padding-bottom: var(--space-sm);
+}
+
+    .er-tab .st-table-wrap {
+        max-height: 46vh;
+    }
+
+.er-table td.wrap {
+    min-width: 7em;
+    max-width: 260px;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.er-table td.num,
+.er-table th.num {
+    text-align: right;
+    font-family: var(--mono-font);
+}
+
+#er-lines tbody tr {
+    cursor: pointer;
+}
+
+.er-table tr.er-review td {
+    background: var(--ocr-review-bg);
+}
+
+.er-table tr.er-ref td {
+    background: var(--ocr-reference-bg);
+    color: var(--text-sub);
+}
+
+.er-corrected {
+    padding: 0 4px;
+    border-radius: var(--radius-sm);
+    background: var(--grid-modified-bg);
+    font-weight: bold;
+}
+
+.er-ocr-flag {
+    color: var(--badge-caution-text);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+}
+
+.er-converted {
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+/* 明細の確認・補正 */
+.er-line-editor {
+    margin: var(--space-sm) var(--space-lg) 0;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+}
+
+.er-editor-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: baseline;
+    margin-bottom: var(--space-xs);
+}
+
+.er-editor-grid,
+.er-form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-xs) var(--space-md);
+}
+
+    .er-editor-grid label,
+    .er-form-grid label {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        color: var(--text-sub);
+        font-size: var(--font-size-xs);
+    }
+
+        .er-editor-grid label.wide,
+        .er-form-grid label.wide {
+            grid-column: span 2;
+        }
+
+    .er-editor-grid input,
+    .er-editor-grid select,
+    .er-form-grid input,
+    .er-form-grid select {
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+        font-size: var(--font-size-sm);
+    }
+
+        .er-form-grid input[readonly] {
+            background: var(--surface-subtle);
+        }
+
+    .er-editor-grid label.er-check,
+    .er-form-grid label.er-check {
+        flex-direction: row;
+        align-items: center;
+        color: var(--text-main);
+        font-size: var(--font-size-sm);
+    }
+
+.er-editor-actions,
+.er-agreement-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+}
+
+    .er-editor-actions .st-hint,
+    .er-agreement-actions .st-hint {
+        margin-right: auto;
+    }
+
+    .er-editor-actions .active-btn,
+    .er-agreement-actions .active-btn,
+    .er-agreement-actions .small-btn {
+        margin: 0;
+        max-width: none;
+    }
+
+        .er-agreement-actions .active-btn:disabled {
+            background: var(--color-muted);
+            cursor: default;
+            box-shadow: none;
+            transform: none;
+        }
+
+/* 取決め */
+#er-agreement,
+#er-history {
+    padding: var(--space-sm) var(--space-lg);
+}
+
+.er-agreement-form fieldset {
+    margin: 0 0 var(--space-sm);
+    padding: var(--space-xs) var(--space-md) var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+    .er-agreement-form legend {
+        padding: 0 var(--space-xs);
+        color: var(--text-heading);
+        font-weight: bold;
+    }
+
+.er-radio {
+    display: block;
+    margin: 2px 0;
+    font-size: var(--font-size-sm);
+}
+
+.er-note {
+    margin: 0 0 var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--badge-caution-bg);
+    color: var(--badge-caution-text);
+    font-size: var(--font-size-sm);
+}
+
+.er-preview-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: var(--space-sm) 0;
+}
+
+.er-blocking,
+.er-warnings,
+.er-ok {
+    margin: var(--space-xs) 0;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+}
+
+    .er-blocking ul,
+    .er-warnings ul {
+        margin: var(--space-xs) 0 0;
+        padding-left: 1.2em;
+    }
+
+.er-blocking {
+    background: var(--color-danger-faint);
+    color: var(--color-danger);
+}
+
+.er-warnings {
+    background: var(--badge-caution-bg);
+    color: var(--badge-caution-text);
+}
+
+.er-ok {
+    background: var(--grid-new-bg);
+    color: var(--color-success);
+    font-weight: bold;
+}
+
+.er-agreement-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px var(--space-md);
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-sm);
+}
+
+    .er-agreement-summary dt {
+        color: var(--text-muted);
+    }
+
+    .er-agreement-summary dd {
+        margin: 0;
+    }
+
+.er-agreement-lines {
+    max-height: 40vh;
+}
+
+.er-history-item {
+    margin-bottom: var(--space-sm);
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+    .er-history-item summary {
+        cursor: pointer;
+        font-size: var(--font-size-sm);
+    }
+
+/* ── 原資料 ── */
+.er-doc-pane {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--surface-card);
+    border-left: 1px solid var(--border-color);
+}
+
+    .er-doc-pane select {
+        max-width: 220px;
+        height: 28px;
+    }
+
+.er-pdf-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    padding: var(--space-sm);
+}
+
+    .er-pdf-wrap .st-empty {
+        align-self: flex-start;
+        width: 100%;
+    }
+
+#er-pdf {
+    flex: 1;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--surface-subtle);
+}
+
+.er-doc-note {
+    padding: 0 var(--space-md) var(--space-sm);
+    word-break: break-all;
+}
+
+/* 紐づけ: 候補をクリックして選んだ値（保存前） */
+.er-pending {
+    flex-basis: 100%;
+    padding: 2px var(--space-sm);
+    border-left: 4px solid var(--color-warning);
+    border-radius: var(--radius-sm);
+    background: var(--grid-modified-bg);
+}
+
+    .er-pending b {
+        color: var(--text-heading);
+    }
+
+/* 諸経費の選択 */
+.er-oh-lines {
+    margin: 2px 0 var(--space-xs) 1.6em;
+    font-size: var(--font-size-sm);
+}
+
+    .er-oh-lines details summary {
+        color: var(--color-primary);
+        cursor: pointer;
+    }
+
+.er-oh-line {
+    display: block;
+    padding: 1px 0;
+}
+
+.er-oh-items {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-xs) var(--space-sm);
+    margin: var(--space-xs) 0 0;
+    font-size: var(--font-size-sm);
+}
+
+    .er-oh-items label {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        color: var(--text-sub);
+        font-size: var(--font-size-xs);
+    }
+
+    .er-oh-items input {
+        width: 12em;
+        height: 28px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--mono-font);
+    }
+
+    .er-oh-items .small-btn {
+        max-width: none;
+        margin: 0;
+    }
+
+/* タブ「取決め」: 操作が必要な場所であることが分かるよう薄い赤 */
+#er-tabs .segmented-btn[data-value="agreement"] {
+    background: var(--er-agreement-tab-bg);
+    color: var(--er-agreement-tab-text);
+    font-weight: bold;
+}
+
+    #er-tabs .segmented-btn[data-value="agreement"].active {
+        background: var(--er-agreement-tab-active);
+        color: var(--text-inverse);
+    }
+
+.er-oh-amount {
+    width: 12em;
+    height: 26px;
+    margin-left: var(--space-sm);
+    padding: 0 var(--space-sm);
+    border: 1px solid var(--border-color-input);
+    border-radius: var(--radius-sm);
+}
+
+/* 見積の削除（ヘッダー） */
+.top-menu nav.header-actions button.er-delete-btn {
+    background: var(--color-danger);
+    color: var(--text-inverse);
+}
+
+/* 集計の数字が狭い幅でも切れないように */
+.er-summary .st-kpi .value,
+.er-preview-kpis .st-kpi .value {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+}

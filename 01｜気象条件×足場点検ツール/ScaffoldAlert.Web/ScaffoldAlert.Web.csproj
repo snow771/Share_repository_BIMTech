@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- 画面(Webアプリ)本体。
+       Sdk が Microsoft.NET.Sdk.Web になっているのが、普通のプログラムとの違い。
+
+       TargetFramework は ScaffoldAlert.Core.csproj と必ず同じ値にする。 -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- 中身の処理(Core)を使えるようにする -->
+  <ItemGroup>
+    <ProjectReference Include="..\ScaffoldAlert.Core\ScaffoldAlert.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Windows のサービスとして動くための部品。
+         共有PCで常時待ち受けるときに使う。
+         誰かがログインしていなくても動き、PCを再起動しても
+         自動で立ち上がる。 -->
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices"
+                      Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

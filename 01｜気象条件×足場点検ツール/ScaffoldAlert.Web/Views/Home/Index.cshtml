@@ -1,0 +1,436 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "ダッシュボード";
+
+    // 行き先の頭に付ける文字。
+    // ふだんは空。デモ画面から開かれたときだけ "/Demo" が入る。
+    var 頭 = (ViewData["DemoPrefix"] as string) ?? "";
+
+}
+
+@* 地図を描くための部品。インターネットから読み込む。
+   社内のPCがインターネットに出られない場合は、
+   leaflet.js と leaflet.css を wwwroot/lib に置いて
+   その場所に書き換えれば動く。 *@
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@@1.9.4/dist/leaflet.js"></script>
+
+@if (!Model.Connected)
+{
+    <h1 class="app-title">ダッシュボード</h1>
+
+    <div class="app-card app-card-error">
+        <h2>データベースを読めませんでした</h2>
+        <p class="app-error-text">@Model.ErrorMessage</p>
+        <h3>確認すること</h3>
+        <ul>
+            <li>SQL Server が動いているか（SSMS で繋がるか）</li>
+            <li><code>appsettings.json</code> のサーバー名が正しいか</li>
+            <li>サーバー名の <code>\</code> が2本になっているか（JSONでは2本必要）</li>
+        </ul>
+    </div>
+}
+else
+{
+    @* ============================================================
+       上の帯：題名・全体の状況・件数を1行にまとめる。
+       縦を使わないほど、下の一覧と地図に高さを回せる。
+       ============================================================ *@
+    <div class="dash-head">
+        <h1 class="app-title dash-head-title">ダッシュボード</h1>
+
+        @if (Model.OpenCount > 0)
+        {
+            <div class="dash-status dash-status-alert">
+                ⚠ 点検義務が発生している現場が @Model.OpenCount 件あります
+            </div>
+        }
+        else if (Model.InstructedCount > 0)
+        {
+            <div class="dash-status dash-status-wait">
+                指示済の現場が @Model.InstructedCount 件あります
+            </div>
+        }
+        else
+        {
+            <div class="dash-status dash-status-ok">
+                ✅ 未対応のアラートはありません
+            </div>
+        }
+
+        <div class="dash-kpis">
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">未対応</span>
+                <span class="dash-kpi-value">@Model.OpenCount</span>
+            </div>
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">指示済</span>
+                <span class="dash-kpi-value">@Model.InstructedCount</span>
+            </div>
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">稼働中の現場</span>
+                <span class="dash-kpi-value">@Model.ActiveSiteCount</span>
+            </div>
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">地図に出る現場</span>
+                <span class="dash-kpi-value">@Model.Sites.Count</span>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.BulkSuccess))
+    {
+        <div class="app-card app-card-ok">
+            <h2>@Model.BulkSuccess</h2>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.BulkError))
+    {
+        <div class="app-card app-card-error">
+            <h2>まとめて処理できませんでした</h2>
+            <p class="app-error-text">@Model.BulkError</p>
+        </div>
+    }
+
+    @* ============================================================
+       下の2列：左に一覧、右に地図。
+       同時に見えることが大事なので、上下に並べない。
+       行を押した現場が地図のどこなのかを、目で追えるようにする。
+       ============================================================ *@
+    @* ---------- 点検義務が生じる基準 ----------
+       「なぜこの現場が出ているのか」を、その場で分かるようにする。
+       気象予測の画面には基準が書いてあるのに、
+       いちばん見るこの画面に無かった。
+
+       数字はデータベース (M_Threshold) から読んでいる。
+       画面に書き写すと、基準を変えたときに食い違う。 *@
+    @if (Model.Limits.Count > 0)
+    {
+        <div class="dash-criteria">
+            <span class="dash-criteria-title">点検義務が生じる基準</span>
+
+            @foreach (var t in Model.Limits)
+            {
+                <span class="dash-criteria-item">
+                    @DashboardViewModel.LimitText(t)
+                </span>
+            }
+
+            <span class="dash-criteria-law">
+                労働安全衛生規則 第567条第2項
+            </span>
+        </div>
+    }
+
+    <div class="dash-board">
+
+        @* ---------- 左：対応が必要な物件 ---------- *@
+        <section class="dash-pane">
+            <div class="dash-pane-head">
+                <h2 class="app-section-title dash-pane-title">
+                    対応が必要な物件
+                </h2>
+
+                @if (Model.Alerts.Count > 0)
+                {
+                    <div class="dash-toolbar">
+                        <label>
+                            部署
+                            <select id="filter-dept" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var d in Model.Alerts
+                                              .Select(a => a.Department)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            災害種別
+                            <select id="filter-event" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var e in Model.Alerts
+                                              .Select(a => a.EventType)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@e">
+                                        @DisplaySettings.Event(e)
+                                    </option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            状況
+                            <select id="filter-status" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var s in Model.Alerts
+                                              .Select(a => a.AlertStatus)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@s">
+                                        @DisplaySettings.Status(s)
+                                    </option>
+                                }
+                            </select>
+                        </label>
+                        <span id="alert-count" class="dash-count"></span>
+
+                        @* 絞り込みを一度に戻す。
+                           4つの欄を1つずつ「すべて」に戻すのは手間で、
+                           戻し忘れたまま「件数が合わない」と悩むことになる。 *@
+                        <button type="button" id="filter-clear"
+                                class="dash-button">絞り込みをクリア</button>
+                    </div>
+
+                    <div class="dash-toolbar">
+                        <label class="dash-search">
+                            検索
+                            <input id="filter-keyword" type="text"
+                                   class="dash-input"
+                                   placeholder="例: 葛西プロジェクト新築工事・〇〇所長　／　空欄ですべて表示" />
+                        </label>
+                    </div>
+
+                    <p class="dash-hint">
+                        □現場名を押すと、その現場に地図が寄ります。
+                        □地図の丸を押すと気象情報の詳細が開きます。
+                        □<strong>絞り込むと、地図もその現場だけになります。</strong>
+                        （観測値は大雨がmm、強風・暴風がm/s、大雪がcm）
+                    </p>
+
+                    @* 選んだ1件についてだけ、対応へ進む道を出す。
+                       行ごとにボタンを置かないのは、数百件発報したときに
+                       ボタンの数だけ描画が重くなり、画面が開けなくなるため。 *@
+                    <div class="dash-pick hidden" id="alert-pick">
+                        <span class="dash-pick-label">
+                            選択中
+                            <strong id="alert-pick-name"></strong>
+                        </span>
+                        <a id="alert-pick-link"
+                           class="dash-button dash-button-on dash-button-big"
+                           href="#">この現場のアラートに対応する →</a>
+                    </div>
+
+                    @* まとめて処理する。左端のチェックで選ぶと出る。
+                       同じ担当者が複数の現場を持っていたり、
+                       同じ理由で点検が不要な現場がまとまって出ることがある。 *@
+                    <div class="dash-bulk hidden" id="bulk-bar">
+                        <span class="dash-bulk-count">
+                            <strong id="bulk-count">0</strong> 件を選択中
+                        </span>
+                        <button type="button" class="dash-button"
+                                id="bulk-instruct">まとめて指示済にする</button>
+                        <button type="button" class="dash-button"
+                                id="bulk-skip">まとめて対象外にする</button>
+                        <button type="button" class="dash-button"
+                                id="bulk-clear">選択を外す</button>
+                    </div>
+                }
+            </div>
+
+            @* 表の中だけを縦に送る。見出しは上に貼り付いたまま残す。
+               ページ全体を送る形にすると、件数が増えたときに
+               地図が画面の外へ出てしまう。 *@
+            <div class="dash-scroll">
+                @if (Model.Alerts.Count == 0)
+                {
+                    <p class="dash-hint">ありません。</p>
+                }
+                else
+                {
+                    <table class="app-table dash-table" id="alert-table">
+                        <thead>
+                            <tr>
+                                @* いま表に出ている行だけをまとめて選ぶ。
+                                   絞り込んでから押せば、その分だけが選ばれる。 *@
+                                <th class="dash-check">
+                                    <input type="checkbox" id="bulk-all"
+                                           title="表示中のすべてを選ぶ" />
+                                </th>
+                                <th>現場名</th>
+                                <th>部署</th>
+                                <th>災害種別</th>
+                                <th class="app-num">観測値</th>
+                                <th class="app-num">震度</th>
+                                <th class="app-num">経過</th>
+                                <th>状況</th>
+                                <th>所長</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.Alerts)
+                            {
+                                @* 現場名と所長名をつないだもの。検索欄はここを見る。 *@
+                                var search = a.SiteName + " "
+                                    + (a.ManagerName ?? string.Empty);
+
+                                <tr data-site-id="@a.SiteId"
+                                    data-alert-id="@a.AlertId"
+                                    data-name="@a.SiteName"
+                                    data-dept="@a.Department"
+                                    data-event="@a.EventType"
+                                    data-status="@a.AlertStatus"
+                                    data-search="@search">
+                                    <td class="dash-check">
+                                        <input type="checkbox"
+                                               class="bulk-pick"
+                                               value="@a.AlertId" />
+                                    </td>
+                                    @* title を付けておくと、切れていても
+                                       マウスを乗せれば全文が読める。 *@
+                                    <td class="dash-cell-name"
+                                        title="@a.SiteName">@a.SiteName</td>
+                                    <td class="dash-cell-dept"
+                                        title="@a.Department">@a.Department</td>
+                                    <td>@DisplaySettings.Event(a.EventType)</td>
+                                    <td class="app-num">
+                                        @(a.TriggerValue?.ToString("0.#") ?? "-")
+                                    </td>
+                                    <td class="app-num">@a.TriggerText</td>
+                                    <td class="app-num">@a.ElapsedHours</td>
+                                    <td>@DisplaySettings.Status(a.AlertStatus)</td>
+                                    <td class="dash-cell-manager"
+                                        title="@a.ManagerName">@a.ManagerName</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </section>
+
+        @* ---------- 右：地図 ---------- *@
+        <section class="dash-pane">
+            <div class="dash-pane-head">
+                <h2 class="app-section-title dash-pane-title">現場位置</h2>
+
+                @if (Model.Sites.Count > 0)
+                {
+                    <div class="dash-toolbar">
+                        <span>色分け</span>
+                        <label>
+                            <input type="radio" name="color-mode"
+                                   value="alert" checked />
+                            アラート該当現場
+                        </label>
+                        <label>
+                            <input type="radio" name="color-mode" value="dept" />
+                            部署名別
+                        </label>
+                        <button type="button" id="map-reset" class="dash-button">
+                            地図全体表示
+                        </button>
+                    </div>
+
+                    @* 一覧を絞り込んだときに、地図も絞られていることを出す。
+                       断りが無いと「現場が消えた」と受け取られる。
+                       中身は js/dashboard_ダッシュボード.js が入れる。 *@
+                    <p class="dash-map-note hidden" id="map-filter-note"></p>
+                }
+            </div>
+
+            @if (Model.Sites.Count == 0)
+            {
+                <p class="dash-hint">
+                    地図に出せる現場がありません。
+                    緯度経度が登録されていない可能性があります。
+                </p>
+            }
+            else
+            {
+                @* 地図がうまく出ないときに、理由をここに出す。 *@
+                <div id="map-message" class="dash-map-message"></div>
+
+                <div id="site-map" class="dash-map"></div>
+            }
+        </section>
+    </div>
+
+    @* ---------- まとめて処理（モーダル） ----------
+       選んだ全件に同じ内容を記録する。 *@
+    <div id="bulk-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="bulk-title">まとめて処理</h4>
+                <button type="button" class="close-btn"
+                        id="bulk-close" aria-label="閉じる">&times;</button>
+            </div>
+
+            <form method="post" id="bulk-form" action="@(頭)/Alert/BulkInstruct">
+                @Html.AntiForgeryToken()
+
+                @* 選んだ現場のIDは、JavaScript がここへ入れる。 *@
+                <div id="bulk-ids"></div>
+
+                <p class="dash-hint" id="bulk-target"></p>
+
+                <div class="app-card app-card-error hidden" id="bulk-warn">
+                    <h3>点検が不要と判断した記録が残ります</h3>
+                    <p>
+                        臨検で理由を問われることがあります。
+                        <strong>選んだ全件に同じ理由が記録される</strong>ので、
+                        まとめてよい理由かを確かめてください。
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="bulk-who" id="bulk-who-label">
+                        指示者名（必須）
+                    </label>
+                    <input type="text" id="bulk-who" name="who" />
+                </div>
+
+                <div class="form-group">
+                    <label for="bulk-note" id="bulk-note-label">
+                        指示内容メモ
+                    </label>
+                    <textarea id="bulk-note" name="memo" rows="3"
+                              placeholder="例: 所長へ電話連絡。明朝の作業開始前に点検を実施するよう指示。"></textarea>
+                </div>
+
+                <div class="button-row">
+                    <button type="button" class="cancel-btn"
+                            id="bulk-cancel">やめる</button>
+                    <button type="submit" class="save-btn"
+                            id="bulk-submit">記録する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @* まとめて処理は、地図に出せる現場が無くても使えるようにする。
+       アラートの一覧は地図とは別に出るため。 *@
+    <script src="~/js/bulkAction_まとめて処理.js" asp-append-version="true"></script>
+
+    @if (Model.Sites.Count > 0)
+    {
+        @* ---------- 現場の詳細（モーダル） ----------
+           中身は押されたときに JavaScript が入れる。
+           最初は .hidden を付けて隠しておく。 *@
+        <div id="site-detail" class="modal hidden">
+            <div class="modal-content wide detail-content">
+                <div class="modal-header">
+                    <h4 id="detail-title">現場の詳細</h4>
+                    <button type="button" class="close-btn"
+                            id="detail-close" aria-label="閉じる">&times;</button>
+                </div>
+
+                @* 左に現場の情報、右に観測所。常に2列で出す。 *@
+                <div class="detail-columns">
+                    <div id="detail-left"></div>
+                    <div id="detail-right"></div>
+                </div>
+            </div>
+        </div>
+
+        @* 地図に渡す中身。JavaScript がここから読み取る。 *@
+        <script type="application/json" id="map-data">
+            @Html.Raw(Model.MapDataJson)
+        </script>
+        <script src="~/js/siteDetail_現場の詳細.js" asp-append-version="true"></script>
+        <script src="~/js/dashboard_ダッシュボード.js" asp-append-version="true"></script>
+    }
+}

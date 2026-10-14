@@ -1,0 +1,7 @@
+# 既存ツール（①②）用
+openpyxl>=3.1.0
+PyYAML>=6.0
+
+# ③ DBエディタ用
+pandas>=2.0.0
+pyodbc>=5.0.0

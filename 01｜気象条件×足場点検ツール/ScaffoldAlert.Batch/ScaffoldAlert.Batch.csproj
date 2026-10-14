@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- bat から動かすための実行プログラム。
+       画面は持たない。決まった時刻に自動で動かすためのもの。
+
+       Web アプリ(ScaffoldAlert.Web)とは別に用意している。
+       Web アプリはブラウザから開いたときだけ動くので、
+       誰も開いていない夜間や休日は取得も判定も行われない。
+       ※XMLのコメントの中にハイフン2つを書くとファイルが壊れるので注意。 -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>ScaffoldAlert.Batch</RootNamespace>
+    <AssemblyName>ScaffoldAlert.Batch</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ScaffoldAlert.Core\ScaffoldAlert.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 設定ファイルの読み込みと、部品の組み立てに使う。 -->
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 接続先の設定。出力先へ一緒に持っていく。 -->
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <!-- 共有PC用の設定。これを書き出しに含めないと、
+         共有PCで開発用の接続先を見に行ってしまう。 -->
+    <None Update="appsettings.Production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>類似物件・実績検索</title>
+
+    <!-- StandardCSS（トークン → 下地 → 部品の順。modal は panel より先） -->
+    <link rel="stylesheet" href="css/standard/variables.css">
+    <link rel="stylesheet" href="css/standard/base.css">
+    <link rel="stylesheet" href="css/standard/button.css">
+    <link rel="stylesheet" href="css/standard/modal.css">
+    <link rel="stylesheet" href="css/standard/panel.css">
+    <link rel="stylesheet" href="css/standard/switch.css">
+    <link rel="stylesheet" href="css/standard/header.css">
+
+    <!-- アプリ固有 -->
+    <link rel="stylesheet" href="css/app/tokens_アプリ色.css">
+    <link rel="stylesheet" href="css/app/layout_画面レイアウト.css">
+    <link rel="stylesheet" href="css/app/filter_絞込パネル.css">
+    <link rel="stylesheet" href="css/app/cards_統計カード.css">
+    <link rel="stylesheet" href="css/app/chart_グラフ.css">
+    <link rel="stylesheet" href="css/app/table_物件一覧.css">
+    <link rel="stylesheet" href="css/app/chat_チャット.css">
+    <link rel="stylesheet" href="css/app/standard_標準単価.css">
+    <link rel="stylesheet" href="css/app/db_DB編集.css">
+    <link rel="stylesheet" href="css/app/home_ホーム.css">
+    <link rel="stylesheet" href="css/app/history_変更履歴.css">
+</head>
+<body>
+<div class="container">
+
+    <!-- ============ ヘッダー ============ -->
+    <header class="top-menu app-header">
+        <div class="brand" data-go="home" title="ホームへ">
+            <h1>類似物件・実績検索</h1>
+            <span>UNIT PRICE ANALYSIS SYSTEM</span>
+        </div>
+
+        <div class="segmented mode-toggle" id="mode-toggle" title="画面の切替（マウスの戻るボタンでも戻れます）">
+            <button type="button" class="segmented-btn" data-value="home">🏠 ホーム</button>
+            <button type="button" class="segmented-btn active" data-value="search">🔍 検索・分析</button>
+            <button type="button" class="segmented-btn" data-value="db">🗄 DB編集</button>
+        </div>
+
+        <div class="segmented structure-toggle" id="structure-toggle" title="構造種別（変更後は「データ読込」を再実行）">
+            <button type="button" class="segmented-btn active" data-value="RC">RC造</button>
+            <button type="button" class="segmented-btn" data-value="S">S造</button>
+        </div>
+
+        <form class="ai-search" id="ai-search" autocomplete="off">
+            <input id="ai-search-input" type="search"
+                   placeholder="例: 東京都RC造7階建て 内装工事の修正単価は（AIが条件を設定します）">
+            <button type="submit">🔍 AIで絞込</button>
+        </form>
+
+        <nav class="header-actions">
+            <button type="button" id="load-btn">⚡ データ読込</button>
+            <button type="button" id="stencil-btn" title="Stencile（元データ Excel）から物件情報・査定/修正単価を取り込む（別ウィンドウ）">🧰 Stencile変換</button>
+            <button type="button" id="ocr-btn" title="協力業者見積PDFを AI-OCR で読み取って構造化する（別ウィンドウ）">🧾 AI-OCR</button>
+            <button type="button" id="settings-btn">⚙ 設定</button>
+            <span class="db-badge" id="db-badge">未接続</span>
+        </nav>
+    </header>
+
+    <!-- ============ ホーム ============ -->
+    <div class="home-body hidden" id="home-body">
+        <div class="home-inner">
+            <p class="home-sub">アイコンを押すと、それぞれの画面に移ります。ヘッダーの「🏠 ホーム」やマウスの戻るボタンで、いつでもここに戻れます。</p>
+            <div class="home-tiles">
+                <button type="button" class="home-tile search" data-go="search">
+                    <span class="home-icon">🔍</span>
+                    <span class="home-name">検索・分析</span>
+                    <span class="home-desc">条件で類似物件を絞り込み、査定・修正単価の分布や標準単価を確認します。AIアシスタントにも相談できます。</span>
+                    <span class="home-status" id="home-status-search">データ未読込</span>
+                </button>
+                <button type="button" class="home-tile db" data-go="db">
+                    <span class="home-icon">🗄</span>
+                    <span class="home-name">DB編集</span>
+                    <span class="home-desc">物件情報・標準建材などのテーブルを、Excel と同じ感覚で表示・追加・更新・削除します。Excel取込や関連テーブルの確認もできます。</span>
+                    <span class="home-status" id="home-status-db">接続先は設定で確認</span>
+                </button>
+                <button type="button" class="home-tile stencil" id="home-stencil">
+                    <span class="home-icon">🧰</span>
+                    <span class="home-name">Stencile変換</span>
+                    <span class="home-desc">Stencile（元データ Excel）から物件諸情報・査定/修正単価を取り出し、確認してから DB に登録します。</span>
+                    <span class="home-status">別ウィンドウで開きます</span>
+                </button>
+                <button type="button" class="home-tile ocr" id="home-ocr">
+                    <span class="home-icon">🧾</span>
+                    <span class="home-name">見積AI-OCR</span>
+                    <span class="home-desc">協力業者の見積PDFを Azure AI-OCR で読み取り、明細を構造化した Excel にします。1日の処理枚数も確認できます。</span>
+                    <span class="home-status" id="home-status-ocr">別ウィンドウで開きます</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-body">
+
+        <!-- ============ 左: 絞込 ============ -->
+        <aside class="pane filter-pane" id="filter-pane">
+            <div class="filter-pane-title">
+                <h2>絞込条件</h2>
+                <button type="button" class="chip-clear" id="reset-btn-top">リセット</button>
+            </div>
+
+            <details class="filter-section" open>
+                <summary>工種</summary>
+                <div class="filter-body">
+                    <div class="filter-field"><label for="f-trade">工種項目</label><select id="f-trade" data-key="trade"></select></div>
+                    <div class="filter-field"><label for="f-work">工事項目</label><select id="f-work" data-key="work"></select></div>
+                    <div class="filter-field"><label for="f-item">項目</label><select id="f-item" data-key="item"></select></div>
+                </div>
+            </details>
+
+            <details class="filter-section" open>
+                <summary>地域</summary>
+                <div class="filter-body">
+                    <div class="filter-field"><label for="f-prefecture">都道府県</label><select id="f-prefecture" data-key="prefecture"></select></div>
+                    <div class="filter-field"><label for="f-city">市区町村</label><select id="f-city" data-key="city"></select></div>
+                    <div class="filter-field"><label for="f-town">町名</label><select id="f-town" data-key="town"></select></div>
+                </div>
+            </details>
+
+            <details class="filter-section" open>
+                <summary>建物諸元</summary>
+                <div class="filter-body">
+                    <div class="filter-field"><label for="f-structure">構造</label><select id="f-structure" data-key="structure"></select></div>
+                    <div class="filter-field"><label for="f-form">形態</label><select id="f-form" data-key="form"></select></div>
+                    <div class="filter-field"><label for="f-floorsAbove">地上階数</label><select id="f-floorsAbove" data-key="floorsAbove"></select></div>
+                    <div class="filter-field"><label for="f-floorsBelow">地下階数</label><select id="f-floorsBelow" data-key="floorsBelow"></select></div>
+                </div>
+            </details>
+
+            <details class="filter-section" open>
+                <summary>算出モード</summary>
+                <div class="filter-body">
+                    <div class="filter-segment">
+                        <span>基準面積</span>
+                        <div class="segmented" id="basis-toggle">
+                            <button type="button" class="segmented-btn active" data-value="LegalFloorArea">法廷床</button>
+                            <button type="button" class="segmented-btn" data-value="ConstructionFloorArea">施工床</button>
+                        </div>
+                    </div>
+                    <div class="filter-segment">
+                        <span>費用</span>
+                        <div class="segmented" id="cost-toggle">
+                            <button type="button" class="segmented-btn active" data-value="NetConstruction">純工事費</button>
+                            <button type="button" class="segmented-btn" data-value="ConstructionCost">工事原価</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="filter-section" open>
+                <summary>面積レンジ（㎡）</summary>
+                <div class="filter-body">
+                    <div class="area-range-label" id="area-label">0 〜 0 ㎡</div>
+                    <div class="dual-range">
+                        <div class="range-fill" id="area-fill"></div>
+                        <input type="range" id="area-min-range" min="0" max="0" step="1" aria-label="面積の下限">
+                        <input type="range" id="area-max-range" min="0" max="0" step="1" aria-label="面積の上限">
+                    </div>
+                    <div class="area-inputs">
+                        <div class="filter-field"><label for="area-min">下限</label><input type="number" id="area-min" min="0" step="1"></div>
+                        <span>〜</span>
+                        <div class="filter-field"><label for="area-max">上限</label><input type="number" id="area-max" min="0" step="1"></div>
+                    </div>
+                </div>
+            </details>
+
+            <div class="filter-actions">
+                <button type="button" class="active-btn danger" id="reset-btn">↺ 条件をリセット</button>
+            </div>
+        </aside>
+
+        <!-- ============ 中央: 主要情報 ============ -->
+        <main class="pane main-pane" id="main-pane">
+
+            <section class="result-header">
+                <div class="result-count">該当<strong id="result-count">0</strong>件</div>
+                <div class="chip-list" id="chip-list"></div>
+                <button type="button" class="chip-clear hidden" id="chip-clear">すべて解除</button>
+            </section>
+
+            <nav class="main-tabs" id="main-tabs" role="tablist">
+                <button type="button" class="main-tab active" data-main-tab="analysis" role="tab">📊 単価分析</button>
+                <button type="button" class="main-tab" data-main-tab="standard" role="tab">📐 標準単価<span class="tab-badge hidden" id="standard-badge"></span></button>
+            </nav>
+
+            <div class="main-tab-panel" id="tab-analysis">
+            <!-- 上段: 左に単価パネル（2段2列）、右に分布図 -->
+            <div class="analysis-top">
+            <section class="stat-grid" id="stat-grid">
+                <div class="card empty-state" style="grid-column: 1 / -1">
+                    「⚡ データ読込」でDBからデータを読み込むと、ここに単価の統計が表示されます。
+                </div>
+            </section>
+
+            <section class="card chart-card">
+                <div class="card-header">
+                    <h2>単価分布</h2>
+                    <span class="card-hint">点をクリックすると物件詳細を表示</span>
+                </div>
+                <div class="chart-toolbar">
+                    <div class="metric-tabs" id="metric-tabs">
+                        <button type="button" class="metric-tab" data-key="assess">査定単価</button>
+                        <button type="button" class="metric-tab active" data-key="revise">修正単価</button>
+                        <button type="button" class="metric-tab" data-key="temp">仮設工事</button>
+                        <button type="button" class="metric-tab" data-key="formwork">型枠歩掛</button>
+                        <button type="button" class="metric-tab" data-key="rebar">鉄筋歩掛</button>
+                    </div>
+                    <div class="segmented" id="view-toggle">
+                        <button type="button" class="segmented-btn active" data-value="box">箱ひげ図</button>
+                        <button type="button" class="segmented-btn" data-value="scatter">散布図</button>
+                    </div>
+                </div>
+                <div class="chart-area" id="chart-area">
+                    <svg class="chart-svg" id="chart-svg" viewBox="0 0 900 340" preserveAspectRatio="none" role="img" aria-label="単価分布グラフ"></svg>
+                    <div class="chart-tooltip hidden" id="chart-tooltip"></div>
+                </div>
+                <div class="chart-legend" id="chart-legend"></div>
+            </section>
+            </div>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2>該当物件一覧</h2>
+                    <span class="card-hint">見出しクリックで並べ替え／行クリックで選択</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="project-table" id="project-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+            </div>
+
+            <!-- 標準単価（建築材料マスタ × 査定・修正の実績） -->
+            <div class="main-tab-panel hidden" id="tab-standard">
+                <section class="card standard-toolbar">
+                    <div class="standard-scope">
+                        <div class="standard-scope-label">表示範囲</div>
+                        <div class="standard-scope-text" id="standard-scope">データ未読込</div>
+                        <div class="standard-project hidden" id="standard-project"></div>
+                    </div>
+                    <div class="standard-controls">
+                        <input type="search" id="standard-keyword" placeholder="名称・規格・建材コードで検索">
+                        <label class="standard-check"><input type="checkbox" id="standard-hide-zero"> 単価0・未設定を隠す</label>
+                        <button type="button" class="chip-clear" id="standard-expand">すべて開く</button>
+                    </div>
+                </section>
+                <div class="standard-summary" id="standard-summary"></div>
+                <div class="standard-groups" id="standard-groups">
+                    <div class="card empty-state">データを読み込むと、建築材料マスタの標準単価が表示されます。</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ============ 右: 補足・AI ============ -->
+        <aside class="pane side-pane" id="side-pane">
+            <section class="card chat-card">
+                <div class="card-header">
+                    <h2>🤖 AIアシスタント</h2>
+                    <button type="button" class="toggle-btn" id="chat-clear" title="会話をクリア">🗑 クリア</button>
+                </div>
+                <div class="quick-actions">
+                    <button type="button" data-insight="summary">📊 判断サマリー</button>
+                    <button type="button" data-insight="review">🔍 確認観点</button>
+                    <button type="button" data-insight="project">📋 物件説明</button>
+                    <button type="button" id="quick-ai-filter">⚙ 入力文で条件設定</button>
+                </div>
+                <div class="chat-log" id="chat-log"></div>
+                <form class="chat-input" id="chat-form" autocomplete="off">
+                    <textarea id="chat-input" rows="2" placeholder="相談内容を入力（Enterで送信 / Shift+Enterで改行）"></textarea>
+                    <button type="submit" class="active-btn">▶</button>
+                </form>
+            </section>
+        </aside>
+    </div>
+
+    <!-- ============ DB編集モード ============ -->
+    <div class="db-body hidden" id="db-body">
+        <aside class="pane db-table-pane">
+            <div class="filter-pane-title">
+                <h2>テーブル</h2>
+                <button type="button" class="chip-clear" id="db-refresh" title="DBの構造（テーブル一覧・関連）を読み直す">⟳ 更新</button>
+            </div>
+            <div class="db-history-entry">
+                <button type="button" class="small-btn edit-btn" id="db-history" title="いつ・だれが・どこを変更したかの履歴。取り消し（元に戻す）もここから">📜 変更履歴</button>
+            </div>
+            <div class="db-conn" id="db-conn">未接続</div>
+            <div class="db-table-search"><input type="search" id="db-table-search" placeholder="テーブル名で絞込"></div>
+            <div class="db-table-list" id="db-table-list"></div>
+        </aside>
+
+        <main class="pane db-main">
+            <!-- 上段: 選択中のテーブル（Excel 風の表） -->
+            <section class="card db-grid-card">
+                <div class="db-toolbar">
+                    <div class="db-title">
+                        <h2 id="db-title">テーブル未選択</h2>
+                        <span class="db-subtitle" id="db-subtitle"></span>
+                    </div>
+                    <div class="db-actions">
+                        <input type="search" id="db-search" placeholder="表内を検索（全列・部分一致）→ Enter">
+                        <button type="button" class="small-btn edit-btn" id="db-import" title="Excel の表を、列を対応付けて追加行として取り込む（保存で DB に反映）">📥 Excel取込</button>
+                        <button type="button" class="small-btn edit-btn" id="db-add-row" title="末尾に新しい行を追加">＋ 行を追加</button>
+                        <button type="button" class="small-btn delete-btn" id="db-delete-rows" title="選択している行を削除（もう一度押すと取消）">－ 行を削除</button>
+                        <button type="button" class="small-btn edit-btn" id="db-undo" title="元に戻す（Ctrl+Z）">↶ 元に戻す</button>
+                        <button type="button" class="small-btn edit-btn" id="db-discard" title="保存していない変更をすべて破棄">✕ 変更を破棄</button>
+                        <button type="button" class="active-btn" id="db-save" disabled>💾 保存</button>
+                    </div>
+                </div>
+                <div class="db-grid-wrap" id="db-grid-wrap" tabindex="-1"></div>
+                <div class="db-footer">
+                    <div class="db-legend">
+                        <span class="lg modified">変更</span><span class="lg new">追加</span><span class="lg deleted">削除</span><span class="lg missing" title="* の付いた列（必須）が空欄">必須が空欄</span><span class="lg empty" title="任意の列が空欄（登録データとして問題がないか確認用）">空欄</span>
+                        <span class="db-help">クリックで選択・ドラッグで範囲／入力で上書き・F2/ダブルクリックで編集／Enter↓ Tab→／Delete で消去／Ctrl+C・Ctrl+V で Excel と相互コピー／Ctrl+Z 元に戻す／Ctrl+S 保存</span>
+                    </div>
+                    <div class="db-pager">
+                        <button type="button" class="small-btn edit-btn" id="db-prev">◀</button>
+                        <span id="db-page-info">---</span>
+                        <button type="button" class="small-btn edit-btn" id="db-next">▶</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 下段: 関連テーブル（ドラッグで配置変更・ホイールで拡大縮小） -->
+            <section class="card db-diagram-card" id="db-diagram-card">
+                <div class="card-header">
+                    <h2>関連テーブル</h2>
+                    <span class="card-hint">クリックで開く／パネルをドラッグで移動／背景ドラッグで全体を移動／ホイールで拡大縮小（実線＝外部キー・点線＝同名キー列からの推定）</span>
+                    <div class="db-diagram-tools">
+                        <button type="button" class="small-btn edit-btn" id="db-diagram-fit" title="全体が収まるように表示">⤢ 全体表示</button>
+                        <button type="button" class="small-btn edit-btn" id="db-diagram-reset" title="パネルの配置を初期状態に戻す">↺ 配置を戻す</button>
+                        <button type="button" class="toggle-btn" id="db-diagram-toggle">▼ 隠す</button>
+                    </div>
+                </div>
+                <div class="db-diagram" id="db-diagram">
+                    <div class="empty-state">左の一覧からテーブルを選んでください。</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="status-bar" id="status-bar">データを読み込んでください。</footer>
+</div>
+
+<!-- ============ 設定モーダル ============ -->
+<!-- ============ 物件詳細モーダル（グラフの点・一覧の行をクリックで開く） ============ -->
+<div class="modal hidden" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+    <div class="modal-content detail-modal">
+        <div class="modal-header">
+            <h4 id="detail-modal-title">選択物件</h4>
+            <button type="button" class="close-btn" data-close title="閉じる（Esc）">&times;</button>
+        </div>
+        <div id="detail-body"></div>
+    </div>
+</div>
+
+<!-- ============ DB編集: 変更履歴（だれが・いつ・どこを／取り消し） ============ -->
+<div class="modal hidden" id="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-title">
+    <div class="modal-content history-modal">
+        <div class="modal-header">
+            <h4 id="history-title">📜 変更履歴</h4>
+            <button type="button" class="close-btn" data-close>&times;</button>
+        </div>
+        <form class="history-filters" id="history-filters" autocomplete="off">
+            <label>期間 <input type="date" id="hf-from"> 〜 <input type="date" id="hf-to"></label>
+            <label>ユーザー・PC <input type="search" id="hf-user" placeholder="例: tanaka"></label>
+            <label>テーブル <select id="hf-table"><option value="">（すべて）</option></select></label>
+            <label>キーワード <input type="search" id="hf-keyword" placeholder="project_id・値など"></label>
+            <button type="submit" class="small-btn edit-btn">🔍 検索</button>
+            <span class="history-spacer"></span>
+            <button type="button" class="small-btn delete-btn" id="history-purge" title="指定日より前の履歴を削除">🗑 古い履歴を削除</button>
+        </form>
+        <div class="history-body">
+            <div class="history-list-wrap">
+                <table class="project-table history-list" id="history-list">
+                    <thead><tr><th>#</th><th>日時</th><th>だれが</th><th>種類</th><th>内容</th><th class="num">行数</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="history-detail" id="history-detail">
+                <div class="empty-state">左の一覧から操作を選ぶと、変更の中身（前 → 後）が表示されます。</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ DB編集: Excel取込（列の対応付け） ============ -->
+<div class="modal hidden" id="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-title">
+    <div class="modal-content wide import-modal">
+        <div class="modal-header">
+            <h4 id="import-title">Excel取込</h4>
+            <button type="button" class="close-btn" data-close>&times;</button>
+        </div>
+        <div class="import-file">
+            <span id="import-path"></span>
+            <label>シート <select id="import-sheet"></select></label>
+            <span class="import-count" id="import-count"></span>
+        </div>
+        <p class="settings-note">Excel の1行目を見出しとして、DB の各列にどの見出しを入れるか選んでください（同じ名前の見出しは自動で対応付けています）。取り込んだ行は表に「追加」として入り、「💾 保存」で DB に反映されます。</p>
+        <div class="import-grid">
+            <table class="project-table import-map" id="import-map">
+                <thead><tr><th>DB の列</th><th>型</th><th>Excel の見出し</th><th>先頭の値（プレビュー）</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="button-row">
+            <button type="button" class="cancel-btn" data-close>キャンセル</button>
+            <button type="button" class="save-btn" id="import-run">表に追加</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal hidden" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 id="settings-title">設定</h4>
+            <button type="button" class="close-btn" data-close>&times;</button>
+        </div>
+
+        <div class="segmented settings-tabs" id="settings-tabs">
+            <button type="button" class="segmented-btn active" data-tab="db">DB接続</button>
+            <button type="button" class="segmented-btn" data-tab="llm">ローカルLLM</button>
+        </div>
+
+        <form id="settings-form" autocomplete="off">
+            <!-- DB -->
+            <div data-panel="db">
+                <div class="settings-grid">
+                    <div class="form-group"><label for="s-server">サーバー名</label><input id="s-server" name="server" placeholder="例: SERVER\SQLEXPRESS"></div>
+                    <div class="form-group"><label for="s-database">データベース名</label><input id="s-database" name="database"></div>
+                    <div class="form-group wide">
+                        <label>認証方式</label>
+                        <div class="segmented" id="s-auth">
+                            <button type="button" class="segmented-btn active" data-value="windows">Windows認証</button>
+                            <button type="button" class="segmented-btn" data-value="sql">SQL Server認証</button>
+                        </div>
+                    </div>
+                    <div class="form-group sql-only"><label for="s-user">ユーザー名</label><input id="s-user" name="user"></div>
+                    <div class="form-group sql-only">
+                        <label for="s-password">パスワード</label>
+                        <input id="s-password" name="password" type="password" placeholder="変更しない場合は空欄">
+                    </div>
+                    <div class="form-group"><label for="s-timeout-db">コマンドタイムアウト（秒）</label><input id="s-timeout-db" type="number" min="10" step="10"></div>
+                    <div class="form-group">
+                        <label>サーバー証明書を信頼</label>
+                        <label class="toggle-switch"><input type="checkbox" id="s-trust"></label>
+                    </div>
+                </div>
+                <details class="table-names">
+                    <summary>テーブル名（通常は変更不要）</summary>
+                    <div class="settings-grid" id="s-tables"></div>
+                </details>
+                <div class="inline-row">
+                    <button type="button" class="small-btn edit-btn" id="s-test-db">🔌 接続テスト</button>
+                </div>
+                <div class="test-result" id="s-db-result"></div>
+            </div>
+
+            <!-- LLM -->
+            <div data-panel="llm" class="hidden">
+                <div class="settings-grid">
+                    <div class="form-group wide"><label for="s-baseurl">Ollama ベースURL</label><input id="s-baseurl" placeholder="http://127.0.0.1:11434"></div>
+                    <div class="form-group wide">
+                        <label for="s-model">モデル</label>
+                        <div class="inline-row">
+                            <select id="s-model"></select>
+                            <button type="button" class="small-btn edit-btn" id="s-refresh-models">⟳ 一覧を取得</button>
+                        </div>
+                        <p class="settings-note">一覧に無いモデル名は下に直接入力できます。</p>
+                        <input id="s-model-text" placeholder="例: hf.co/Qwen/Qwen3-4B-GGUF:Q4_K_M">
+                    </div>
+                    <div class="form-group"><label for="s-timeout-llm">タイムアウト（秒）</label><input id="s-timeout-llm" type="number" min="10" step="10"></div>
+                    <div class="form-group"><label for="s-temperature">temperature</label><input id="s-temperature" type="number" min="0" max="2" step="0.1"></div>
+                    <div class="form-group"><label for="s-numpredict">最大トークン数（num_predict）</label><input id="s-numpredict" type="number" min="64" step="64"></div>
+                    <div class="form-group">
+                        <label for="s-numctx">コンテキスト長（num_ctx）</label>
+                        <input id="s-numctx" type="number" min="0" step="1024">
+                        <p class="settings-note">AI条件設定の指示文が入る大きさ。足りないとエラーになります（目安 8192）。0 はサーバーの既定。</p>
+                    </div>
+                </div>
+                <div class="inline-row">
+                    <button type="button" class="small-btn edit-btn" id="s-test-llm">🔌 接続テスト</button>
+                </div>
+                <div class="test-result" id="s-llm-result"></div>
+            </div>
+
+            <div class="button-row">
+                <button type="button" class="cancel-btn" data-close>キャンセル</button>
+                <button type="submit" class="save-btn">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ローディング・トースト -->
+<div class="loading-overlay hidden" id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">処理中...</p>
+</div>
+<div class="toast-area" id="toast-area"></div>
+
+<script type="module" src="js/app_起動.js"></script>
+</body>
+</html>

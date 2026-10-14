@@ -1,0 +1,164 @@
+/* css/app/home_ホーム.css
+   ホーム画面（＜検索・分析＞＜DB編集＞＜Stencile変換＞＜見積AI-OCR＞のアイコン）と、画面ごとのヘッダー表示の出し分け。
+*/
+
+.home-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
+    background:
+        radial-gradient(circle at 20% 10%, var(--color-primary-faint), transparent 45%),
+        radial-gradient(circle at 85% 90%, var(--color-danger-faint), transparent 40%),
+        var(--surface-app);
+}
+
+.home-inner {
+    width: 100%;
+    max-width: 1360px;
+    text-align: center;
+}
+
+.home-title {
+    margin: 0 0 var(--space-sm);
+    color: var(--text-heading);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.home-sub {
+    margin: 0 0 var(--space-xl);
+    color: var(--text-muted);
+    font-size: var(--font-size-md);
+}
+
+.home-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-xl);
+}
+
+@media (max-width: 1200px) {
+    .home-tiles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .home-tiles {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.home-tile {
+    --tile-color: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 32px var(--space-xl) var(--space-xl);
+    border: 1px solid var(--border-color);
+    border-top: 6px solid var(--tile-color);
+    border-radius: var(--radius-lg);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-card);
+    color: var(--text-main);
+    font-family: var(--main-font);
+    text-align: center;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+    .home-tile:hover,
+    .home-tile:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-panel-drag);
+        outline: none;
+    }
+
+    .home-tile.search { --tile-color: var(--color-primary); }
+    .home-tile.db { --tile-color: var(--color-success); }
+    .home-tile.stencil { --tile-color: var(--color-warning); }
+    .home-tile.ocr { --tile-color: var(--series-formwork); }
+
+.home-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--surface-subtle);
+    box-shadow: inset 0 0 0 3px var(--tile-color);
+    font-size: 48px;
+}
+
+.home-name {
+    margin-top: var(--space-sm);
+    color: var(--text-heading);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.home-desc {
+    min-height: 4.5em;
+    color: var(--text-sub);
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+}
+
+.home-status {
+    margin-top: auto;
+    padding: 3px 12px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-hover-weak);
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+}
+
+    .home-status.ok {
+        background: var(--grid-new-bg);
+        color: var(--color-success);
+    }
+
+    /* 見積AI-OCR の処理枚数（～注意値=緑 / 注意値超=黄 / 警告値超・上限=赤） */
+    .home-status.ocr-safe {
+        background: var(--ocr-meter-safe-bg);
+        color: var(--ocr-meter-safe);
+        font-weight: bold;
+    }
+
+    .home-status.ocr-caution {
+        background: var(--ocr-meter-caution-bg);
+        color: var(--ocr-meter-caution-text);
+        font-weight: bold;
+    }
+
+    .home-status.ocr-danger,
+    .home-status.ocr-over {
+        background: var(--ocr-meter-danger-bg);
+        color: var(--ocr-meter-danger-text);
+        font-weight: bold;
+    }
+
+/* ── ヘッダー: 画面に関係のない操作は隠す ── */
+.brand[data-go] {
+    cursor: pointer;
+}
+
+body[data-view="home"] .app-header .structure-toggle,
+body[data-view="home"] .app-header .ai-search,
+body[data-view="home"] #load-btn,
+body[data-view="db"] .app-header .structure-toggle,
+body[data-view="db"] .app-header .ai-search,
+body[data-view="db"] #load-btn {
+    visibility: hidden;
+}
+
+body[data-view="home"] .status-bar,
+body[data-view="db"] .status-bar {
+    opacity: 0.6;
+}

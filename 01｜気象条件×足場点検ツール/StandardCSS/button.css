@@ -1,0 +1,142 @@
+/* css/components/button.css
+   ボタンの見た目を一元管理する。
+   「操作できる青 = --color-primary」「操作できないグレー = --color-muted」
+   「破壊的な赤 = --color-danger」の3色だけで表現し、個別CSSで色を上書きしないこと。
+
+   種別:
+     .active-btn        通常操作（青）
+     .active-btn.danger 破壊的操作（赤）
+     .passive-btn       押せない状態（グレー・ホバー無し）
+     .toggle-btn        文字だけのトグル
+     .small-btn         一覧内の小ボタン（.edit-btn / .delete-btn / .no-permission）
+*/
+
+/* =========================================================
+ * 共通の土台
+ * =======================================================*/
+.active-btn,
+.passive-btn,
+.toggle-btn {
+    font-family: var(--button-font);
+    font-size: var(--font-size-base);
+    color: var(--text-inverse);
+    background-color: var(--color-primary);
+    border: none;
+    padding: 10px 20px;
+    margin-left: var(--space-md);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: background-color var(--transition-base), transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.active-btn:hover {
+    background-color: var(--color-primary-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-hover);
+}
+
+.active-btn:active {
+    background-color: var(--color-primary-hover);
+    transform: scale(1);
+    box-shadow: none;
+}
+
+/* 押せないボタン */
+.passive-btn {
+    background-color: var(--color-muted);
+    cursor: default;
+    transition: none;
+}
+
+    .passive-btn:hover {
+        background-color: var(--color-muted);
+        transform: none;
+        box-shadow: none;
+    }
+
+/* 文字だけのトグル */
+.toggle-btn {
+    background-color: transparent;
+    color: var(--color-muted);
+}
+
+    .toggle-btn:hover {
+        color: var(--color-primary);
+        background-color: transparent;
+        font-weight: 500;
+        transform: none;
+        box-shadow: none;
+    }
+
+/* 破壊的操作（青ボタンに .danger を足す） */
+.active-btn.danger {
+    background-color: var(--color-danger);
+}
+
+    .active-btn.danger:hover,
+    .active-btn.danger:active {
+        background-color: var(--color-danger-hover);
+        box-shadow: var(--shadow-hover);
+    }
+
+/* =========================================================
+ * 一覧内の小さいボタン
+ * =======================================================*/
+.small-btn {
+    display: inline-block;
+    font-family: var(--button-font);
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    padding: 4px 7px;
+    /* 元の "1px solid dashed" は不正値（solid と dashed を同時指定）。dashed に統一。 */
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-card);
+    text-decoration: none;
+    margin: 2px 0 2px var(--space-md);
+    min-width: 40px;
+    max-width: 70px;
+    cursor: pointer;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+    .small-btn:hover {
+        transform: scale(1.05);
+        font-weight: 800;
+    }
+
+    .small-btn:active {
+        transform: scale(1);
+        box-shadow: none;
+    }
+
+    /* 文字色だけで種別を表す */
+    .small-btn.edit-btn {
+        color: var(--color-muted);
+    }
+
+        .small-btn.edit-btn:hover,
+        .small-btn.edit-btn:active {
+            background-color: var(--surface-hover-weak);
+        }
+
+    .small-btn.delete-btn {
+        color: var(--color-danger);
+    }
+
+        .small-btn.delete-btn:hover,
+        .small-btn.delete-btn:active {
+            background-color: var(--color-danger-faint);
+        }
+
+    .small-btn.no-permission {
+        background-color: var(--surface-disabled);
+        border-left: solid 6px var(--border-color-strong);
+        color: var(--color-muted);
+        cursor: default;
+    }
+
+        .small-btn.no-permission:hover {
+            transform: none;
+            font-weight: 400;
+        }

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- このプロジェクトは「画面を持たない、中身の処理」をまとめたもの。
+       データベースの読み書き・気象データの取得・点検義務の判定を入れていく。
+       画面(ScaffoldAlert.Web)から参照して使う。
+
+       TargetFramework は .NET のバージョン。
+       net10.0 は長期サポート版(LTS)。この環境に入っているSDKに合わせている。
+       ※XMLのコメントの中にハイフン2つを書くとファイルが壊れるので注意。 -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- 外から持ってくる部品。ビルド時に自動で取得される。 -->
+  <ItemGroup>
+    <!-- SQL Server に繋ぐための部品。 -->
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+  </ItemGroup>
+
+  <!-- 補足：Shift_JIS(cp932) を読むための CodePagesEncodingProvider は
+       net10.0 では既定で使えるため、参照を書く必要がない。
+       書くと「明示的に参照する必要はありません」と案内が出る。 -->
+
+</Project>

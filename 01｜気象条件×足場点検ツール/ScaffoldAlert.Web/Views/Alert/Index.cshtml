@@ -1,0 +1,298 @@
+@model AlertResponseViewModel
+@{
+    ViewData["Title"] = "アラート対応";
+    var a = Model.Alert;
+
+    // 行き先の頭に付ける文字。
+    // ふだんは空。デモ画面から開かれたときだけ "/Demo" が入る。
+    var 頭 = (ViewData["DemoPrefix"] as string) ?? "";
+
+}
+
+<h1 class="app-title">アラート対応</h1>
+
+@if (a is null)
+{
+    <div class="app-card app-card-error">
+        <h2>このアラートは見つかりませんでした</h2>
+        <p>
+            既に対応済みか、別の担当者が処理した可能性があります。
+        </p>
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <p class="app-error-text">@Model.ErrorMessage</p>
+        }
+        <p><a href="@(頭)/" class="dash-button">ダッシュボードへ戻る</a></p>
+    </div>
+}
+else
+{
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="app-card app-card-ok">
+            <h2>@Model.SuccessMessage</h2>
+            <p><a href="@(頭)/" class="dash-button">ダッシュボードへ戻る</a></p>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="app-card app-card-error">
+            <h2>登録できませんでした</h2>
+            <p class="app-error-text">@Model.ErrorMessage</p>
+        </div>
+    }
+
+    @* この else の中は、既にコード側にいる。
+       ここで @@{ を書くとビルドが失敗する。そのまま行を書く。 *@
+
+    @* 実測値。地震は震度なので数値ではなく文字で出す。 *@
+    var shown = a.TriggerValue.HasValue
+        ? a.TriggerValue.Value.ToString("0.0")
+        : (a.TriggerText ?? string.Empty);
+    var unit = DisplaySettings.Unit(a.EventType);
+
+    <div class="app-card">
+        <h2>
+            【@DisplaySettings.Status(a.AlertStatus)】@a.SiteName ／
+            @DisplaySettings.Event(a.EventType) @shown@unit ／
+            @a.OccurredAt.ToString("yyyy-MM-dd HH:mm")
+        </h2>
+
+        <dl class="detail-list">
+            <dt>住所</dt><dd>@a.Address</dd>
+            <dt>現場所長</dt>
+            <dd>@(string.IsNullOrWhiteSpace(a.ManagerName)
+                  ? "未登録" : a.ManagerName)</dd>
+            <dt>根拠</dt><dd>@a.LegalBasis</dd>
+        </dl>
+    </div>
+
+    @if (!a.CanRespond)
+    {
+        @* 点検完了・対象外になっているアラートには入力欄を出さない。
+           出してしまうと、対応済みのアラートに点検記録をもう一度
+           登録でき、点検記録簿に同じ事象が二重に並んでしまう。 *@
+        <div class="app-card app-card-ok">
+            <h2>このアラートは既に対応済みです</h2>
+            <p>追加の入力は必要ありません。</p>
+            <dl class="detail-list">
+                <dt>現在の状態</dt>
+                <dd>@DisplaySettings.Status(a.AlertStatus)</dd>
+                <dt>対応者</dt>
+                <dd>@(a.InstructedBy ?? "未記録")</dd>
+                <dt>対応日時</dt>
+                <dd>@(a.InstructedAt?.ToString("yyyy-MM-dd HH:mm") ?? "未記録")</dd>
+                @if (!string.IsNullOrEmpty(a.InstructionNote))
+                {
+                    <dt>記録</dt>
+                    <dd>@a.InstructionNote</dd>
+                }
+            </dl>
+            <p class="dash-hint">
+                点検の内容は「点検記録簿」の画面で確認できます。
+            </p>
+        </div>
+    }
+    else
+    {
+        @* 指示を登録したことが分かるようにする。
+           小さな文字で1行だけ出していたときは、
+           登録できたのかどうかが伝わらなかった。 *@
+        @if (a.InstructedAt.HasValue)
+        {
+            <div class="app-card app-card-ok">
+                <h2>この現場へは指示済みです</h2>
+                <dl class="detail-list">
+                    <dt>指示日時</dt>
+                    <dd>@a.InstructedAt.Value.ToString("yyyy-MM-dd HH:mm")</dd>
+                    <dt>指示者</dt>
+                    <dd>@a.InstructedBy</dd>
+                    @if (!string.IsNullOrEmpty(a.InstructionNote))
+                    {
+                        <dt>指示内容</dt>
+                        <dd>@a.InstructionNote</dd>
+                    }
+                </dl>
+                <p class="dash-hint">
+                    点検が終わったら「② 点検結果を登録」に進んでください。
+                    指示の内容を直したいときは「① 現場へ指示」で
+                    入れ直せます。
+                </p>
+            </div>
+        }
+
+        @* ---------- タブ ----------
+           ① 現場へ連絡したら「指示済」にする
+           ② 点検が終わったら結果を登録する
+           ③ 足場撤去済みなどで点検が不要と判断した場合は「対象外」にする *@
+        <div class="tab-row" id="alert-tabs" data-open="@Model.OpenTab">
+            <button type="button" class="tab-button" data-tab="instruct">
+                ① 現場へ指示
+            </button>
+            <button type="button" class="tab-button" data-tab="inspect">
+                ② 点検結果を登録
+            </button>
+            <button type="button" class="tab-button" data-tab="skip">
+                ③ 対象外にする
+            </button>
+        </div>
+
+        @* ---------- ① 現場へ指示 ---------- *@
+        <section class="tab-panel" data-tab="instruct">
+            <form method="post" action="@(頭)/Alert/Instruct" class="app-card">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="alertId" value="@a.AlertId" />
+
+                @* 登録済みの中身を入れておく。
+                   空にすると、登録できたのに入っていないように見え、
+                   もう一度入れ直す手間が生まれる。 *@
+                <div class="form-group">
+                    <label for="who">指示者名（必須）</label>
+                    <input type="text" id="who" name="who"
+                           value="@(Model.Value("who") != ""
+                                    ? Model.Value("who")
+                                    : (a.InstructedBy ?? ""))" />
+                </div>
+
+                <div class="form-group">
+                    <label for="memo">指示内容メモ</label>
+                    <textarea id="memo" name="memo" rows="3"
+                              placeholder="例: 所長へ電話連絡。明朝の作業開始前に点検を実施するよう指示。">@(Model.Value("memo") != "" ? Model.Value("memo") : (a.InstructionNote ?? ""))</textarea>
+                </div>
+
+                <div class="button-row">
+                    <button type="submit" class="save-btn">
+                        @(a.InstructedAt.HasValue
+                          ? "指示の記録を書き直す" : "指示済にする")
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        @* ---------- ② 点検結果を登録 ---------- *@
+        <section class="tab-panel" data-tab="inspect">
+            <form method="post" action="@(頭)/Alert/Inspect" class="app-card">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="alertId" value="@a.AlertId" />
+
+                <div class="task-form-row">
+                    <div class="form-group">
+                        <label for="inspectedDate">点検実施日</label>
+                        <input type="date" id="inspectedDate"
+                               name="inspectedDate"
+                               value="@(Model.Value("inspectedDate") != ""
+                                        ? Model.Value("inspectedDate")
+                                        : DateTime.Today.ToString("yyyy-MM-dd"))" />
+                    </div>
+                    <div class="form-group">
+                        <label for="inspectedTime">点検実施時刻</label>
+                        <input type="time" id="inspectedTime"
+                               name="inspectedTime"
+                               value="@(Model.Value("inspectedTime") != ""
+                                        ? Model.Value("inspectedTime") : "08:00")" />
+                    </div>
+                </div>
+
+                <div class="task-form-row">
+                    <div class="form-group">
+                        <label for="name">点検実施者氏名（必須）</label>
+                        <input type="text" id="name" name="name"
+                               value="@Model.Value("name")" />
+                    </div>
+                    <div class="form-group">
+                        <label for="qualify">点検者の資格</label>
+                        <input type="text" id="qualify" name="qualify"
+                               placeholder="足場の組立て等作業主任者 など"
+                               value="@Model.Value("qualify")" />
+                    </div>
+                </div>
+
+                <div class="task-form-row">
+                    <div class="form-group">
+                        <label for="scaffoldType">足場種類</label>
+                        <select id="scaffoldType" name="scaffoldType">
+                            @foreach (var t in InspectionChoices.ScaffoldTypes)
+                            {
+                                <option value="@t"
+                                        selected="@(Model.Value("scaffoldType") == t)">
+                                    @t
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="result">点検結果</label>
+                        <select id="result" name="result">
+                            @foreach (var r in InspectionChoices.Results.Keys)
+                            {
+                                <option value="@r"
+                                        selected="@(Model.Value("result") == r)">
+                                    @r
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="finding">指摘事項・補修内容</label>
+                    <textarea id="finding" name="finding" rows="3">@Model.Value("finding")</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="registeredBy">登録者名（必須）</label>
+                    <input type="text" id="registeredBy" name="registeredBy"
+                           value="@Model.Value("registeredBy")" />
+                </div>
+
+                <p class="dash-hint">
+                    登録すると、このアラートは「点検完了」になります。
+                </p>
+
+                <div class="button-row">
+                    <button type="submit" class="save-btn">点検記録を登録</button>
+                </div>
+            </form>
+        </section>
+
+        @* ---------- ③ 対象外にする ---------- *@
+        <section class="tab-panel" data-tab="skip">
+            <div class="app-card app-card-error">
+                <h2>点検が不要と判断した場合に使います</h2>
+                <p>
+                    足場を撤去済みなどの場合です。
+                    <strong>臨検で理由を問われることがあるため、
+                    必ず具体的に記入してください。</strong>
+                </p>
+            </div>
+
+            <form method="post" action="@(頭)/Alert/NotRequired" class="app-card">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="alertId" value="@a.AlertId" />
+
+                <div class="form-group">
+                    <label for="skipWho">判断者名（必須）</label>
+                    <input type="text" id="skipWho" name="who"
+                           value="@Model.Value("skipWho")" />
+                </div>
+
+                <div class="form-group">
+                    <label for="skipWhy">対象外とする理由（必須）</label>
+                    <textarea id="skipWhy" name="why" rows="3"
+                              placeholder="例: 8月1日に足場を全面撤去済みのため、点検対象の設備が存在しない。">@Model.Value("skipWhy")</textarea>
+                </div>
+
+                <div class="button-row">
+                    <button type="submit" class="save-btn danger">
+                        対象外にする
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <script src="~/js/alertResponse_アラート対応.js" asp-append-version="true"></script>
+    }
+
+    <p><a href="@(頭)/" class="dash-button">ダッシュボードへ戻る</a></p>
+}

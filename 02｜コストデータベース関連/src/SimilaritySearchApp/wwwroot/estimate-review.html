@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>見積確認・取決め</title>
+
+    <!-- StandardCSS（トークン → 下地 → 部品） -->
+    <link rel="stylesheet" href="css/standard/variables.css">
+    <link rel="stylesheet" href="css/standard/base.css">
+    <link rel="stylesheet" href="css/standard/button.css">
+    <link rel="stylesheet" href="css/standard/modal.css">
+    <link rel="stylesheet" href="css/standard/panel.css">
+    <link rel="stylesheet" href="css/standard/switch.css">
+    <link rel="stylesheet" href="css/standard/header.css">
+
+    <!-- アプリ固有（一覧・バッジ・入力の部品は既存画面と共通） -->
+    <link rel="stylesheet" href="css/app/tokens_アプリ色.css">
+    <link rel="stylesheet" href="css/app/layout_画面レイアウト.css">
+    <link rel="stylesheet" href="css/app/table_物件一覧.css">
+    <link rel="stylesheet" href="css/app/cards_統計カード.css">
+    <link rel="stylesheet" href="css/app/chat_チャット.css">
+    <link rel="stylesheet" href="css/app/stencil_Stencile変換.css">
+    <link rel="stylesheet" href="css/app/estimateReview_見積確認.css">
+</head>
+<body>
+<div class="container">
+
+    <header class="top-menu app-header">
+        <div class="brand">
+            <h1 id="er-title">📋 見積確認・取決め</h1>
+            <span id="er-subtitle">ESTIMATE REVIEW &amp; AGREEMENT</span>
+        </div>
+        <div class="er-header-badges" id="er-badges"></div>
+        <nav class="header-actions">
+            <button type="button" id="er-delete" class="hidden er-delete-btn" title="この見積（明細・取決め・資料）を DB から削除します">🗑 この見積を削除</button>
+            <button type="button" id="er-reload" title="DB から最新の内容を読み込み直す">⟳ 再読込</button>
+            <span class="db-badge connected" id="er-operator" title="保存・確定の記録に使う利用者（Windows のユーザー）">利用者</span>
+        </nav>
+    </header>
+
+    <!-- ================= 一覧モード ================= -->
+    <main class="er-list-body hidden" id="er-list">
+        <section class="card er-list-card">
+            <form class="st-toolbar er-list-toolbar" id="er-list-form" autocomplete="off">
+                <input type="search" id="er-kw" placeholder="業者名・工事名・物件名・現場コード・取引先CD で検索">
+                <div class="segmented" id="er-state">
+                    <button type="button" class="segmented-btn active" data-value="all">すべて</button>
+                    <button type="button" class="segmented-btn" data-value="unlinked">未紐づけ</button>
+                    <button type="button" class="segmented-btn" data-value="draft">未確定</button>
+                    <button type="button" class="segmented-btn" data-value="confirmed">確定済</button>
+                </div>
+                <label class="st-check"><input type="checkbox" id="er-include-test" checked> 試験データも表示</label>
+                <button type="submit" class="small-btn edit-btn">🔍 検索</button>
+            </form>
+            <div class="st-table-wrap">
+                <table class="project-table st-table er-table" id="er-list-table">
+                    <thead><tr>
+                        <th class="num">見積ID</th><th>状態</th><th>取込日</th><th>業者（OCR）</th><th>工事名（OCR）</th>
+                        <th>紐づけ物件</th><th>紐づけ業者</th><th class="num">明細</th><th class="num">明細合計</th><th>PDF</th><th>取込者</th>
+                    </tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= 詳細モード ================= -->
+    <div class="er-body hidden" id="er-detail">
+        <main class="pane er-main">
+            <!-- 紐づけ -->
+            <section class="card er-link-card">
+                <div class="er-card-head">
+                    <h2>物件・業者の紐づけ</h2>
+                    <span class="st-hint">候補が 1 件でも自動では決めません。コード・住所を確認して選んでください。</span>
+                    <button type="button" class="active-btn er-save-link" id="er-save-link" disabled>紐づけを保存</button>
+                </div>
+                <div class="er-link-grid">
+                    <div class="er-link-col">
+                        <div class="er-link-current" id="er-project-current"></div>
+                        <form class="er-search" data-kind="project" autocomplete="off">
+                            <input type="search" placeholder="物件名・現場コード・住所で検索（空欄で OCR の工事名から候補）">
+                            <button type="submit" class="small-btn edit-btn">候補</button>
+                        </form>
+                        <ul class="er-candidates" id="er-project-candidates"></ul>
+                    </div>
+                    <div class="er-link-col">
+                        <div class="er-link-current" id="er-supplier-current"></div>
+                        <form class="er-search" data-kind="supplier" autocomplete="off">
+                            <input type="search" placeholder="業者名・取引先CD・カナで検索（空欄で OCR の業者名から候補）">
+                            <button type="submit" class="small-btn edit-btn">候補</button>
+                        </form>
+                        <ul class="er-candidates" id="er-supplier-candidates"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 集計 -->
+            <section class="st-summary er-summary" id="er-summary"></section>
+
+            <!-- タブ -->
+            <section class="card er-tab-card">
+                <div class="st-toolbar">
+                    <div class="segmented" id="er-tabs">
+                        <button type="button" class="segmented-btn active" data-value="lines">明細</button>
+                        <button type="button" class="segmented-btn" data-value="review">要確認</button>
+                        <button type="button" class="segmented-btn" data-value="audit">行監査</button>
+                        <button type="button" class="segmented-btn" data-value="agreement">取決め</button>
+                        <button type="button" class="segmented-btn" data-value="history">履歴</button>
+                    </div>
+                    <span class="st-hint" id="er-tab-hint"></span>
+                </div>
+
+                <!-- 明細・要確認・行監査 -->
+                <div class="er-tab" data-tab="table">
+                    <div class="st-table-wrap">
+                        <table class="project-table st-table er-table" id="er-lines"><thead></thead><tbody></tbody></table>
+                    </div>
+                    <form class="er-line-editor hidden" id="er-line-editor" autocomplete="off"></form>
+                </div>
+
+                <!-- 取決め -->
+                <div class="er-tab hidden" data-tab="agreement" id="er-agreement"></div>
+
+                <!-- 履歴 -->
+                <div class="er-tab hidden" data-tab="history" id="er-history"></div>
+            </section>
+        </main>
+
+        <!-- 原資料 -->
+        <aside class="pane er-doc-pane">
+            <div class="er-card-head">
+                <h2>原資料</h2>
+                <select id="er-pdf-select" title="表示する元PDF"></select>
+                <button type="button" class="small-btn edit-btn" id="er-add-pdf">＋ PDFを追加</button>
+                <button type="button" class="small-btn edit-btn" id="er-open-excel">📊 構造化Excel</button>
+            </div>
+            <div class="er-pdf-wrap" id="er-pdf-wrap">
+                <div class="st-empty" id="er-pdf-empty">元PDF未登録です。「＋ PDFを追加」で登録すると、ここに表示され、明細の行を選ぶと該当ページへ移動します。<br>（PDF が無くても確認・下書き保存はできますが、取決めの確定には必要です）</div>
+                <iframe id="er-pdf" class="hidden" title="元PDF"></iframe>
+            </div>
+            <div class="st-hint er-doc-note" id="er-doc-note"></div>
+        </aside>
+    </div>
+
+    <footer class="status-bar" id="status-bar">準備完了</footer>
+</div>
+
+<div class="loading-overlay hidden" id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">処理中...</p>
+</div>
+<div class="toast-area" id="toast-area"></div>
+
+<script type="module" src="js/estimateReview_見積確認.js"></script>
+</body>
+</html>

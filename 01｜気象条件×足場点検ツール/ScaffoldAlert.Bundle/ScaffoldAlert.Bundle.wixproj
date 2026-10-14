@@ -1,0 +1,30 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+
+  <!-- ============================================================
+       setup.exe を作るプロジェクト
+
+       ビルドすると
+         bin\Release\ScaffoldAlert.exe
+       ができる。これが setup.exe にあたるもの。
+
+       ★先に ScaffoldAlert.Installer をビルドしておくこと
+         できあがった .msi を包むので、.msi が無いと失敗する。
+       ============================================================ -->
+
+  <PropertyGroup>
+    <OutputName>ScaffoldAlert</OutputName>
+    <OutputType>Bundle</OutputType>
+  </PropertyGroup>
+
+  <!-- 包む .msi の場所を、設計図(.wxs)へ渡す。 -->
+  <PropertyGroup>
+    <MsiPath>$(MSBuildThisFileDirectory)..\ScaffoldAlert.Installer\bin\$(Configuration)\ScaffoldAlert.msi</MsiPath>
+    <DefineConstants>MsiPath=$(MsiPath)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- インストール中の画面を出すための部品。 -->
+    <PackageReference Include="WixToolset.Bal.wixext" Version="5.0.2" />
+  </ItemGroup>
+
+</Project>

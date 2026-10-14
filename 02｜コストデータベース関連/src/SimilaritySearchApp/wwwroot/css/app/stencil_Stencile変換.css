@@ -1,0 +1,440 @@
+/* css/app/stencil_Stencile変換.css
+   Stencile変換ウィンドウ: 左に入力とログ、中央に読込結果の一覧と実行ボタン、右に選択ファイルの詳細。
+*/
+
+/* ── ヘッダーの手順表示 ── */
+.st-steps {
+    display: flex;
+    gap: var(--space-xs);
+    flex: 1;
+    justify-content: center;
+}
+
+.st-step {
+    padding: 4px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary-faint);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+}
+
+    .st-step.active {
+        background: var(--color-primary);
+        color: var(--text-inverse);
+        font-weight: bold;
+    }
+
+    .st-step.done {
+        background: var(--color-success);
+        color: var(--text-inverse);
+    }
+
+/* ── 本体 ── */
+.st-body {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    flex: 1;
+    min-height: 0;
+}
+
+    .st-body.with-detail {
+        grid-template-columns: 340px minmax(0, 1fr) 380px;
+    }
+
+.st-input-pane {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border-right: 1px solid var(--border-color);
+}
+
+.st-section {
+    padding: var(--space-md) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+    .st-section h2,
+    .st-log-head h2,
+    .st-detail-head h2 {
+        margin: 0 0 var(--space-sm);
+        color: var(--text-heading);
+        font-size: var(--font-size-md);
+        font-weight: 700;
+    }
+
+.st-hint {
+    margin: var(--space-xs) 0 0;
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: normal;
+}
+
+.st-path {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+    .st-path input {
+        flex: 1;
+        min-width: 0;
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        background: var(--surface-subtle);
+        color: var(--text-main);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+    }
+
+    .st-path .small-btn {
+        max-width: none;
+        min-width: 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+.st-check {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+}
+
+    .st-check.big {
+        font-size: var(--font-size-md);
+        color: var(--text-heading);
+    }
+
+.st-section.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.st-run {
+    padding: var(--space-md) var(--space-lg);
+}
+
+    .st-run .active-btn {
+        width: 100%;
+        margin-left: 0;
+        font-size: var(--font-size-lg);
+    }
+
+.st-progress {
+    position: relative;
+    height: 20px;
+    margin-top: var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--surface-hover-weak);
+    overflow: hidden;
+}
+
+    .st-progress .bar {
+        height: 100%;
+        width: 0;
+        background: var(--color-primary);
+        transition: width var(--transition-fast);
+    }
+
+    .st-progress span {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-heading);
+        font-size: var(--font-size-xs);
+        font-weight: bold;
+    }
+
+/* ── ログ（Python 版ランチャーと同じ色分け） ── */
+.st-log-wrap {
+    flex: 1;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-sm) var(--space-lg) var(--space-md);
+}
+
+.st-log-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.st-log {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    background: var(--menu-background);
+    color: var(--text-inverse);
+    font-family: var(--mono-font);
+    font-size: var(--font-size-xs);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+    .st-log .lv-step { color: var(--st-log-step); }
+    .st-log .lv-file { color: var(--st-log-file); }
+    .st-log .lv-ok, .st-log .lv-done { color: var(--st-log-ok); }
+    .st-log .lv-warn { color: var(--st-log-warn); }
+    .st-log .lv-error { color: var(--st-log-error); }
+
+    .st-log .tag {
+        display: inline-block;
+        min-width: 4.2em;
+        font-weight: bold;
+    }
+
+/* ── 中央 ── */
+.st-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--surface-app);
+}
+
+.st-summary {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-md);
+}
+
+.st-empty {
+    grid-column: 1 / -1;
+    padding: var(--space-xl);
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.st-kpi {
+    padding: var(--space-sm) var(--space-md);
+    border-left: 4px solid var(--kpi-color, var(--color-primary));
+    background: var(--surface-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+}
+
+    .st-kpi .label {
+        color: var(--text-muted);
+        font-size: var(--font-size-xs);
+    }
+
+    .st-kpi .value {
+        color: var(--text-heading);
+        font-family: var(--mono-font);
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .st-kpi.new { --kpi-color: var(--color-success); }
+    .st-kpi.existing { --kpi-color: var(--color-warning); }
+    .st-kpi.error { --kpi-color: var(--color-danger); }
+    .st-kpi.info { --kpi-color: var(--color-muted); }
+
+.st-table-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.st-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+    .st-toolbar input[type="search"] {
+        width: 280px;
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+    }
+
+.st-table-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+.st-table th,
+.st-table td {
+    white-space: nowrap;
+}
+
+.st-table td.name {
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.st-table td.msg {
+    max-width: 360px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-sub);
+    font-size: var(--font-size-sm);
+}
+
+.st-table tr.error td {
+    color: var(--color-danger);
+}
+
+.st-table tr.unchecked td:not(:first-child) {
+    opacity: 0.6;
+}
+
+.st-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* 状態バッジ */
+.st-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+    .st-badge.new { background: var(--grid-new-bg); color: var(--color-success); }
+    .st-badge.existing { background: var(--badge-caution-bg); color: var(--badge-caution-text); }
+    .st-badge.overwrite { background: var(--color-warning); color: var(--text-inverse); }
+    .st-badge.error { background: var(--color-danger-faint); color: var(--color-danger); }
+    .st-badge.unknown { background: var(--surface-hover-weak); color: var(--text-muted); }
+
+.st-warn-mark {
+    color: var(--color-warning);
+    font-weight: bold;
+}
+
+.st-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+}
+
+.st-actions-info {
+    color: var(--text-heading);
+    font-size: var(--font-size-md);
+}
+
+    .st-actions-info strong {
+        color: var(--color-primary);
+        font-size: var(--font-size-lg);
+    }
+
+.st-actions-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+    .st-actions-buttons .st-check {
+        margin: 0;
+    }
+
+    .st-actions-buttons .small-btn {
+        max-width: none;
+        margin: 0;
+        padding: 8px 14px;
+    }
+
+    .st-actions-buttons .active-btn {
+        margin: 0;
+    }
+
+        .st-actions-buttons .active-btn:disabled,
+        .st-actions-buttons .small-btn:disabled {
+            background: var(--color-muted);
+            color: var(--text-inverse);
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+/* ── 右: 詳細 ── */
+.st-detail-pane {
+    padding: var(--space-md) var(--space-lg);
+    background: var(--surface-card);
+    border-left: 1px solid var(--border-color);
+}
+
+.st-detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-sm);
+}
+
+.st-detail-file {
+    margin-bottom: var(--space-sm);
+    color: var(--text-muted);
+    font-family: var(--mono-font);
+    font-size: var(--font-size-xs);
+    word-break: break-all;
+}
+
+.st-detail-warn {
+    margin: var(--space-sm) 0;
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    background: var(--badge-caution-bg);
+    color: var(--badge-caution-text);
+    font-size: var(--font-size-sm);
+}
+
+    .st-detail-warn.error {
+        background: var(--color-danger-faint);
+        color: var(--color-danger);
+    }
+
+.st-fields {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 var(--space-md);
+    font-size: var(--font-size-sm);
+}
+
+    .st-fields dt {
+        padding: 3px 0;
+        color: var(--text-muted);
+        white-space: nowrap;
+        border-bottom: 1px solid var(--border-color-subtle);
+    }
+
+    .st-fields dd {
+        margin: 0;
+        padding: 3px 0;
+        border-bottom: 1px solid var(--border-color-subtle);
+        word-break: break-all;
+    }
+
+        .st-fields dd.num {
+            text-align: right;
+            font-family: var(--mono-font);
+        }

@@ -1,0 +1,188 @@
+@model JudgementViewModel
+@{
+    ViewData["Title"] = "判定確認・基準";
+}
+
+<h1 class="app-title">判定確認・基準</h1>
+
+<div class="app-card">
+    <h2>この画面では気象条件の記録を残しません</h2>
+    <p>
+        「いま判定したら、どの現場に点検義務が出るか」を試しに見る画面です。
+        表示するだけで、アラートは記録されません。
+    </p>
+    <p class="dash-hint">
+        実際に記録するには「取得と判定」の画面から実行してください。
+    </p>
+</div>
+
+@if (!Model.Connected)
+{
+    <div class="app-card app-card-error">
+        <h2>判定できませんでした</h2>
+        <p class="app-error-text">@Model.ErrorMessage</p>
+        <h3>確認すること</h3>
+        <ul>
+            <li>データベースに繋がるか（ダッシュボードで確認できます）</li>
+            <li>
+                <code>add_gust_snow_support.sql</code> を実行済みか
+                （暴風・大雪の基準がまだ無い場合、その2つは判定されません）
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    @* いま使っている基準を出す。数字を目で確かめられるようにするため。 *@
+    <h2 class="app-section-title">現在の判定基準</h2>
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th>災害種別</th>
+                <th>名称</th>
+                <th class="app-num">基準値</th>
+                <th>法令の根拠</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var key in new[] { "RAIN", "WIND", "GUST", "SNOW", "EARTHQUAKE" })
+            {
+                @if (Model.Thresholds.TryGetValue(key, out var t))
+                {
+                    <tr>
+                        <td>@JudgementViewModel.EventLabel(key)</td>
+                        <td>@t.Name</td>
+                        <td class="app-num">
+                            @(t.Value.HasValue ? t.Value.Value.ToString("0.#") : t.Text)
+                        </td>
+                        <td>@t.LegalBasis</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@JudgementViewModel.EventLabel(key)</td>
+                        <td colspan="3">
+                            基準が登録されていないため判定していません
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @* 気をつけてほしいこと *@
+    @if (Model.Result.Warnings.Count > 0)
+    {
+        <div class="app-card app-card-error">
+            <h2>確認が必要なこと</h2>
+            <ul>
+                @foreach (var warning in Model.Result.Warnings)
+                {
+                    <li>@warning</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <h2 class="app-section-title">A. 今回の判定結果</h2>
+
+    @if (Model.Result.Candidates.Count == 0)
+    {
+        <div class="app-card app-card-ok">
+            <h2>基準に達した現場はありません</h2>
+            <p>（判定にかかった時間 @Model.Seconds.ToString("0.0") 秒）</p>
+        </div>
+    }
+    else
+    {
+        <div class="app-card app-card-error">
+            <h2>@Model.Result.Candidates.Count 件の現場に点検義務が発生します</h2>
+            <p>
+                ※ この画面では記録していません。
+                （判定にかかった時間 @Model.Seconds.ToString("0.0") 秒）
+            </p>
+        </div>
+
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>現場名</th>
+                    <th>災害種別</th>
+                    <th>発生日時</th>
+                    <th>内容</th>
+                    <th>観測地点</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Result.Candidates
+                                        .OrderBy(x => x.EventType)
+                                        .ThenBy(x => x.SiteName))
+                {
+                    <tr>
+                        <td>@c.SiteName</td>
+                        <td>@JudgementViewModel.EventLabel(c.EventType)</td>
+                        <td>@c.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@c.Detail</td>
+                        <td>@c.StationName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @*
+        B. 未対応のアラート。
+        今回の判定結果(A)とは別物なので、見出しで分けている。
+        混ぜると「いま出た義務」と「前から残っている義務」の
+        区別が付かなくなる。
+    *@
+    <h2 class="app-section-title">B. 未対応のアラート</h2>
+    <p>
+        これまでに記録され、まだ対応が終わっていないものです。
+        <strong>今回の判定結果ではありません。</strong>
+    </p>
+
+    @if (Model.Pending.Count == 0)
+    {
+        <div class="app-card app-card-ok">
+            <h2>未対応のアラートはありません</h2>
+        </div>
+    }
+    else
+    {
+        <div class="app-card app-card-error">
+            <h2>@Model.Pending.Count 件が対応待ちです</h2>
+        </div>
+
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>状況</th>
+                    <th>現場名</th>
+                    <th>災害種別</th>
+                    <th class="app-num">観測値</th>
+                    <th>発生日時</th>
+                    <th class="app-num">経過</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.Pending)
+                {
+                    <tr>
+                        <td>@JudgementViewModel.StatusLabel(a.AlertStatus)</td>
+                        <td>@a.SiteName</td>
+                        <td>@JudgementViewModel.EventLabel(a.EventType)</td>
+                        <td class="app-num">
+                            @(a.TriggerValue.HasValue
+                                ? a.TriggerValue.Value.ToString("0.0")
+                                : a.TriggerText)
+                        </td>
+                        <td>@a.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td class="app-num">@a.ElapsedHours 時間</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

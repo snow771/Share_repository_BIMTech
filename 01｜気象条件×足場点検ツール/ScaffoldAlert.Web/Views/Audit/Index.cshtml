@@ -1,0 +1,270 @@
+@model AuditViewModel
+@{
+    ViewData["Title"] = "点検";
+
+    // 行き先の頭に付ける文字。
+    // ふだんは空。デモ画面から開かれたときだけ "/Demo" が入る。
+    var 頭 = (ViewData["DemoPrefix"] as string) ?? "";
+}
+
+<h1 class="app-title">点検記録簿</h1>
+
+<p class="dash-hint">
+    労働基準監督署の臨検時に、そのまま提出できる形式です。
+</p>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="app-card app-card-ok">
+        <h2>@Model.SuccessMessage</h2>
+    </div>
+}
+
+@if (!Model.Loaded)
+{
+    <div class="app-card app-card-error">
+        <h2>読み込めませんでした</h2>
+        <p class="app-error-text">@Model.ErrorMessage</p>
+    </div>
+}
+else
+{
+    <form method="get" class="dash-toolbar">
+        <label>
+            期間 開始
+            <input type="date" name="from" class="dash-input"
+                   value="@Model.From.ToString("yyyy-MM-dd")" />
+        </label>
+        <label>
+            期間 終了
+            <input type="date" name="to" class="dash-input"
+                   value="@Model.To.ToString("yyyy-MM-dd")" />
+        </label>
+        <button type="submit" class="dash-button">この期間で表示</button>
+
+        @* 期間を既定（180日前から今日まで）に戻す。
+           日付を2つとも打ち直すのは手間で、
+           片方だけ戻して「件数が合わない」と悩むことになる。
+           何も付けずに開き直せば既定に戻るので、ただのリンクでよい。 *@
+        <a href="@(頭)/Audit" class="dash-button">期間をクリア</a>
+
+        <a class="dash-button dash-button-on"
+           href="@(頭)/Audit/Csv?from=@Model.From.ToString("yyyy-MM-dd")&to=@Model.To.ToString("yyyy-MM-dd")">
+            CSVでダウンロード
+        </a>
+    </form>
+
+    @if (Model.All.Count == 0)
+    {
+        <p>該当期間に記録はありません。</p>
+    }
+    else
+    {
+        <div class="dash-toolbar">
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">対象事象</span>
+                <span class="dash-kpi-value">@Model.Rows.Count</span>
+            </div>
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">点検済</span>
+                <span class="dash-kpi-value">@Model.DoneCount</span>
+            </div>
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">未実施</span>
+                <span class="dash-kpi-value">@Model.NotDoneCount</span>
+            </div>
+            <div class="dash-kpi">
+                <span class="dash-kpi-label">対象外</span>
+                <span class="dash-kpi-value">@Model.SkippedCount</span>
+            </div>
+        </div>
+
+        @if (Model.NotDoneCount > 0)
+        {
+            <div class="app-card app-card-error">
+                <h2>点検が未実施の事象が @Model.NotDoneCount 件あります</h2>
+                <p>臨検で指摘される可能性があります。</p>
+            </div>
+        }
+
+        <p class="dash-hint">
+            <strong>行を押すと、指示と点検の内容が開きます。</strong>
+            見出しを押すと、その列で並べ替えられます（もう一度押すと逆順）。
+            対象外にしたものは、いちばん下の折りたたみに入れています。
+        </p>
+
+        @* ============================================================
+           点検の対象になっている記録
+           ============================================================
+           対象外はここに入れない。混ぜたまま「未実施」に数えると、
+           やるべきことが残っていないのに件数が膨らみ、
+           本当に危ない件が埋もれる。
+           ============================================================ *@
+        <div class="audit-scroll">
+            <table class="app-table audit-table" id="audit-table">
+                <thead>
+                    <tr>
+                        @* data-sort が付いている見出しは押して並べ替えられる。
+                           num = 数字として、date = 日時として比べる。 *@
+                        <th data-sort="text">現場名</th>
+                        <th data-sort="text">住所</th>
+                        <th data-sort="text">事象</th>
+                        <th data-sort="date">事象発生日時</th>
+                        <th data-sort="num" class="app-num">実測値</th>
+                        <th data-sort="text">根拠条文</th>
+                        <th data-sort="date">点検実施日時</th>
+                        <th data-sort="text">点検実施者</th>
+                        <th data-sort="text">点検者資格</th>
+                        <th data-sort="text">点検結果</th>
+                        <th data-sort="text">指摘事項</th>
+                        <th data-sort="num" class="app-num">日数</th>
+                        <th data-sort="text">対応状況</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Rows)
+                    {
+                        @* data-status で、行の色を決めている
+                           (audit_点検記録簿.css)。
+                           data-detail に詳細を入れておき、
+                           押されたときに JavaScript がモーダルに出す。 *@
+                        <tr data-alert-id="@r.AlertId"
+                            data-status="@r.AlertStatus"
+                            data-can-edit="@(r.CanEdit ? "1" : "0")"
+                            data-name="@r.SiteName"
+                            data-addr="@r.Address"
+                            data-event="@DisplaySettings.Event(r.EventType)"
+                            data-occurred="@r.OccurredAt.ToString("yyyy-MM-dd HH:mm")"
+                            data-value="@(r.TriggerValue?.ToString("0.#") ?? r.TriggerText)"
+                            data-unit="@DisplaySettings.Unit(r.EventType)"
+                            data-legal="@r.LegalBasis"
+                            data-status-label="@DisplaySettings.Status(r.AlertStatus)"
+                            data-instructed-at="@r.InstructedAt?.ToString("yyyy-MM-dd HH:mm")"
+                            data-instructed-by="@r.InstructedBy"
+                            data-instruction-note="@r.InstructionNote"
+                            data-inspected-at="@r.InspectedAt?.ToString("yyyy-MM-dd HH:mm")"
+                            data-inspector="@r.InspectorName"
+                            data-qualify="@r.InspectorQualify"
+                            data-scaffold="@r.ScaffoldType"
+                            data-result="@InspectionChoices.ResultLabel(r.InspectionResult)"
+                            data-finding="@r.FindingNote"
+                            data-days="@r.DaysToInspection"
+                            data-registered="@r.RegisteredBy"
+                            data-ins-created="@r.InspectionCreatedAt?.ToString("yyyy-MM-dd HH:mm")"
+                            data-ins-updated="@r.InspectionUpdatedAt?.ToString("yyyy-MM-dd HH:mm")"
+                            data-ins-edited="@(r.InspectionEdited ? "1" : "0")">
+                            <td>@r.SiteName</td>
+                            <td>@r.Address</td>
+                            <td>@DisplaySettings.Event(r.EventType)</td>
+                            <td>@r.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="app-num">
+                                @(r.TriggerValue?.ToString("0.#") ?? r.TriggerText)
+                            </td>
+                            <td>@r.LegalBasis</td>
+                            <td>
+                                @(r.InspectedAt?.ToString("yyyy-MM-dd HH:mm")
+                                  ?? "未実施")
+                            </td>
+                            <td>@r.InspectorName</td>
+                            <td>@r.InspectorQualify</td>
+                            <td>
+                                @InspectionChoices.ResultLabel(r.InspectionResult)
+                            </td>
+                            <td>@r.FindingNote</td>
+                            <td class="app-num">@r.DaysToInspection</td>
+                            <td>@DisplaySettings.Status(r.AlertStatus)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @* ============================================================
+           対象外にした記録
+           ============================================================
+           消してはいない。臨検で「なぜ点検しなかったのか」を
+           問われたときに、理由を出せなければ意味がない。
+
+           ふだんは見なくてよいので、折りたたんでおく。
+           <details> は、押すと開く仕組み。JavaScript は要らない。
+           ============================================================ *@
+        @if (Model.SkippedCount > 0)
+        {
+            <details class="audit-skipped">
+                <summary>
+                    対象外にした記録 @Model.SkippedCount 件（押すと開きます）
+                </summary>
+
+                <p class="dash-hint">
+                    足場を撤去済み、試験用の現場などで
+                    「点検の必要がなかった」と判断したものです。
+                    上の件数には数えていません。
+                    <strong>行を押すと理由が開きます。</strong>
+                </p>
+
+                <div class="audit-scroll audit-scroll-skipped">
+                    <table class="app-table audit-table" id="audit-skipped-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="text">現場名</th>
+                                <th data-sort="text">住所</th>
+                                <th data-sort="text">事象</th>
+                                <th data-sort="date">事象発生日時</th>
+                                <th data-sort="num" class="app-num">実測値</th>
+                                <th data-sort="date">対象外にした日時</th>
+                                <th data-sort="text">判断者</th>
+                                <th data-sort="text">理由</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.Skipped)
+                            {
+                                <tr data-alert-id="@r.AlertId"
+                                    data-status="@r.AlertStatus"
+                                    data-can-edit="1"
+                                    data-name="@r.SiteName"
+                                    data-addr="@r.Address"
+                                    data-event="@DisplaySettings.Event(r.EventType)"
+                                    data-occurred="@r.OccurredAt.ToString("yyyy-MM-dd HH:mm")"
+                                    data-value="@(r.TriggerValue?.ToString("0.#") ?? r.TriggerText)"
+                                    data-unit="@DisplaySettings.Unit(r.EventType)"
+                                    data-legal="@r.LegalBasis"
+                                    data-status-label="@DisplaySettings.Status(r.AlertStatus)"
+                                    data-instructed-at="@r.InstructedAt?.ToString("yyyy-MM-dd HH:mm")"
+                                    data-instructed-by="@r.InstructedBy"
+                                    data-instruction-note="@r.SkipReason">
+                                    <td>@r.SiteName</td>
+                                    <td>@r.Address</td>
+                                    <td>@DisplaySettings.Event(r.EventType)</td>
+                                    <td>@r.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="app-num">
+                                        @(r.TriggerValue?.ToString("0.#") ?? r.TriggerText)
+                                    </td>
+                                    <td>
+                                        @r.InstructedAt?.ToString("yyyy-MM-dd HH:mm")
+                                    </td>
+                                    <td>@r.InstructedBy</td>
+                                    <td>@r.SkipReason</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        }
+
+        @* ---------- 詳細（モーダル） ---------- *@
+        <div id="audit-detail" class="modal hidden">
+            <div class="modal-content wide">
+                <div class="modal-header">
+                    <h4 id="audit-detail-title">記録の詳細</h4>
+                    <button type="button" class="close-btn"
+                            id="audit-detail-close" aria-label="閉じる">&times;</button>
+                </div>
+                <div id="audit-detail-body"></div>
+            </div>
+        </div>
+
+        <script src="~/js/audit_点検記録簿.js" asp-append-version="true"></script>
+    }
+}

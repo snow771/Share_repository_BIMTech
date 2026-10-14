@@ -1,0 +1,313 @@
+/* css/app/chat_チャット.css
+   右カラム: 選択物件の詳細カード、AIアシスタント（チャット）、設定モーダルのタブ。
+*/
+
+/* ── 選択物件（モーダル） ── */
+.detail-modal {
+    max-width: 720px;
+}
+
+    /* 左右2列（項目・値・項目・値）。値は数値なら右寄せ */
+    .detail-modal .detail-table {
+        display: grid;
+        grid-template-columns: 9em minmax(0, 1fr) 9em minmax(0, 1fr);
+        column-gap: var(--space-md);
+        margin-top: var(--space-md);
+        font-size: var(--font-size-md);
+    }
+
+        .detail-modal .detail-table .dk,
+        .detail-modal .detail-table .dv {
+            padding: 5px var(--space-xs);
+            border-bottom: 1px solid var(--border-color-subtle);
+            min-height: 2em;
+        }
+
+        .detail-modal .detail-table .dk {
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .detail-modal .detail-table .dv {
+            color: var(--text-main);
+            word-break: break-all;
+        }
+
+            .detail-modal .detail-table .dv.num {
+                text-align: right;
+                font-family: var(--mono-font);
+            }
+
+        /* 右側の組との間に少し間隔 */
+        .detail-modal .detail-table .dk:nth-child(4n + 3) {
+            padding-left: var(--space-lg);
+        }
+
+.detail-title {
+    margin: 0 0 2px;
+    color: var(--text-heading);
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+}
+
+.detail-pid {
+    color: var(--text-muted);
+    font-family: var(--mono-font);
+    font-size: var(--font-size-sm);
+}
+
+.detail-price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin: var(--space-sm) 0;
+    font-family: var(--mono-font);
+}
+
+    .detail-price .value {
+        color: var(--series-revise);
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+.delta {
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+}
+
+    .delta.up {
+        background: var(--color-danger-faint);
+        color: var(--delta-up);
+    }
+
+    .delta.down {
+        background: var(--color-primary-faint);
+        color: var(--delta-down);
+    }
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px var(--space-md);
+    margin: 0;
+    font-size: var(--font-size-sm);
+}
+
+    .detail-grid dt {
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .detail-grid dd {
+        margin: 0;
+        color: var(--text-main);
+        word-break: break-all;
+    }
+
+.detail-more summary {
+    margin-top: var(--space-sm);
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+}
+
+/* ── AIチャット ── */
+.chat-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+    .quick-actions button {
+        padding: 6px 4px;
+        border: 1px solid var(--color-primary-weak);
+        border-radius: var(--radius-md);
+        background: var(--surface-card);
+        color: var(--color-primary);
+        font-family: var(--button-font);
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+        transition: background-color var(--transition-fast);
+    }
+
+        .quick-actions button:hover {
+            background: var(--color-primary-faint);
+        }
+
+.chat-log {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-md);
+    background: var(--chat-bg);
+}
+
+.bubble-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--space-md);
+}
+
+    .bubble-row.user {
+        align-items: flex-end;
+    }
+
+    .bubble-row.assistant {
+        align-items: flex-start;
+    }
+
+    .bubble-row.system {
+        align-items: center;
+    }
+
+.bubble-name {
+    margin: 0 4px 2px;
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+}
+
+.bubble {
+    max-width: 92%;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: var(--shadow-card);
+}
+
+.bubble-row.user .bubble {
+    background: var(--chat-user-bg);
+    color: var(--text-inverse);
+    border-bottom-right-radius: 2px;
+}
+
+.bubble-row.assistant .bubble {
+    background: var(--surface-card);
+    color: var(--text-main);
+    border-bottom-left-radius: 2px;
+}
+
+.bubble-row.system .bubble {
+    background: var(--chat-system-bg);
+    color: var(--chat-system-text);
+    font-size: var(--font-size-sm);
+    box-shadow: none;
+}
+
+.bubble-row.error .bubble {
+    background: var(--color-danger-faint);
+    color: var(--color-danger);
+}
+
+.bubble.typing::after {
+    content: "考え中…";
+    color: var(--text-muted);
+}
+
+.chat-input {
+    display: flex;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    border-top: 1px solid var(--border-color);
+}
+
+    .chat-input textarea {
+        flex: 1;
+        min-height: 40px;
+        max-height: 120px;
+        padding: var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-md);
+        font-family: var(--main-font);
+        font-size: var(--font-size-md);
+        resize: vertical;
+    }
+
+        .chat-input textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+    .chat-input .active-btn {
+        margin-left: 0;
+        padding: 0 var(--space-lg);
+    }
+
+/* ── 設定モーダル ── */
+.settings-tabs {
+    margin-bottom: var(--space-lg);
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-lg);
+}
+
+    .settings-grid .wide {
+        grid-column: 1 / -1;
+    }
+
+.inline-row {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+    .inline-row select,
+    .inline-row input {
+        flex: 1;
+    }
+
+    .inline-row .small-btn {
+        max-width: none;
+        white-space: nowrap;
+        margin-left: 0;
+    }
+
+.test-result {
+    min-height: 1.5em;
+    margin-top: var(--space-sm);
+    font-size: var(--font-size-sm);
+    white-space: pre-wrap;
+}
+
+    .test-result.ok {
+        color: var(--color-success);
+    }
+
+    .test-result.ng {
+        color: var(--color-danger);
+    }
+
+.settings-note {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.table-names summary {
+    color: var(--color-primary);
+    cursor: pointer;
+    margin-bottom: var(--space-md);
+}
+
+/* AIアシスタントが DB を調べて答えたときの「DB編集で開く」ボタン */
+.chat-table-link .small-btn {
+    max-width: none;
+    margin: 0;
+    white-space: normal;
+    text-align: left;
+}

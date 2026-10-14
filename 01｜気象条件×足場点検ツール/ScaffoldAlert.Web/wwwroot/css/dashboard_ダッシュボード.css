@@ -1,0 +1,474 @@
+/* ============================================================
+   ダッシュボードの画面
+   ============================================================
+   動きは js/dashboard_ダッシュボード.js にある。
+   どの画面でも使う部品は parts_共通の部品.css にある。
+
+   ねらい
+     ・一覧と地図を同時に見せる
+       行を押した現場が地図のどこなのかを、目で追えるようにする。
+     ・ページ全体は縦に送らない
+       件数が増えたときに地図が画面の外へ出てしまうため。
+     ・縦に送るのは表の中だけ。見出しは貼り付いたまま残す。
+
+   ★印の付いている数字が、よく変えるところ。
+   ============================================================ */
+
+/* ============================================================
+   1. 上の帯（題名・状況・件数）
+   ============================================================ */
+/* 題名・全体の状況・件数を1行にまとめる。
+   縦を使わないほど、下の一覧と地図に高さを回せる。 */
+.dash-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-bottom: 30px;     /* ★帯と、その下の見出しのあいだ */
+}
+
+.dash-head-title {
+    margin: 0;
+}
+
+/* 全体の状況。色で一目で分かるようにする。 */
+.dash-status {
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+}
+
+.dash-status-alert {
+    background: var(--color-danger-faint);
+    color: var(--color-danger);
+}
+
+/* 指示済がある状態。行の色と同じ「青」の考え方にそろえる。
+   帯だけ黄色のままだと、行の色と結び付かない。 */
+.dash-status-wait {
+    background: var(--color-primary);
+    color: var(--text-inverse);
+}
+
+.dash-status-ok {
+    background: var(--color-success);
+    color: var(--text-inverse);
+}
+
+/* 件数のまとまり。右端に寄せる。 */
+.dash-kpis {
+    display: flex;
+    gap: var(--space-xl);
+    margin-left: auto;
+}
+
+/* ============================================================
+   1b. 判定基準の帯
+   ============================================================
+   「なぜこの現場が出ているのか」を、その場で分かるようにする。
+   数字はデータベース (M_Threshold) から読んでいるので、
+   ここに書き写してはいけない。
+   ============================================================ */
+.dash-criteria {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);            /* ★項目と項目のあいだ */
+    margin-bottom: 6px;              /* ★帯の下の余白 */
+    padding: 5px 12px;               /* ★帯の高さ */
+    border-radius: var(--radius-md);
+    background: var(--color-primary-faint);
+    font-size: 12px;                 /* ★基準の文字 */
+    line-height: 1.6;
+}
+
+.dash-criteria-title {
+    font-weight: 700;
+}
+
+/* 1つ1つの基準。区切りが分かるように縦棒を前に置く。 */
+.dash-criteria-item + .dash-criteria-item::before,
+.dash-criteria-title + .dash-criteria-item::before {
+    content: "";
+}
+
+.dash-criteria-item {
+    white-space: nowrap;
+    padding: 0 var(--space-sm);
+    border-left: 2px solid var(--border-color);
+}
+
+/* 根拠条文。右端へ寄せて、控えめに出す。 */
+.dash-criteria-law {
+    margin-left: auto;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ============================================================
+   2. 2列の配置（左に一覧、右に地図）
+   ============================================================ */
+.dash-board {
+    display: grid;
+
+    /* 左（一覧）の 最低の幅 と 割合。残りが地図になる。
+         38% … 既定
+         45% … 一覧を広く
+         30% … 地図を広く
+       420px は「これ以上は狭くしない」幅。 */
+    grid-template-columns: minmax(420px, 45%) 1fr;   /* ★左右の割合 */
+
+    gap: 30px;                                        /* ★左右のすきま */
+
+    /* 見出しの帯との間。ここが詰まっていると窮屈に見える。 */
+    margin-top: 6px;                                  /* ★帯との間 */
+
+    /* 画面の高さから、上のぶんを引いた残り。
+       ここを決めておかないと、中の表が伸びるだけになり、
+       ページ全体が縦に送られてしまう。
+
+       232px の内訳（おおよそ）
+         上のメニュー            約 62px
+         画面のまわりの余白      約 48px（上下 24px ずつ）
+         題名と件数の帯          約 50px
+         判定基準の帯            約 32px
+         帯との間                約  6px
+         横のスクロールバー      約 18px
+         下の余白                約 16px
+
+       --demo-banner は、デモ画面のときだけ入る帯の高さ。
+       ふだんは 0px なので、何も引かれない。
+       (決めているのは app_全画面共通.css)
+
+       ★画面の下に余白が出る  → 数字を減らす
+       ★縦にはみ出す          → 数字を増やす */
+    height: calc(100vh - 232px - var(--demo-banner, 0px));  /* ★2列の高さ */
+    min-height: 420px;
+}
+
+/* 画面が狭いときは縦に並べる。横に潰れて読めなくなるより良い。 */
+@media (max-width: 1200px) {
+    .dash-board {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .dash-scroll {
+        max-height: 50vh;
+    }
+
+    .dash-map {
+        height: 60vh;
+    }
+}
+
+/* 1列ぶんの枠。中身を縦に積み、表か地図に残りを渡す。 */
+.dash-pane {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;   /* 中身に引っ張られて伸びないようにする */
+}
+
+/* 見出しと絞り込み。ここは縦に送らず、常に見えるようにしておく。 */
+.dash-pane-head {
+    flex: none;
+}
+
+.dash-pane-title {
+    /* 上は空けない。左右の見出しの高さがそろわなくなるため。 */
+    margin-top: 0;
+    margin-bottom: 6px;     /* ★見出しと、その下のあいだ */
+}
+
+/* ============================================================
+   3. アラートの一覧
+   ============================================================ */
+/* 表の中だけを縦に送る。
+   ページ全体を送る形にすると、件数が増えたときに
+   地図が画面の外へ出てしまう。 */
+.dash-scroll {
+    flex: 1;
+    min-height: 0;
+
+    /* 上下左右とも、常にスクロールバーを出す。
+       1行で表示しているので、画面が狭いときは横にはみ出す。 */
+    overflow: scroll;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+/* 枠は .dash-scroll が持つので、表からは外す。 */
+.dash-scroll .app-table {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+}
+
+/* 見出しを上に貼り付ける。
+   縦に送っても、どの列が何なのかが分かるようにするため。 */
+.dash-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* ---------- 表の文字と行の高さ ---------- */
+.dash-scroll .app-table td {
+    font-size: 13px;        /* ★行の文字。大きく=15px 小さく=12px */
+}
+
+.dash-scroll .app-table th {
+    font-size: 12px;        /* ★見出しの文字 */
+}
+
+.dash-scroll .app-table th,
+.dash-scroll .app-table td {
+    padding-top: 4px;       /* ★行の高さ（上） */
+    padding-bottom: 4px;    /* ★行の高さ（下） */
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+
+    /* Excel のセルと同じ考え方。
+       折り返して2段になると行の高さがまちまちになり、
+       目で追いにくくなるため、必ず1行に収める。
+       はみ出す分は「…」で切る。 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 「…」で切るには、幅の上限が要る。
+   長くなりがちな列にだけ置く。全文はマウスを乗せると出る。
+   em は「全角の文字の何個分か」。12em ≒ 全角12文字。 */
+.dash-cell-name {
+    max-width: 8em;        /* ★現場名が切れる位置 */
+}
+
+.dash-cell-dept {
+    max-width: 8em;         /* ★部署が切れる位置 */
+}
+
+.dash-cell-manager {
+    max-width: 8em;         /* ★所長が切れる位置 */
+}
+
+/* ---------- 未対応の行 ---------- */
+/* まだ誰も手を付けていない行を、薄い赤で塗る。
+
+   ★なぜ色を付けるか
+     状態の列は右のほうにあり、行数が増えると
+     どれが未対応なのかを1つずつ読むことになる。
+     行そのものが赤ければ、ぱっと見て分かる。
+
+   ★色は薄くする
+     文字が読めなくなっては意味がない。
+     「目が留まる」程度にとどめる。
+
+   data-status は、画面(Views/Home/Index.cshtml)が
+   1行ごとに付けている印。OPEN が未対応。 */
+.dash-table tbody tr[data-status="OPEN"] {
+    background: #fdeaea;    /* ★未対応の行の色（薄い赤） */
+}
+
+/* 指示済 … 連絡は済んだが、点検結果を待っている。
+
+   ★赤と青にしている理由
+     赤と黄は隣り合った色で、薄くすると見分けにくい。
+     とくに色覚によっては、ほとんど同じに見える。
+     赤と青なら、どんな見え方でも対比がはっきりする。
+
+   点検記録簿と同じ色の決まりにしてある。
+   画面ごとに色の意味が変わると、読み違える。 */
+.dash-table tbody tr[data-status="INSTRUCTED"] {
+    background: #e4f0fa;    /* ★指示済の行の色（薄い青） */
+}
+
+/* ---------- 行を押せることを示す ---------- */
+.dash-table tbody tr {
+    cursor: pointer;
+}
+
+.dash-table tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+/* 未対応の行にマウスを乗せたとき。
+   ふつうの行と同じ色にすると、赤が消えて
+   「押したら状態が変わったのか」と思われてしまう。
+   赤のまま、少しだけ濃くする。 */
+.dash-table tbody tr[data-status="OPEN"]:hover {
+    background: #f9d9d9;    /* ★未対応にマウスを乗せたとき */
+}
+
+.dash-table tbody tr[data-status="INSTRUCTED"]:hover {
+    background: #d0e5f6;    /* ★指示済にマウスを乗せたとき */
+}
+
+.dash-row-selected {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+}
+
+/* ============================================================
+   3b. 選んだ現場への対応
+   ============================================================
+   ★以前は小さな文字の中にボタンが1つあるだけで、
+     気づかない人が多かった。
+     まとめて処理の帯と同じ見た目にして、目に留まるようにする。
+   ============================================================ */
+.dash-pick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    margin: var(--space-sm) 0;
+    padding: var(--space-sm) var(--space-md);   /* ★帯の高さ */
+    border: 2px solid var(--color-primary);     /* ★枠の太さ */
+    border-radius: var(--radius-md);
+    background: var(--color-primary-faint);
+}
+
+.dash-pick-label {
+    margin-right: auto;
+}
+
+.dash-pick-label strong {
+    font-size: var(--font-size-base);   /* ★選んだ現場名の大きさ */
+    margin-left: var(--space-sm);
+}
+
+/* 大きめのボタン。押す先だと分かるようにする。 */
+.dash-button-big {
+    padding: 8px 20px;      /* ★ボタンの大きさ */
+    font-size: 14px;        /* ★ボタンの文字 */
+    font-weight: 700;
+}
+
+/* ============================================================
+   4. まとめて処理
+   ============================================================ */
+/* 左端のチェックの列。狭くしておく。 */
+.dash-check {
+    width: 2.2em;
+    text-align: center;
+}
+
+.dash-check input {
+    cursor: pointer;
+}
+
+/* 選んだときに出る帯 */
+.dash-bulk {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: var(--space-sm) 0;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    background: var(--color-primary-faint);
+}
+
+.dash-bulk-count {
+    margin-right: auto;
+}
+
+.dash-bulk-count strong {
+    font-size: var(--font-size-lg);
+}
+
+/* ============================================================
+   5. 地図
+   ============================================================
+   気象予測の地図も、この .dash-map を使っている。
+   あちらは高さの決め方だけが違う (forecast_気象予測.css の .fc-map)。
+   ============================================================ */
+.dash-map {
+    /* 右の列の残りをすべて使う。
+       高さを固定しないのは、画面の大きさに合わせて伸ばすため。
+       地図は横長なので、日本を縦に収めようとすると横が大きく余り、
+       中国やロシアまで映り込む。高さを取るほど縮尺が上がり、
+       横に映り込む範囲がその分狭くなる。
+
+       min-height: 0 が要る。これが無いと、中身の大きさに
+       引っ張られて縦に伸び続け、2列の高さの決まりを外れてしまう。 */
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* 一覧を絞り込んだときに、地図の上に出す断り。
+   断りが無いと「現場が消えた」と受け取られる。 */
+.dash-map-note {
+    margin: 4px 0;
+    padding: 4px 10px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-faint);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+/* 地図がうまく出ないときのお知らせ。
+   何かあったときだけ表示する。ふだんは隠しておく。 */
+.dash-map-message {
+    display: none;
+    margin: 8px 0;
+    padding: 10px 12px;
+    border: 1px solid var(--color-danger);
+    border-radius: var(--radius-md);
+    background: var(--color-danger-faint);
+    color: var(--color-danger);
+}
+
+/* 地図の吹き出しは既定だと小さいので読める大きさにする */
+.leaflet-tooltip {
+    font-size: var(--font-size-base);   /* ★地図の吹き出しの文字 */
+    line-height: 1.5;
+}
+
+/* ---------- 凡例 ----------
+   地図の上に白い紙を置く形なので、色は固定で書いている。
+   背景がどうであれ読めるようにするため。 */
+.dash-legend {
+    background: #ffffff;
+    color: #0b0b0b;
+    padding: 10px 12px;
+    border: 1px solid rgba(11, 11, 11, 0.15);
+    border-radius: 4px;
+    min-width: 190px;
+    font-size: var(--font-size-base);
+    line-height: 1.4;
+}
+
+.dash-legend-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.dash-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 3px 0;
+}
+
+.dash-legend-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    box-shadow: 0 0 0 1px rgba(11, 11, 11, 0.2);
+    flex: none;
+}
+
+.dash-legend-name {
+    flex: 1;
+}
+
+.dash-legend-count {
+    color: #52514e;
+}

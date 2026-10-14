@@ -1,0 +1,673 @@
+/* css/app/db_DB編集.css
+   DB編集モード: 左にテーブル一覧、中央上に関連図（カード＋線）、中央下に Excel 風の表グリッド。
+*/
+
+.mode-toggle .segmented-btn {
+    padding: 5px var(--space-md);
+    font-size: var(--font-size-sm);
+}
+
+.db-body {
+    display: grid;
+    grid-template-columns: var(--filter-pane-width) minmax(0, 1fr);
+    flex: 1;
+    min-height: 0;
+}
+
+/* ── テーブル一覧 ── */
+.db-table-pane {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border-right: 1px solid var(--border-color);
+}
+
+.db-conn {
+    padding: var(--space-xs) var(--space-lg);
+    color: var(--text-muted);
+    font-family: var(--mono-font);
+    font-size: var(--font-size-xs);
+    word-break: break-all;
+}
+
+.db-table-search {
+    padding: var(--space-sm) var(--space-lg);
+}
+
+    .db-table-search input {
+        width: 100%;
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+    }
+
+.db-table-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: var(--space-lg);
+}
+
+.db-group-title {
+    padding: var(--space-sm) var(--space-lg) var(--space-xs);
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.db-table-item {
+    display: block;
+    width: 100%;
+    padding: 6px var(--space-lg);
+    border: none;
+    border-left: 3px solid transparent;
+    background: none;
+    text-align: left;
+    font-family: var(--main-font);
+    cursor: pointer;
+}
+
+    .db-table-item:hover {
+        background: var(--surface-hover);
+    }
+
+    .db-table-item.active {
+        border-left-color: var(--color-primary);
+        background: var(--color-primary-faint);
+    }
+
+    .db-table-item .t-label {
+        display: block;
+        color: var(--text-heading);
+        font-size: var(--font-size-md);
+        font-weight: 700;
+    }
+
+    .db-table-item .t-sub {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-sm);
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+    }
+
+.role-badge {
+    padding: 0 6px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary-faint);
+    color: var(--color-primary);
+    font-family: var(--main-font);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+}
+
+/* ── 中央 ── */
+.db-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    overflow: hidden;
+}
+
+.db-diagram-card {
+    flex-shrink: 0;
+}
+
+    .db-diagram-card .card-header {
+        flex-wrap: wrap;
+        padding: var(--space-xs) var(--space-lg);
+    }
+
+    .db-diagram-card.collapsed .db-diagram {
+        display: none;
+    }
+
+/* 関連図のキャンバス（中身は .db-world を移動・拡大縮小する） */
+.db-diagram {
+    position: relative;
+    height: 230px;
+    overflow: hidden;
+    cursor: grab;
+    background-color: var(--surface-subtle);
+    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+    background-size: 18px 18px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    user-select: none;
+}
+
+    .db-diagram.panning {
+        cursor: grabbing;
+    }
+
+    /* 右下に倍率 */
+    .db-diagram::after {
+        content: attr(data-zoom);
+        position: absolute;
+        right: 10px;
+        bottom: 6px;
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+        pointer-events: none;
+    }
+
+.db-world {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
+}
+
+.db-links {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+}
+
+    .db-links .link {
+        fill: none;
+        stroke-width: 2;
+    }
+
+        .db-links .link.fk {
+            stroke: var(--diagram-fk-line);
+        }
+
+        .db-links .link.inferred {
+            stroke: var(--diagram-inferred-line);
+            stroke-dasharray: 6 4;
+        }
+
+        .db-links .link.hover {
+            stroke-width: 3.5;
+        }
+
+    .db-links .link-label {
+        fill: var(--text-sub);
+        font-family: var(--mono-font);
+        font-size: 10px;
+    }
+
+.db-diagram-tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-shrink: 0;
+}
+
+    .db-diagram-tools .small-btn {
+        max-width: none;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+.db-card {
+    position: absolute;
+    width: 180px;
+    padding: 6px var(--space-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: box-shadow var(--transition-fast);
+}
+
+    .db-card.dragging {
+        z-index: 2;
+        box-shadow: var(--shadow-panel-drag);
+        cursor: grabbing;
+    }
+
+    .db-card:hover {
+        box-shadow: var(--shadow-hover);
+    }
+
+    .db-card.center {
+        border-color: var(--diagram-center-bg);
+        background: var(--diagram-center-bg);
+        color: var(--text-inverse);
+        cursor: move;
+    }
+
+        .db-card.center .c-sub,
+        .db-card.center .c-dir {
+            color: var(--text-inverse);
+        }
+
+    .db-card .c-label {
+        display: block;
+        font-size: var(--font-size-md);
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .db-card .c-sub {
+        display: flex;
+        justify-content: space-between;
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+    }
+
+    .db-card .c-dir {
+        position: absolute;
+        top: -9px;
+        right: 8px;
+        padding: 0 6px;
+        border-radius: var(--radius-pill);
+        background: var(--surface-header);
+        color: var(--text-sub);
+        font-size: var(--font-size-xs);
+        border: 1px solid var(--border-color);
+    }
+
+    .db-card .c-dir.parent { color: var(--color-primary); }
+    .db-card .c-dir.child { color: var(--color-success); }
+
+.db-diagram-note {
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    transform: translateX(-50%);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ── グリッドのカード ── */
+.db-grid-card {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.db-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-md);
+    padding: var(--space-sm) var(--space-lg);
+    border-bottom: 1px solid var(--border-color-subtle);
+}
+
+.db-title h2 {
+    margin: 0;
+    color: var(--text-heading);
+    font-size: var(--font-size-lg);
+}
+
+.db-subtitle {
+    color: var(--text-muted);
+    font-family: var(--mono-font);
+    font-size: var(--font-size-xs);
+}
+
+.db-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+    .db-actions input[type="search"] {
+        width: 220px;
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+    }
+
+    .db-actions .small-btn {
+        max-width: none;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .db-actions .active-btn {
+        margin-left: var(--space-xs);
+        padding: 6px 16px;
+    }
+
+        .db-actions .active-btn:disabled {
+            background: var(--color-muted);
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+.db-grid-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 200px;
+    overflow: auto;
+    outline: none;
+}
+
+.db-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-xs) var(--space-lg);
+    border-top: 1px solid var(--border-color-subtle);
+    font-size: var(--font-size-xs);
+}
+
+.db-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    color: var(--text-muted);
+}
+
+    .db-legend .lg {
+        padding: 0 6px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        color: var(--text-sub);
+    }
+
+        .db-legend .lg.modified { background: var(--grid-modified-bg); }
+        .db-legend .lg.new { background: var(--grid-new-bg); }
+        .db-legend .lg.deleted { background: var(--grid-deleted-bg); text-decoration: line-through; }
+        .db-legend .lg.missing { background: var(--grid-missing-bg); border-color: var(--grid-missing-border); }
+        .db-legend .lg.empty { background: var(--grid-empty-bg); border-color: var(--grid-empty-border); }
+
+.db-pager {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--text-sub);
+    white-space: nowrap;
+}
+
+    .db-pager .small-btn {
+        min-width: 0;
+        margin: 0;
+    }
+
+/* ── Excel取込モーダル ── */
+.import-modal .import-file {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-sm);
+}
+
+    .import-modal .import-file #import-path {
+        flex: 1;
+        min-width: 0;
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        word-break: break-all;
+    }
+
+    .import-modal select {
+        height: 30px;
+        padding: 0 var(--space-sm);
+        border: 1px solid var(--border-color-input);
+        border-radius: var(--radius-sm);
+        font-family: var(--main-font);
+    }
+
+.import-count {
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+.import-grid {
+    max-height: 52vh;
+    overflow: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+}
+
+.import-map td {
+    vertical-align: middle;
+}
+
+    .import-map td select {
+        width: 100%;
+        min-width: 180px;
+    }
+
+    .import-map td.preview {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text-sub);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+    }
+
+.import-map tr.mapped td:first-child {
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+.import-map tr.required-missing td:first-child {
+    color: var(--color-danger);
+}
+
+/* ── 表グリッド（Excel 風） ── */
+.db-grid {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--font-size-md);
+    user-select: none;
+}
+
+    .db-grid th,
+    .db-grid td {
+        height: 26px;
+        padding: 0 var(--space-sm);
+        border-right: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        white-space: nowrap;
+    }
+
+    .db-grid thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: 4px var(--space-sm);
+        background: var(--grid-header-bg);
+        color: var(--text-heading);
+        text-align: left;
+        vertical-align: bottom;
+        cursor: pointer;
+    }
+
+        .db-grid thead th:hover {
+            background: var(--surface-hover);
+        }
+
+        .db-grid thead th .col-name {
+            display: block;
+            font-weight: 700;
+        }
+
+        .db-grid thead th .col-type {
+            display: block;
+            color: var(--text-muted);
+            font-family: var(--mono-font);
+            font-size: var(--font-size-xs);
+            font-weight: normal;
+        }
+
+        .db-grid thead th.sorted-asc .col-name::after { content: " ▲"; color: var(--color-primary); }
+        .db-grid thead th.sorted-desc .col-name::after { content: " ▼"; color: var(--color-primary); }
+
+    /* 行番号列 */
+    .db-grid .rowhead {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        min-width: 48px;
+        background: var(--grid-header-bg);
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+        font-size: var(--font-size-xs);
+        text-align: right;
+        cursor: pointer;
+    }
+
+    .db-grid thead .rowhead {
+        z-index: 3;
+    }
+
+    .db-grid td {
+        max-width: 320px;
+        min-width: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: var(--surface-card);
+        cursor: cell;
+    }
+
+        .db-grid td.num {
+            text-align: right;
+            font-family: var(--mono-font);
+        }
+
+        .db-grid td.readonly {
+            background: var(--grid-readonly-bg);
+            color: var(--text-muted);
+        }
+
+        .db-grid td.null::before {
+            content: "NULL";
+            color: var(--text-muted);
+            font-size: var(--font-size-xs);
+            font-style: italic;
+        }
+
+        .db-grid td.modified {
+            background: var(--grid-modified-bg);
+        }
+
+        /* 空欄の注意表示（追加行の緑より優先）
+           必須（* の列）が空欄 = 赤 ／ 任意の列が空欄 = 薄い紫 */
+        .db-grid td.empty,
+        .db-grid tr.new td.empty {
+            background: var(--grid-empty-bg);
+            box-shadow: inset 0 0 0 1px var(--grid-empty-border);
+        }
+
+        .db-grid td.missing,
+        .db-grid tr.new td.missing {
+            background: var(--grid-missing-bg);
+            box-shadow: inset 0 0 0 1px var(--grid-missing-border);
+        }
+
+        .db-grid td.in-range {
+            background: var(--grid-range-bg);
+        }
+
+        .db-grid td.active {
+            outline: 2px solid var(--grid-selected-border);
+            outline-offset: -2px;
+        }
+
+    .db-grid tr.new td {
+        background: var(--grid-new-bg);
+    }
+
+    .db-grid tr.deleted td {
+        background: var(--grid-deleted-bg);
+        color: var(--grid-deleted-text);
+        text-decoration: line-through;
+    }
+
+    .db-grid tr.new .rowhead {
+        color: var(--color-success);
+        font-weight: bold;
+    }
+
+    .db-grid tr.deleted .rowhead {
+        color: var(--grid-deleted-text);
+    }
+
+/* セルの入力欄（選択中のセルに重ねる。編集していないときは透明） */
+.cell-editor {
+    position: absolute;
+    z-index: 4;
+    padding: 0 var(--space-sm);
+    border: 2px solid var(--grid-selected-border);
+    border-radius: 0;
+    background: var(--surface-card);
+    color: var(--text-main);
+    font-family: var(--main-font);
+    font-size: var(--font-size-md);
+    outline: none;
+    opacity: 0;
+    caret-color: transparent;
+    /* 編集中以外はクリックを下のセルへ通す（2回目のクリックもセルに届き、ダブルクリックで編集が始まるように） */
+    pointer-events: none;
+}
+
+    /* 編集中: 黄色地＋オレンジの太枠＋カーソル表示で「いま入力できる」ことをはっきり見せる */
+    .cell-editor.editing {
+        pointer-events: auto;
+        opacity: 1;
+        border: 3px solid var(--grid-editing-border);
+        background: var(--grid-editing-bg);
+        color: var(--grid-editing-text);
+        font-weight: 600;
+        caret-color: var(--color-danger);
+        box-shadow: 0 0 0 3px var(--color-danger-faint), var(--shadow-panel);
+    }
+
+/* 編集中のセルの上に出す札 */
+.cell-edit-hint {
+    position: absolute;
+    z-index: 5;
+    display: none;
+    padding: 1px 8px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--grid-editing-border);
+    color: var(--text-inverse);
+    font-size: var(--font-size-xs);
+    font-weight: bold;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+    .cell-edit-hint.show {
+        display: block;
+    }
+
+    .cell-edit-hint.readonly {
+        background: var(--color-muted);
+    }
+
+/* 選択中（未編集）のセルも少し太い枠で */
+.db-grid td.active {
+    outline-width: 3px;
+}
+
+/* 編集中は対象の行番号・列見出しも強調 */
+.db-grid tr.editing-row .rowhead,
+.db-grid thead th.editing-col {
+    background: var(--grid-editing-bg);
+    color: var(--grid-editing-text);
+    box-shadow: inset 0 -3px 0 var(--grid-editing-border);
+}

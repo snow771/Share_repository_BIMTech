@@ -1,0 +1,152 @@
+/* css/components/panel.css
+   画面に浮かせる小パネル（設定パネル等）の共通スタイル。
+
+   構造:
+     .floating-panel            （.hidden で非表示 / .dragging でドラッグ中）
+       > .floating-panel-header （ドラッグハンドル）
+           > .floating-panel-title
+           > .close-btn          ← 見た目は modal.css の .close-btn を継承
+       > .floating-panel-body
+
+   ※ 本ファイルは自動フォーマット（VS の「ドキュメントのフォーマット」等）で
+     ハイフンの前後に空白が挿入される（例: .floating - panel / z - index）と
+     全ルールが無効化される。編集時は同じ事故を起こさないよう注意すること。
+*/
+
+/* =========================================================
+ * 枠
+ * =======================================================*/
+.floating-panel {
+    position: absolute;
+    top: 44px;
+    right: 12px;
+    z-index: var(--z-panel);
+    width: 260px;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    background: var(--surface-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-panel);
+    color: var(--text-main);
+    font-size: var(--font-size-md);
+}
+
+    .floating-panel.hidden {
+        display: none;
+    }
+
+    .floating-panel.dragging {
+        opacity: 0.92;
+        box-shadow: var(--shadow-panel-drag);
+    }
+
+/* =========================================================
+ * ヘッダー（ドラッグハンドル）
+ * =======================================================*/
+.floating-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: -12px -14px var(--space-md) -14px;
+    padding: 8px 14px;
+    background: var(--surface-header);
+    border-bottom: 1px solid var(--border-color-subtle);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    cursor: move;
+    user-select: none;
+}
+
+.floating-panel-title {
+    margin: 0;
+    font-weight: bold;
+    color: var(--text-sub);
+    cursor: move;
+    user-select: none;
+}
+
+/* パネルの閉じるボタンはモーダルより一回り小さくする（.close-btn は modal.css） */
+.floating-panel .close-btn {
+    font-size: 20px;
+}
+
+/* =========================================================
+ * セクション・行
+ * =======================================================*/
+.floating-panel-section + .floating-panel-section {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color-subtle);
+}
+
+.floating-panel-section-title {
+    margin-bottom: var(--space-sm);
+    font-weight: bold;
+    color: var(--text-sub);
+}
+
+.floating-panel-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: var(--space-sm) 0;
+}
+
+.floating-panel-row-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+}
+
+.floating-panel-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.floating-panel-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+}
+
+/* =========================================================
+ * セグメント（左右トグルなど、排他の小選択）
+ * =======================================================*/
+.segmented {
+    display: inline-flex;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color-strong);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.segmented-btn {
+    padding: 3px var(--space-md);
+    border: none;
+    background: var(--surface-disabled);
+    color: var(--color-muted);
+    font-size: var(--font-size-xs);
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+    .segmented-btn + .segmented-btn {
+        border-left: 1px solid var(--border-color-strong);
+    }
+
+    .segmented-btn.active {
+        background: var(--color-primary);
+        color: var(--text-inverse);
+        font-weight: bold;
+    }
+
+    .segmented-btn:not(.active):hover {
+        background: var(--surface-hover);
+    }

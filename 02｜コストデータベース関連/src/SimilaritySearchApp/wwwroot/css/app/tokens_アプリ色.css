@@ -1,0 +1,97 @@
+/* css/app/tokens_アプリ色.css
+   このアプリ固有のトークン。StandardCSS の variables.css は編集せず、ここで追加・上書きする。
+   直値の色を書いてよいのはこのファイルだけ。他のCSS/JSは必ず var(--...) を参照する。
+*/
+
+:root {
+    /* オフライン環境でも崩れないよう、Webフォントが無い場合の日本語フォントを補う */
+    --main-font: 'M PLUS 2', 'Yu Gothic UI', 'Meiryo UI', 'Meiryo', sans-serif;
+    --title-font: 'Montserrat', 'Segoe UI', 'Yu Gothic UI', sans-serif;
+    --mono-font: 'Consolas', 'BIZ UDGothic', monospace;
+
+    /* ── 指標ごとの系列色（基色 = 補正後 / 淡色 = 補正前） ── */
+    --series-assess: #1565C0;
+    --series-assess-weak: #90CAF9;
+    --series-revise: #2E7D32;
+    --series-revise-weak: #A5D6A7;
+    --series-temp: #E65100;
+    --series-temp-weak: #FFCC80;
+    --series-formwork: #880E4F;
+    --series-formwork-weak: #F48FB1;
+    --series-rebar: #6A1B9A;
+    --series-rebar-weak: #CE93D8;
+
+    /* ── 統計線 ── */
+    --stat-median: #E53935;
+    --stat-quartile: #FF8F00;
+
+    /* ── グラフ ── */
+    --chart-grid: #E3E7EC;
+    --chart-axis: #90A4AE;
+    --chart-plot-bg: var(--surface-subtle);
+    --chart-selected: #FFC107;
+
+    /* ── チャット ── */
+    --chat-bg: #EEF2F6;
+    --chat-user-bg: var(--color-primary);
+    --chat-system-bg: #FFF8E1;
+    --chat-system-text: #5D4037;
+
+    /* ── 判断補助バッジ ── */
+    --badge-caution-bg: #FFF3E0;
+    --badge-caution-text: #B85C00;
+    --delta-up: var(--color-danger);
+    --delta-down: var(--color-success);
+
+    /* ── DB編集（表グリッドの変更状態） ── */
+    --grid-modified-bg: #FFF4C2;
+    --grid-new-bg: #E3F5E1;
+    --grid-deleted-bg: #FBE3E6;
+    --grid-deleted-text: #B04A5A;
+    --grid-selected-border: var(--color-primary);
+    --grid-range-bg: #DCEBF7;
+    --grid-header-bg: #EEF1F4;
+    --grid-readonly-bg: #F4F5F7;
+    --grid-editing-bg: #FFFBE0;
+    --grid-missing-bg: #FDE2E4;
+    --grid-missing-border: #E8A0A8;
+    --grid-empty-bg: #EFEAFB;
+    --grid-empty-border: #C9BDEB;
+    --grid-editing-border: var(--color-warning);
+    --grid-editing-text: #1F2A37;
+
+    /* ── Stencile変換のログ（暗い背景の上の文字色） ── */
+    --st-log-step: #7FB3FF;
+    --st-log-file: #E5E7EB;
+    --st-log-ok: #4ADE80;
+    --st-log-warn: #FBBF24;
+    --st-log-error: #F87171;
+
+    /* ── 見積AI-OCR: 利用枚数メーター（～注意値 / 注意値超 / 警告値超 / 上限） ── */
+    --ocr-meter-safe: #2E9E5B;
+    --ocr-meter-safe-bg: #E3F5E1;
+    --ocr-meter-caution: #F59E0B;
+    --ocr-meter-caution-bg: #FFF4D6;
+    --ocr-meter-caution-text: #92400E;
+    --ocr-meter-danger: #DC2626;
+    --ocr-meter-danger-bg: #FDE2E2;
+    --ocr-meter-danger-text: #991B1B;
+    --ocr-meter-track: rgba(255, 255, 255, 0.22);
+    --ocr-review-bg: #FDECEC;
+    --ocr-reference-bg: #F3F4F6;
+
+    /* ── 見積確認: 「取決め」タブ（操作が必要な場所を薄い赤で示す）── */
+    --er-agreement-tab-bg: #FDE4E4;
+    --er-agreement-tab-text: #B42318;
+    --er-agreement-tab-active: #D9534F;
+
+    /* ── 関連図 ── */
+    --diagram-fk-line: var(--color-primary);
+    --diagram-inferred-line: var(--color-muted);
+    --diagram-center-bg: var(--color-primary);
+
+    /* ── レイアウト寸法 ── */
+    --filter-pane-width: 268px;
+    --side-pane-width: 360px;
+    --header-height: 64px;
+}

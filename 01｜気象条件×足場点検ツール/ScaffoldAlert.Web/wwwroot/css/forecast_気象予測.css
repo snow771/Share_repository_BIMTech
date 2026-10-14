@@ -1,0 +1,202 @@
+/* ============================================================
+   気象予測の画面
+   ============================================================
+   動きは js/forecast_気象予測.js にある。
+   絞り込みの列やボタンは parts_共通の部品.css にある。
+   ============================================================ */
+
+/* ============================================================
+   1. 上の帯（題名・断り・見る種類・時刻）
+   ============================================================ */
+/* ダッシュボードの .dash-head と同じ形。
+   1行にまとめて、下の2列に高さを回す。 */
+.fc-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-lg);
+    margin-bottom: 30px;     /* ★帯と、その下のあいだ */
+}
+
+.fc-head-title {
+    margin: 0;
+}
+
+/* 「これは予測です」の断り。
+   ダッシュボードの「指示済」(オレンジ) と同じ色にすると、
+   別のものと取り違えられる。青系の落ち着いた色にする。 */
+.fc-head-note {
+    background: var(--color-primary-faint);
+    color: var(--text-main);
+}
+
+/* 見る種類のボタン。帯の中に入れるので、上下の余白を消す。
+    margin-leftでボタンと一緒に”みる種類”を全体的に右に寄せられる
+*/
+.fc-head-kind {
+    margin: 0;
+    margin-left: 170px;
+}
+
+/* 時刻は右端へ寄せる。 */
+.fc-head-time {
+    margin: 0;
+    margin-left: auto;
+}
+
+/* ============================================================
+   2. 2列の配置（左に表、右に地図）
+   ============================================================
+   ダッシュボードと同じ形にしている。
+   表の行を押した現場が地図のどこなのかを、目で追えるようにする。
+   ============================================================ */
+.fc-board {
+    display: grid;
+
+    /* 左（表）の 最低の幅 と 割合。残りが地図になる。
+         45% … 既定
+         55% … 表を広く（列が多いので、こちらも見やすい）
+         35% … 地図を広く */
+    grid-template-columns: minmax(420px, 45%) 1fr;   /* ★左右の割合 */
+
+    gap: 30px;                                        /* ★左右のすきま */
+    margin-top: 6px;                                  /* ★帯との間 */
+
+    /* 画面の高さから、上のぶんを引いた残り。
+       考え方はダッシュボードと同じ。
+       (dashboard_ダッシュボード.css の .dash-board を参照)
+
+       ★画面の下に余白が出る  → 数字を減らす
+       ★縦にはみ出す          → 数字を増やす */
+    height: calc(100vh - 200px - var(--demo-banner, 0px));  /* ★2列の高さ */
+    min-height: 420px;
+}
+
+/* 画面が狭いときは縦に並べる。 */
+@media (max-width: 1200px) {
+    .fc-board {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .fc-left-scroll {
+        max-height: 50vh;
+    }
+
+    .fc-map {
+        height: 60vh;
+    }
+}
+
+/* ---------- 左の列 ----------
+   表が2つ（警報級の可能性 / 基準に達する予測）あるので、
+   表ごとではなく、この列ごと縦に送る。 */
+.fc-left-scroll {
+    flex: 1;
+    min-height: 0;
+
+    /* 上下左右とも、常にスクロールバーを出す。 */
+    overflow: scroll;
+
+    /* スクロールバーと中身がくっつかないようにする。 */
+    padding-right: 8px;
+}
+
+/* 左の列の中の見出し。表と表のあいだを空ける。 */
+.fc-left-scroll .app-section-title {
+    margin-top: var(--space-xl);   /* ★表と表のあいだ */
+}
+
+/* 表の見出しを上に貼り付ける。
+   縦に送っても、どの列が何なのかが分かるようにするため。 */
+.fc-left-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* ---------- 表の文字と行の高さ ---------- */
+/* ダッシュボードの一覧と同じ大きさにそろえる。 */
+.fc-left-scroll .app-table td {
+    font-size: 13px;        /* ★行の文字 */
+}
+
+.fc-left-scroll .app-table th {
+    font-size: 12px;        /* ★見出しの文字 */
+}
+
+.fc-left-scroll .app-table th,
+.fc-left-scroll .app-table td {
+    padding-top: 4px;       /* ★行の高さ（上） */
+    padding-bottom: 4px;    /* ★行の高さ（下） */
+
+    /* Excel のセルと同じ考え方。
+       折り返して2段になると行の高さがまちまちになり、
+       目で追いにくくなるため、必ず1行に収める。 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 「…」で切るには、幅の上限が要る。
+   長くなりがちな列にだけ置く。全文はマウスを乗せると出る。 */
+.fc-cell-name {
+    max-width: 9em;         /* ★現場名が切れる位置 */
+}
+
+.fc-cell-dept {
+    max-width: 7em;         /* ★部署が切れる位置 */
+}
+
+.fc-cell-wind {
+    max-width: 10em;        /* ★風の予報が切れる位置 */
+}
+
+/* ---------- 地図 ----------
+   右の列の残りをすべて使う。
+   ダッシュボードの .dash-map と同じ考え方。 */
+.fc-map {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+}
+
+/* ---------- 凡例 ---------- */
+.fc-legend-row {
+    gap: var(--space-xl);
+}
+
+/* 色見本。地図の塗りと同じ色を使う。
+   地図の色は js/forecast_気象予測.js が
+   ForecastBoard_気象予測画面のまとめ方.cs の色を使って塗っている。
+   ここを変えるときは、そちらも合わせること。 */
+.fc-swatch {
+    display: inline-block;
+    width: 20px;            /* ★色見本の大きさ */
+    height: 20px;
+    border-radius: 2px;
+    border: 2px solid #5b6770;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.fc-swatch-high {
+    background: #e34948;    /* 高 */
+}
+
+.fc-swatch-mid {
+    background: #eda100;    /* 中 */
+}
+
+.fc-swatch-none {
+    background: #c9ced2;    /* 発表なし */
+}
+
+/* ---------- いま効いている時間帯 ---------- */
+/* 予測は6時間ごとの区切りで、12:00 の区切りは 18:00 まで効いている。
+   終わった区切りは画面に出さないので、
+   残っているのは「いま」と「この先」だけ。
+   そのうち「いま」を目立たせる。 */
+.fc-now {
+    background: var(--color-primary-faint);
+}

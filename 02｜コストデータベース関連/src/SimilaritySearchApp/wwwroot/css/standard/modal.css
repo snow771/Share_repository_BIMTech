@@ -1,0 +1,288 @@
+/* css/components/modal.css
+   モーダル共通の骨格・フォーム・ボタン行。
+   個別モーダルのCSSは「レイアウト（grid）と固有サイズ」だけを書き、
+   色・角丸・影はここに任せること。
+
+   構造:
+     .modal (.hidden で非表示)
+       > .modal-content (.narrow / .wide で幅変更)
+           > .modal-header (h4 + .close-btn)
+           > form
+               > .form-group ...
+               > .button-row (.cancel-btn + .save-btn)
+*/
+
+/* =========================================================
+ * 外枠
+ * =======================================================*/
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: var(--z-modal);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xl);
+    box-sizing: border-box;
+    background-color: var(--surface-overlay);
+}
+
+    .modal.hidden {
+        display: none !important;
+    }
+
+.modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--space-xl);
+    box-sizing: border-box;
+    background-color: var(--surface-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+}
+
+    /* 幅のバリエーション（個別CSSで max-width を直接書かない） */
+    .modal-content.narrow {
+        max-width: 480px;
+    }
+
+    .modal-content.wide {
+        max-width: 1000px;
+    }
+
+/* =========================================================
+ * ヘッダー
+ * =======================================================*/
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 2px solid var(--border-color-subtle);
+}
+
+    .modal-header h4 {
+        margin: 0;
+        color: var(--text-heading);
+        font-size: var(--font-size-title);
+    }
+
+/* 閉じるボタン（モーダル・パネル共通） */
+.close-btn {
+    flex-shrink: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--color-muted);
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+    .close-btn:hover,
+    .close-btn:focus {
+        color: var(--text-main);
+    }
+
+/* =========================================================
+ * ボタン行
+ * =======================================================*/
+.button-row {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    width: calc(100% - 10px);
+}
+
+.save-btn,
+.cancel-btn {
+    flex: 1;
+    padding: 12px var(--space-xl);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--text-inverse);
+    font-family: var(--button-font);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    transition: background-color var(--transition-base);
+}
+
+.save-btn {
+    background-color: var(--color-primary);
+    font-weight: bold;
+}
+
+    .save-btn:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .save-btn:disabled {
+        background-color: var(--color-muted);
+        cursor: not-allowed;
+    }
+
+.cancel-btn {
+    background-color: var(--color-muted);
+}
+
+    .cancel-btn:hover {
+        background-color: var(--text-sub);
+    }
+
+/* 削除など破壊的な確定ボタン */
+.save-btn.danger {
+    background-color: var(--color-danger);
+}
+
+    .save-btn.danger:hover {
+        background-color: var(--color-danger-hover);
+    }
+
+/* =========================================================
+ * フォーム
+ * =======================================================*/
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+    .form-group label,
+    .form-group span {
+        display: block;
+        margin-bottom: var(--space-xs);
+        font-weight: bold;
+        color: var(--control-label);
+    }
+
+    /* 読み取り専用の表示値 */
+    .form-group span {
+        width: 100%;
+        margin: 0;
+        min-height: 36px;
+        padding: 5px;
+        box-sizing: border-box;
+        border: 2px solid var(--border-color-input);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        vertical-align: top;
+        transition: border-color var(--transition-base);
+    }
+
+    .form-group input:not([type="radio"]):not([type="checkbox"]),
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        min-height: 36px;
+        max-height: 36px;
+        padding: 5px;
+        box-sizing: border-box;
+        border: 2px solid var(--border-color-input);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        transition: border-color var(--transition-base);
+    }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+    .form-group textarea {
+        max-height: none;
+        resize: vertical;
+    }
+
+    .form-group input[type="radio"],
+    .form-group input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+    }
+
+/* 横並びの入力行 */
+.task-form-row {
+    display: flex;
+    gap: 15px;
+}
+
+    .task-form-row .form-group {
+        flex: 1;
+    }
+
+    .task-form-row span {
+        color: var(--control-label);
+        font-weight: bold;
+    }
+
+/* =========================================================
+ * チェックボックス
+ * =======================================================*/
+/* 複数列で並べるチェックボックス群 */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    gap: 8px var(--space-lg);
+    margin-left: var(--space-xl);
+    font-size: var(--font-size-base);
+}
+
+    .checkbox-group label {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        width: fit-content;
+        white-space: nowrap;
+        font-weight: normal;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        flex-shrink: 0;
+    }
+
+/* 1行のチェックボックス */
+.checkbox-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: var(--space-xs) 0;
+}
+
+    .checkbox-wrap label {
+        display: flex;
+        align-items: center;
+        margin: 0 var(--space-md);
+        font-size: var(--font-size-base);
+        font-weight: 400;
+    }
+
+    .checkbox-wrap input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin-right: 14px;
+    }
+
+/* =========================================================
+ * モーダル内の見出し
+ * =======================================================*/
+.modal-control-title {
+    margin: var(--space-md) 0 var(--space-md) var(--space-md);
+    padding: 0;
+    font-family: var(--button-font);
+    font-size: var(--font-size-title);
+    font-weight: 700;
+    color: var(--text-sub);
+    vertical-align: middle;
+}

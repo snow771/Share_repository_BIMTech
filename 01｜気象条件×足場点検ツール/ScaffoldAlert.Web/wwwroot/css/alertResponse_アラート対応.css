@@ -1,0 +1,43 @@
+/* ============================================================
+   アラート対応の画面（タブ）
+   ============================================================
+   動きは js/alertResponse_アラート対応.js にある。
+
+   3つの入力を1つの画面に並べると縦に長くなり、
+   どれを使えばよいのか分かりにくいため、タブで1つずつ出す。
+     ① 現場へ指示
+     ② 点検結果を登録
+     ③ 対象外にする
+   ============================================================ */
+.tab-row {
+    display: flex;
+    gap: var(--space-sm);
+    margin: var(--space-lg) 0 0;
+    border-bottom: 2px solid var(--border-color-subtle);
+}
+
+.tab-button {
+    font: inherit;
+    padding: 6px 16px;      /* ★タブの大きさ */
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--surface-subtle);
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.tab-button:hover {
+    background: var(--surface-hover);
+}
+
+/* いま開いているタブ。 */
+.tab-button-on {
+    background: var(--surface-card);
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.tab-panel {
+    margin-top: var(--space-lg);
+}

@@ -1,0 +1,252 @@
+@* 設定 (appsettings.json) を読む。デモ画面を出すかどうかに使う。 *@
+@inject IConfiguration 設定
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 足場点検義務管理</title>
+
+    @* フォント。共通CSSが M PLUS 2 と Montserrat を指定しているため読み込む。 *@
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+2:wght@400;500;700&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+
+    @*
+        社内共通CSS。読み込む順番が決まっている。
+        トークン → 下地 → 部品 → アプリ固有 の順。
+        panel.css は modal.css の指定を引き継ぐため、必ず後ろに置く。
+        順番を入れ替えると見た目が崩れる。
+    *@
+    <link rel="stylesheet" href="~/css/variables.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/button.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/switch.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
+    @* --- このアプリ用 --- *@
+    <link rel="stylesheet" href="~/css/app_全画面共通.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/parts_共通の部品.css" asp-append-version="true" />
+
+    @* --- 画面ごと ---
+       JavaScript と同じ名前にしてある。
+       直したい画面のファイルを開けばよい。
+       全部の画面で読み込んでいるが、1つ1つが小さいので
+       速さには影響しない。 *@
+    <link rel="stylesheet" href="~/css/dashboard_ダッシュボード.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/siteDetail_現場の詳細.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/forecast_気象予測.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/audit_点検記録簿.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/alertResponse_アラート対応.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/batch_取得と判定.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/menu_上のメニュー.css" asp-append-version="true" />
+</head>
+<body>
+
+    @* 行き先の頭に付ける文字を、JavaScript へ渡す。
+
+   ふだんは空。デモ画面から開かれたときだけ "/Demo" が入る。
+   これがあるので、地図やモーダルの動き(.js)は
+   本物とデモで同じものを使い回せる。
+
+   ★ここが空でないときは、押しても本物のデータベースには
+     何も書き込まれない。 *@
+<script>
+    window.APP_PREFIX = "@(ViewData["DemoPrefix"] ?? "")";
+</script>
+
+@* いま開いている画面のボタンを点灯させる。
+       どの画面を見ているのかが一目で分かるようにするため。
+
+       ViewContext.RouteData から、いま動いている窓口の名前を取る。
+         / → Home、/Forecast → Forecast、というように
+         URL の最初の部分がそのまま入っている。 *@
+    @{
+        var currentScreen =
+            ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+        // チームに配るデモ版かどうか。
+        //
+        // デモ版は、データベースを持たないPCで動かす。
+        // 本物の画面を出しても「読み込めませんでした」しか出ないので、
+        // 上のメニューをデモ画面だけにする。
+        //
+        // ふだんの開発と共有PCの運用では false のままなので、
+        // メニューは何も変わらない。
+        bool デモ専用 = 設定.GetValue<bool>("Demo:OnlyDemo");
+
+        // 複数の窓口を1つのボタンにまとめている場所がある。
+        //   ダッシュボード … アラート対応もここから開くので一緒に点灯
+        //   参考           … 判定確認・基準 と 取得情報確認 の2つ
+        string LitIf(params string[] names)
+            => names.Contains(currentScreen,
+                              StringComparer.OrdinalIgnoreCase)
+               ? "active" : "";
+    }
+
+    @* 上部のメニューバー。共通CSSの .top-menu をそのまま使う。 *@
+    <header class="top-menu">
+        @* 画面の切り替え。
+           左から、よく使う順に並べている。
+           見るだけの画面は使う頻度が低いので、
+           ＜参考＞のプルダウンにまとめて奥へ置いている。 *@
+        <nav>
+            @if (デモ専用)
+            {
+                @* ---------- 配布するデモ版 ----------
+                   データベースを持たないPCで動かすので、
+                   デモ画面だけを出す。
+                   「取得と判定」はデータベースに書き込む画面なので出さない。 *@
+                <a href="/Demo" class="top-menu-link">
+                    <button type="button" class="@LitIf("Demo", "DemoAlert")">
+                        ダッシュボード
+                    </button>
+                </a>
+                <a href="/Demo/Forecast" class="top-menu-link">
+                    <button type="button" class="@LitIf("DemoForecast")">
+                        気象予測
+                    </button>
+                </a>
+                <a href="/Demo/Audit" class="top-menu-link">
+                    <button type="button" class="@LitIf("DemoAudit")">
+                        点検記録簿
+                    </button>
+                </a>
+            }
+            else
+            {
+            <a href="/" class="top-menu-link">
+                <button type="button" class="@LitIf("Home", "Alert")">
+                    ダッシュボード
+                </button>
+            </a>
+            <a href="/Forecast" class="top-menu-link">
+                <button type="button" class="@LitIf("Forecast")">
+                    気象予測
+                </button>
+            </a>
+            <a href="/Audit" class="top-menu-link">
+                <button type="button" class="@LitIf("Audit")">
+                    点検記録簿
+                </button>
+            </a>
+            <a href="/Batch" class="top-menu-link">
+                <button type="button" class="@LitIf("Batch")">
+                    取得と判定
+                </button>
+            </a>
+
+            @* ＜参考＞ 見るだけの画面をまとめたプルダウン。
+               動きは js/menu_上のメニュー.js にある。 *@
+            <div class="top-menu-more">
+                <button type="button" id="menu-more"
+                        class="@LitIf("Judgement", "Fetch", "Demo", "DemoForecast", "DemoAlert", "DemoAudit")"
+                        aria-haspopup="true" aria-expanded="false">
+                    参考 <span class="top-menu-arrow">▾</span>
+                </button>
+
+                <div class="top-menu-list hidden" id="menu-more-list">
+                    <a href="/Judgement">判定確認・基準</a>
+                    <a href="/Fetch">取得情報確認</a>
+
+                    @* デモ画面。
+                       appsettings.json の Demo:Enabled が true のときだけ出す。
+                       本番では false にしておけば、
+                       デモのファイルを消してもここが壊れない。 *@
+                    @if (設定.GetValue<bool>("Demo:Enabled"))
+                    {
+                        <a href="/Demo">デモ画面</a>
+                    }
+                </div>
+            </div>
+            }
+        </nav>
+        @* 題名と、版・作成者。
+           版と作成者は appsettings.json の App から読む。
+           プログラムを直さずに書き換えられるようにするため。
+
+           どの版を触っているのかが分かると、
+           意見をもらったときに「どの版に対する意見か」が
+           はっきりする。デモ版を配ると特に効いてくる。 *@
+        <div class="app-brand">
+            <h4>気象条件×外部足場点検@(デモ専用 ? "（デモ版）" : "")</h4>
+
+            <span class="app-stamp">
+                ver @(設定["App:Version"] ?? "-")
+                @if (!string.IsNullOrWhiteSpace(設定["App:Author"]))
+                {
+                    <span class="app-stamp-sep">／</span>
+                    <text>作成 @設定["App:Author"]</text>
+                }
+            </span>
+        </div>
+    </header>
+
+    @* デモ画面のときは印を付ける。
+       上に帯が入るぶん、下の2列の高さを減らすため。
+       (減らし方は app_全画面共通.css の .app-main-demo) *@
+    <main class="app-main @(ViewData["DemoPrefix"] is not null ? "app-main-demo" : "")">
+
+        @* デモ画面の帯。
+           デモは本物とまったく同じ画面を使っているので、
+           断りがないと本物の数字と思い込まれてしまう。
+
+           見た目の指定をこの場で書いているのは、
+           Demo_デモ画面 フォルダを消したときに
+           使われないCSSが残らないようにするため。 *@
+        @if (ViewData["DemoPrefix"] is not null)
+        {
+            // 押されているボタンが分かるようにする見た目。
+            // @if の中では、C# の文をそのまま書ける。
+            string 選択中 = "background:#fff; color:#4a3aa7;";
+            string 未選択 = "background:rgba(255,255,255,0.15); color:#fff;";
+            string 共通 = "display:inline-block; padding:4px 14px;"
+                        + "border-radius:4px; margin-right:8px;"
+                        + "text-decoration:none; font-weight:700;";
+
+            <div style="background:#4a3aa7; color:#fff; padding:10px 16px;
+                        border-radius:6px; margin-bottom:12px;
+                        line-height:1.8;">
+
+                <div style="font-weight:700;">
+                    デモ画面です。ここに出ている現場・気象・アラートは
+                    すべて説明用の作り物で、実際の記録ではありません。
+                    <span style="font-weight:400;">入力しても保存されません。</span>
+                </div>
+
+                @* デモの中の行き来。
+                   上のメニューは本物の画面へ行くので、
+                   デモ同士の行き来はここに置いている。
+
+                   配布するデモ版では、上のメニューがデモ画面を指しているので
+                   ここは出さない。同じものが2つ並ぶと迷わせる。 *@
+                <div style="margin-top:6px;" class="@(デモ専用 ? "hidden" : "")">
+                    <a href="/Demo"
+                       style="@共通 @(currentScreen == "Demo" || currentScreen == "DemoAlert" ? 選択中 : 未選択)">
+                        ダッシュボード
+                    </a>
+                    <a href="/Demo/Forecast"
+                       style="@共通 @(currentScreen == "DemoForecast" ? 選択中 : 未選択)">
+                        気象予測
+                    </a>
+                    <a href="/Demo/Audit"
+                       style="@共通 @(currentScreen == "DemoAudit" ? 選択中 : 未選択)">
+                        点検記録簿
+                    </a>
+                    <span style="font-weight:400; margin-left:8px;">
+                        ← デモの中の行き来。上のメニューを押すと本物の画面へ戻ります。
+                    </span>
+                </div>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    @* 上のメニューの動き。どの画面でも使う。 *@
+    <script src="~/js/menu_上のメニュー.js" asp-append-version="true"></script>
+
+</body>
+</html>

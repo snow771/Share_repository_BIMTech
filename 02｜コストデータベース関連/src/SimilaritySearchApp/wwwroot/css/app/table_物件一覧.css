@@ -1,0 +1,78 @@
+/* css/app/table_物件一覧.css
+   中央下部: 該当物件の一覧テーブル（見出しクリックで並べ替え、行クリックで選択）。
+*/
+
+.table-wrap {
+    max-height: 420px;
+    overflow: auto;
+}
+
+.project-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-md);
+}
+
+    .project-table th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        padding: var(--space-sm) var(--space-md);
+        border-bottom: 2px solid var(--border-color);
+        background: var(--surface-header);
+        color: var(--text-heading);
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+    }
+
+        .project-table th:hover {
+            background: var(--surface-hover);
+        }
+
+        .project-table th.sorted-asc::after {
+            content: " ▲";
+            color: var(--color-primary);
+        }
+
+        .project-table th.sorted-desc::after {
+            content: " ▼";
+            color: var(--color-primary);
+        }
+
+    .project-table td {
+        padding: 6px var(--space-md);
+        border-bottom: 1px solid var(--border-color-subtle);
+        white-space: nowrap;
+    }
+
+    .project-table .num {
+        text-align: right;
+        font-family: var(--mono-font);
+    }
+
+    .project-table tbody tr {
+        cursor: pointer;
+    }
+
+        .project-table tbody tr:hover {
+            background: var(--surface-hover);
+        }
+
+        .project-table tbody tr.selected {
+            background: var(--color-primary-faint);
+            box-shadow: inset 4px 0 0 var(--color-primary);
+        }
+
+    .project-table .name {
+        max-width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .project-table .pid {
+        color: var(--text-muted);
+        font-family: var(--mono-font);
+    }

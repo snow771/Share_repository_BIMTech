@@ -1,0 +1,269 @@
+@model ForecastViewModel
+@{
+    ViewData["Title"] = "予測確認";
+}
+
+<h1 class="app-title">第3段階：気象予測の取得</h1>
+
+<div class="app-card">
+    <h2>この画面は記録を残しません</h2>
+    <p>
+        気象庁から取ってきた内容を表示するだけです。
+        データベースには書き込まないため、稼働中の Python 版に影響しません。
+    </p>
+    <p>
+        <code>python fetch_forecast.py</code> の出力と見比べてください。
+        こちらは書き込まないので、先に開いても後に開いても構いません。
+    </p>
+    <h3>ここで取り込むのは「予測」です</h3>
+    <p>
+        法令の点検義務は<strong>実際に悪天候が起きた後</strong>に生じます。
+        予測は点検義務のアラートには入れません。臨検で
+        「点検していない事象」が並んで見えてしまうためです。
+        予測は<strong>対策会議の判断材料</strong>として使います。
+    </p>
+</div>
+
+@if (Model.Result.Errors.Count > 0)
+{
+    <div class="app-card app-card-error">
+        <h2>取れなかったものがあります</h2>
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th>取得先</th>
+                    <th>理由</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.Result.Errors)
+                {
+                    <tr>
+                        <td>@e.Key</td>
+                        <td class="app-error-text">@e.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="app-card app-card-ok">
+        <h2>取得できました</h2>
+        <p>かかった時間 @Model.Seconds.ToString("0.0") 秒</p>
+    </div>
+}
+
+<div class="app-metrics">
+    <div class="app-metric">
+        <div class="app-metric-label">市区町村コード</div>
+        <div class="app-metric-value">@Model.Result.MunicipalityCount</div>
+        <div class="app-metric-unit">件</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">現場と区域の対応</div>
+        <div class="app-metric-value">@Model.Result.Links.Count</div>
+        <div class="app-metric-unit">件</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">現場がある府県予報区</div>
+        <div class="app-metric-value">@Model.Result.Offices.Count</div>
+        <div class="app-metric-unit">件</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">電文から取り出した予測</div>
+        <div class="app-metric-value">@Model.Result.Rows.Count</div>
+        <div class="app-metric-unit">件</div>
+    </div>
+    <div class="app-metric">
+        <div class="app-metric-label">風の予報</div>
+        <div class="app-metric-value">@Model.Result.WindTexts.Count</div>
+        <div class="app-metric-unit">件</div>
+    </div>
+</div>
+
+<h2 class="app-section-title">Python版のどこと比べるか</h2>
+<table class="app-table">
+    <thead>
+        <tr>
+            <th>Python版の出力</th>
+            <th>この画面</th>
+            <th class="app-num">この画面の値</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>[1] 市区町村コード: ○ 件</code></td>
+            <td>市区町村コード</td>
+            <td class="app-num">@Model.Result.MunicipalityCount</td>
+        </tr>
+        <tr>
+            <td><code>[2] 現場と区域の対応: ○ 件</code></td>
+            <td>現場と区域の対応</td>
+            <td class="app-num">@Model.Result.Links.Count</td>
+        </tr>
+        <tr>
+            <td><code>うち緯度経度から割り出したもの: ○ 件</code></td>
+            <td>緯度経度から割り出したもの</td>
+            <td class="app-num">@Model.Result.ByShapeCount</td>
+        </tr>
+        <tr>
+            <td><code>現場がある府県予報区: ○ 件</code></td>
+            <td>現場がある府県予報区</td>
+            <td class="app-num">@Model.Result.Offices.Count</td>
+        </tr>
+        <tr>
+            <td><code>[3] フィード内の該当電文: ○ 件</code></td>
+            <td>フィード内の該当電文</td>
+            <td class="app-num">@Model.Result.FeedTotal</td>
+        </tr>
+        <tr>
+            <td><code>うち自社の現場がある区域: ○ 件</code></td>
+            <td>取り込んだ電文</td>
+            <td class="app-num">@Model.Result.FeedWanted</td>
+        </tr>
+        <tr>
+            <td><code>[4] 保存完了: ○ 件</code></td>
+            <td>電文から取り出した予測</td>
+            <td class="app-num">@Model.Result.Rows.Count</td>
+        </tr>
+        <tr>
+            <td><code>[5] 保存完了: ○ 件</code></td>
+            <td>風の予報</td>
+            <td class="app-num">@Model.Result.WindTexts.Count</td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    <strong>[4][5] の「保存完了」は、多少ずれることがあります。</strong>
+    気象庁は1日に何度も発表し直すため、実行した時刻が離れていると
+    取り込む電文そのものが入れ替わります。
+    件数が近く、下の中身が同じであれば問題ありません。
+</p>
+
+@if (Model.Result.UnknownSiteIds.Count > 0)
+{
+    <div class="app-card app-card-error">
+        <h2>区域を割り出せない現場が @Model.Result.UnknownSiteIds.Count 件あります</h2>
+        <p>
+            この現場には予測が出ません。市区町村コードも緯度経度も
+            持っていないと、どの区域の予測を見ればよいか決められません。
+        </p>
+        <p>SiteId: @string.Join(", ", Model.Result.UnknownSiteIds.Take(20))</p>
+    </div>
+}
+
+<h2 class="app-section-title">基準に達する予測</h2>
+<p>
+    Python版がバッチの最後に表示している一覧と同じものです。
+    最大風速 10m/s・24時間最大雨量 50mm・24時間最大降雪量 25cm
+    のいずれかに達する予測を、これから先の分だけ出しています。
+</p>
+@{
+    var overLimit = Model.Result.OverLimit(Model.Now);
+}
+@if (overLimit.Count == 0)
+{
+    <p>ありません。</p>
+}
+else
+{
+    <table class="app-table">
+        <thead>
+            <tr>
+                <th>対象日時</th>
+                <th>区域</th>
+                <th>項目</th>
+                <th class="app-num">値</th>
+                <th>備考</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in overLimit)
+            {
+                <tr>
+                    <td>@r.TargetAt.ToString("MM/dd HH:mm")</td>
+                    <td>@r.AreaName</td>
+                    <td>@r.ItemType</td>
+                    <td class="app-num">@r.Value?.ToString("0")</td>
+                    <td>@r.ValueText</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2 class="app-section-title">取り出した予測（先頭40件）</h2>
+<p>
+    Python版を実行したあとに、SSMS で
+    <code>SELECT * FROM dbo.T_Forecast ORDER BY TargetAt</code>
+    を見ると同じ値が並ぶはずです。
+</p>
+<table class="app-table">
+    <thead>
+        <tr>
+            <th>区域</th>
+            <th>対象日時</th>
+            <th>項目</th>
+            <th class="app-num">値</th>
+            <th>文字</th>
+            <th>発表日時</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Result.Rows
+                       .OrderBy(x => x.TargetAt).ThenBy(x => x.AreaCode)
+                       .Take(40))
+        {
+            <tr>
+                <td>@r.AreaName<br /><small>@r.AreaCode</small></td>
+                <td>@r.TargetAt.ToString("MM/dd HH:mm")</td>
+                <td>@r.ItemType</td>
+                <td class="app-num">@(r.Value?.ToString("0.#") ?? "-")</td>
+                <td>@r.ValueText</td>
+                <td>@(r.ReportedAt?.ToString("MM/dd HH:mm") ?? "-")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2 class="app-section-title">風の予報（先頭20件）</h2>
+<table class="app-table">
+    <thead>
+        <tr>
+            <th>区域</th>
+            <th>対象日時</th>
+            <th class="app-num">確率</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Result.WindTexts
+                       .OrderBy(x => x.TargetAt).ThenBy(x => x.AreaCode)
+                       .Take(20))
+        {
+            <tr>
+                <td>@r.AreaName<br /><small>@r.AreaCode</small></td>
+                <td>@r.TargetAt.ToString("MM/dd HH:mm")</td>
+                <td class="app-num">@r.Value?.ToString("0")%</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Result.Failed.Count > 0 || Model.Result.WindTextFailed.Count > 0)
+{
+    <div class="app-card app-card-error">
+        <h2>取り込めなかったもの</h2>
+        <ul>
+            @foreach (var f in Model.Result.Failed.Take(5))
+            {
+                <li class="app-error-text">電文 @f</li>
+            }
+            @foreach (var f in Model.Result.WindTextFailed.Take(5))
+            {
+                <li class="app-error-text">風の予報 @f</li>
+            }
+        </ul>
+    </div>
+}

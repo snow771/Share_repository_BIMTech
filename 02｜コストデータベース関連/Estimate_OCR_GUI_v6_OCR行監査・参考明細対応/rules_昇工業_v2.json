@@ -1,0 +1,31 @@
+{
+  "rule_version": "0.2",
+  "rule_scope": "協力業者差分",
+  "supplier_name": "株式会社 昇工業",
+  "description": "昇工業の見積帳票で追加する差分。共通ルールを上書き・補完する。",
+  "header_fields": {
+    "table_labels": {
+      "header_estimate_amount": [
+        "見積金額"
+      ],
+      "estimate_id": [
+        "見積番号",
+        "見積No",
+        "見積NO"
+      ]
+    },
+    "content_patterns": {
+      "project_name": [
+        "工\\s*事\\s*名\\s*([^\\n]+)"
+      ],
+      "supplier_name": [
+        "(株式会社\\s*昇\\s*工\\s*業)"
+      ]
+    }
+  },
+  "column_aliases": {
+    "dimension": [
+      "材料·寸法"
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+/* css/base/base.css
+   リセット・下地・共通ユーティリティ。
+   色は variables.css のトークンのみを参照する。
+*/
+
+/* box-sizing を全要素で統一（幅計算の事故を防ぐ） */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--surface-app);
+    color: var(--text-main);
+    font-family: var(--main-font);
+    font-weight: 300;
+}
+
+/* アプリ全体の縦積みコンテナ */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* =========================================================
+ * 表示切り替えユーティリティ
+ * =======================================================*/
+.hidden {
+    display: none !important;
+}
+
+/* 控えめな補助テキスト（タイムスタンプ等） */
+.timeStamp {
+    margin-top: 0;
+    color: var(--text-muted);
+    font-family: var(--time-font);
+    font-size: var(--font-size-sm);
+}
+
+/* =========================================================
+ * ツールチップ
+ * =======================================================*/
+.tooltip {
+    position: fixed;
+    display: none;
+    z-index: var(--z-tooltip);
+    padding: 4px 8px 7px 12px;
+    background: #666;
+    border: 1px solid var(--color-muted);
+    border-radius: 7px;
+    color: var(--text-inverse);
+    font-family: var(--main-font);
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+    white-space: pre-wrap;
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+/* =========================================================
+ * 画面全体を覆うローディング
+ * =======================================================*/
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-loading);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    margin-bottom: var(--space-xl);
+    border: 6px solid var(--surface-hover-weak);
+    border-top: 6px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* アニメーションを控える設定を尊重する */
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation-duration: 2s;
+    }
+}

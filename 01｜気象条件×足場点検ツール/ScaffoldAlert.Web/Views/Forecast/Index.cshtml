@@ -1,0 +1,541 @@
+@model ForecastBoardViewModel
+@{
+    ViewData["Title"] = "気象予測";
+
+    // 行き先の頭に付ける文字。
+    // ふだんは空。デモ画面から開かれたときだけ "/Demo" が入る。
+    var 頭 = (ViewData["DemoPrefix"] as string) ?? "";
+}
+
+@* 地図を描くための部品。ダッシュボードと同じものを使う。 *@
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@@1.9.4/dist/leaflet.js"></script>
+
+@if (!Model.Loaded)
+{
+    <h1 class="app-title">気象予測</h1>
+
+    <div class="app-card app-card-error">
+        <h2>読み込めませんでした</h2>
+        <p class="app-error-text">@Model.ErrorMessage</p>
+    </div>
+}
+else if (Model.IsEmpty)
+{
+    <h1 class="app-title">気象予測</h1>
+
+    <div class="app-card app-card-error">
+        <h2>予測データがありません</h2>
+        <p>
+            「取得と判定」の画面から実行するか、
+            定期実行が動いているかを確認してください。
+        </p>
+    </div>
+}
+else
+{
+    @* ============================================================
+       上の帯（題名・断り・見る種類・時刻）
+       ============================================================
+       ダッシュボードと同じ形にしている。
+       1行にまとめて、下の2列に高さを回す。
+       ============================================================ *@
+    <div class="fc-head">
+        <h1 class="app-title fc-head-title">気象予測</h1>
+
+        @* ここが「予測」であって点検義務ではない、という断り。
+           混ぜて読まれると、臨検で
+           「点検していない事象」が並んで見えてしまう。 *@
+        <div class="dash-status fc-head-note">
+            これは予測です。点検義務はダッシュボードのアラートで判断します
+        </div>
+
+        <div class="dash-toolbar fc-head-kind">
+            <span>見る種類</span>
+            @foreach (var k in new[] { "風", "雨", "雪" })
+            {
+                <a href="@(頭)/Forecast?kind=@k"
+                   class="dash-button @(Model.Kind == k ? "dash-button-on" : "")">@k</a>
+            }
+        </div>
+
+        <p class="dash-hint fc-head-time">
+            現在 @Model.Now.ToString("yyyy-MM-dd HH:mm")
+            ／ 発表 @(Model.ReportedAt?.ToString("yyyy-MM-dd HH:mm") ?? "不明")
+            @if (Model.ReportedAt is not null
+                 && (Model.Now - Model.ReportedAt.Value).TotalHours >= 12)
+            {
+                <strong class="app-error-text">
+                    （発表から @((int)(Model.Now - Model.ReportedAt.Value).TotalHours)
+                    時間が経っています。取得が止まっていないか確認してください）
+                </strong>
+            }
+        </p>
+    </div>
+
+    @* ============================================================
+       2列（左に表、右に地図）
+       ============================================================
+       ダッシュボードと同じ形。
+       表の行を押した現場が地図のどこなのかを、目で追えるようにする。
+       ============================================================ *@
+    <div class="fc-board">
+
+        @* ---------- 左：表 ----------
+           表が2つ（警報級の可能性 / 基準に達する予測）あるので、
+           この列ごと縦に送る形にしている。 *@
+        <section class="dash-pane">
+            <div class="dash-pane-head">
+                <h2 class="app-section-title dash-pane-title">警報級の可能性</h2>
+            </div>
+
+            <div class="fc-left-scroll">
+
+                @* ---------- 警報級の可能性 ---------- *@
+                <p class="dash-hint">
+                    気象庁が「高」「中」と発表している区域です。
+                    <strong>現場と種類ごとに1行</strong>なので、
+                    1つの現場が雨と雪の両方で出ることがあります。
+                    <strong>行を押すと、時間ごとの動きが開きます。</strong>
+                </p>
+                <p class="dash-hint">
+                    ※ <strong>風はここにほとんど出ません。</strong>
+                    気象庁が風の「高」「中」を発表することが
+                    めったにないためです。
+                    風の危なさは、下の<strong>「風の予報」</strong>と
+                    地図の色でご覧ください。
+                </p>
+
+                @if (Model.Possibilities.Count == 0)
+                {
+                    <div class="app-card app-card-ok">
+                        <h2>「高」「中」の発表はありません</h2>
+                    </div>
+                }
+                else
+                {
+                    <div class="dash-toolbar">
+                        <label>
+                            部署
+                            <select id="rank-dept" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var d in Model.Possibilities
+                                              .Select(p => p.Department)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            区域
+                            <select id="rank-area" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var a in Model.Possibilities
+                                              .Select(p => p.AreaLabel)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@a">@a</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            種類
+                            <select id="rank-kind" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var k in Model.Possibilities
+                                              .Select(p => p.Kind)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@k">@k</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            可能性
+                            <select id="rank-level" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var l in Model.Possibilities
+                                              .Select(p => p.Level)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@l">@l</option>
+                                }
+                            </select>
+                        </label>
+                        <span id="rank-count" class="dash-count"></span>
+
+                        <button type="button" id="rank-clear"
+                                class="dash-button">絞り込みをクリア</button>
+                    </div>
+
+                    @if (Model.DuplicateNames.Count > 0)
+                    {
+                        <p class="dash-hint">
+                            ※ 同じ名前で別に登録されている現場が
+                            @Model.DuplicateNames.Count 件あります
+                            （@string.Join("、", Model.DuplicateNames.Take(3))@(Model.DuplicateNames.Count > 3 ? " ほか" : "")）。
+                            同名でも別の現場として扱っています。
+                        </p>
+                    }
+
+                    <table class="app-table dash-table" id="rank-table">
+                        <thead>
+                            <tr>
+                                <th>現場名</th>
+                                <th>部署</th>
+                                <th>区域</th>
+                                <th>種類</th>
+                                <th>可能性</th>
+                                <th>最も高くなる時間帯</th>
+                                <th>この先で最も強い風</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.Possibilities)
+                            {
+                                <tr data-site-id="@p.SiteId"
+                                    data-dept="@p.Department"
+                                    data-area="@p.AreaLabel"
+                                    data-kind="@p.Kind"
+                                    data-level="@p.Level">
+                                    <td class="fc-cell-name"
+                                        title="@p.SiteName">@p.SiteName</td>
+                                    <td class="fc-cell-dept"
+                                        title="@p.Department">@p.Department</td>
+                                    <td>@p.AreaLabel</td>
+                                    <td>@p.Kind</td>
+                                    <td>@p.Level</td>
+                                    <td>
+                                        @p.TargetAt.ToString("MM/dd HH:mm")
+                                        @if (ForecastBoard.IsNow(p.TargetAt, Model.Now))
+                                        {
+                                            <strong>（いま）</strong>
+                                        }
+                                    </td>
+                                    <td class="fc-cell-wind"
+                                        title="@p.WindText">@p.WindText</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @* ---------- 風の予報 ----------
+                   地図の色と同じ根拠の一覧。
+                   気象庁は風の「高」「中」をほとんど出さないので、
+                   上の表だけだと「風が取れていない」ように見える。 *@
+                <h2 class="app-section-title">風の予報</h2>
+                <p class="dash-hint">
+                    府県天気予報の文章から、風の強さを見分けたものです。
+                    <strong>地図の色と同じ根拠</strong>で、
+                    「やや強い風」以上が予報されている現場を出しています。
+                    強風の点検基準は @Model.WindLimit.ToString("0") m/s です。
+                </p>
+
+                @if (Model.Winds.Count == 0)
+                {
+                    <div class="app-card app-card-ok">
+                        <h2>強い風の予報はありません</h2>
+                    </div>
+                }
+                else
+                {
+                    <div class="dash-toolbar">
+                        <label>
+                            部署
+                            <select id="wind-dept" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var d in Model.Winds
+                                              .Select(w => w.Department)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            強さ
+                            <select id="wind-level" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var n in Model.Winds
+                                              .Select(w => w.Strength.Name)
+                                              .Distinct())
+                                {
+                                    <option value="@n">@n</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            扱い
+                            <select id="wind-caution" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var c in Model.Winds
+                                              .Select(w => w.Strength.Caution)
+                                              .Distinct())
+                                {
+                                    <option value="@c">@c</option>
+                                }
+                            </select>
+                        </label>
+                        <span id="wind-count" class="dash-count"></span>
+
+                        <button type="button" id="wind-clear"
+                                class="dash-button">絞り込みをクリア</button>
+                    </div>
+
+                    <table class="app-table dash-table" id="wind-table">
+                        <thead>
+                            <tr>
+                                <th>現場名</th>
+                                <th>部署</th>
+                                <th>区域</th>
+                                <th>強さ</th>
+                                <th>扱い</th>
+                                <th>対象日</th>
+                                <th>気象庁の文章</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var w in Model.Winds)
+                            {
+                                <tr data-site-id="@w.SiteId"
+                                    data-dept="@w.Department"
+                                    data-level="@w.Strength.Name"
+                                    data-caution="@w.Strength.Caution">
+                                    <td class="fc-cell-name"
+                                        title="@w.SiteName">@w.SiteName</td>
+                                    <td class="fc-cell-dept"
+                                        title="@w.Department">@w.Department</td>
+                                    <td>@w.AreaLabel</td>
+                                    <td>
+                                        @* 色見本を添える。地図と同じ色。
+                                           文字だけでは強さの順が伝わらない。 *@
+                                        <span class="fc-swatch"
+                                              style="background:@w.Strength.Color"></span>
+                                        @w.Strength.Name
+                                    </td>
+                                    <td>@w.Strength.Caution</td>
+                                    <td>@w.TargetAt.ToString("MM/dd")</td>
+                                    <td class="fc-cell-wind"
+                                        title="@w.Text">@w.Text</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @* ---------- 基準に達する予測 ---------- *@
+                <h2 class="app-section-title">基準に達する予測がある現場</h2>
+                <p class="dash-hint">
+                    強風 @Model.WindLimit.ToString("0")m/s ／
+                    大雨 @Model.RainLimit.ToString("0")mm ／
+                    大雪 @Model.SnowLimit.ToString("0")cm 以上の予測
+                </p>
+
+                @if (Model.OverLimit.Count == 0)
+                {
+                    <div class="app-card app-card-ok">
+                        <h2>基準に達する予測はありません</h2>
+                    </div>
+                }
+                else
+                {
+                    <div class="app-card app-card-error">
+                        <h2>⚠ @Model.OverLimitSiteCount 現場に基準に達する予測があります</h2>
+                    </div>
+
+                    <div class="dash-toolbar">
+                        <label>
+                            部署
+                            <select id="over-dept" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var d in Model.OverLimit
+                                              .Select(o => o.Department)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@d">@d</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            区域
+                            <select id="over-area" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var a in Model.OverLimit
+                                              .Select(o => o.AreaLabel)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@a">@a</option>
+                                }
+                            </select>
+                        </label>
+                        <label>
+                            項目
+                            <select id="over-item" class="dash-select">
+                                <option value="">すべて</option>
+                                @foreach (var i in Model.OverLimit
+                                              .Select(o => o.ItemType)
+                                              .Distinct().OrderBy(x => x))
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                        </label>
+                        <span id="over-count" class="dash-count"></span>
+
+                        <button type="button" id="over-clear"
+                                class="dash-button">絞り込みをクリア</button>
+                    </div>
+
+                    <table class="app-table" id="over-table">
+                        <thead>
+                            <tr>
+                                <th>現場名</th>
+                                <th>部署</th>
+                                <th>区域</th>
+                                <th>項目</th>
+                                <th class="app-num">予測値</th>
+                                <th>補足</th>
+                                <th>対象日時</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model.OverLimit)
+                            {
+                                <tr data-dept="@o.Department"
+                                    data-area="@o.AreaLabel"
+                                    data-item="@o.ItemType">
+                                    <td class="fc-cell-name"
+                                        title="@o.SiteName">@o.SiteName</td>
+                                    <td class="fc-cell-dept"
+                                        title="@o.Department">@o.Department</td>
+                                    <td>@o.AreaLabel</td>
+                                    <td>@o.ItemType</td>
+                                    <td class="app-num">@o.Value?.ToString("0.#")</td>
+                                    <td>@o.ValueText</td>
+                                    <td>@o.TargetAt.ToString("MM/dd HH:mm")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @* ---------- 区域に紐付いていない現場 ---------- *@
+                @if (Model.UnlinkedTotal > 0)
+                {
+                    <h2 class="app-section-title">
+                        予測の区域に紐づいていない現場
+                    </h2>
+                    <p class="dash-hint">
+                        @Model.UnlinkedTotal 件あります。
+                        住所から区域を割り出せなかった現場です。
+                        この現場は、上の表と地図に出てきません。
+                    </p>
+
+                    <table class="app-table">
+                        <thead>
+                            <tr>
+                                <th>部署</th>
+                                <th class="app-num">現場数</th>
+                                <th class="app-num">紐づいていない</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.Coverage
+                                          .Where(c => c.Unlinked > 0))
+                            {
+                                <tr>
+                                    <td>@c.Department</td>
+                                    <td class="app-num">@c.Total</td>
+                                    <td class="app-num">@c.Unlinked</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @* ---------- この画面の読み方 ---------- *@
+                <h2 class="app-section-title">この画面の読み方</h2>
+                <p class="dash-hint">
+                    気象庁「警報級の可能性・早期注意情報」より。
+                    予測は一次細分区域（例: 東京地方）の単位で発表されるため、
+                    同じ区域の現場は同じ予測になります。
+                </p>
+                <p class="dash-hint">
+                    <strong>風の数値予測は気象庁から発表されていません。</strong>
+                    代わりに府県天気予報の文章（「やや強く」など）を出しています。
+                </p>
+            </div>
+        </section>
+
+        @* ---------- 右：地図 ---------- *@
+        <section class="dash-pane">
+            <div class="dash-pane-head">
+                <h2 class="app-section-title dash-pane-title">区域ごとの警戒度</h2>
+
+                @* 地図に出す現場を部署で絞る。
+                   左の表には、それぞれ別に部署の絞り込みがある。 *@
+                <div class="dash-toolbar">
+                    <label>
+                        部署
+                        <select id="map-dept" class="dash-select">
+                            <option value="">すべて</option>
+                            @foreach (var d in Model.SiteDepartments)
+                            {
+                                <option value="@d">@d</option>
+                            }
+                        </select>
+                    </label>
+                    @* 色が付いた区域にある現場だけに絞る。
+                       危ない場所の現場だけを見たいときに使う。 *@
+                    <label>
+                        <input type="checkbox" id="map-risk-only" />
+                        色が付いた区域の現場だけ
+                    </label>
+
+                    <span id="map-dept-count" class="dash-count"></span>
+
+                    <button type="button" id="map-clear" class="dash-button">
+                        絞り込みをクリア
+                    </button>
+                </div>
+            </div>
+
+            <div id="forecast-map" class="dash-map fc-map"></div>
+
+            @* 風のときは、この中身を JavaScript が
+               風の強さの凡例に差し替える。 *@
+            <div class="dash-toolbar fc-legend-row" id="fc-legend">
+                <span><span class="fc-swatch fc-swatch-high"></span> 高</span>
+                <span><span class="fc-swatch fc-swatch-mid"></span> 中</span>
+                <span><span class="fc-swatch fc-swatch-none"></span> 発表なし</span>
+                <span class="dash-hint">
+                    現場の丸は<strong>部署の色</strong>です。
+                    危ない区域の現場だけを見たいときは、上の
+                    <strong>「色が付いた区域の現場だけ」</strong>を使ってください。
+                    <strong>丸を押すと、その現場の詳細が開きます。</strong>
+                </span>
+            </div>
+        </section>
+    </div>
+
+    @* ---------- 時間ごとの動き（モーダル） ---------- *@
+    <div id="forecast-detail" class="modal hidden">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h4 id="fc-detail-title">時間ごとの動き</h4>
+                <button type="button" class="close-btn"
+                        id="fc-detail-close" aria-label="閉じる">&times;</button>
+            </div>
+            <div id="fc-detail-body"></div>
+        </div>
+    </div>
+
+    @* 地図に渡す中身。JavaScript がここから読み取る。 *@
+    <script type="application/json" id="forecast-map-data">
+        @Html.Raw(Model.MapDataJson)
+    </script>
+    <script src="~/js/forecast_気象予測.js" asp-append-version="true"></script>
+}

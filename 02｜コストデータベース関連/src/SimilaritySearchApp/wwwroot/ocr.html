@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>見積AI-OCR</title>
+
+    <!-- StandardCSS（トークン → 下地 → 部品） -->
+    <link rel="stylesheet" href="css/standard/variables.css">
+    <link rel="stylesheet" href="css/standard/base.css">
+    <link rel="stylesheet" href="css/standard/button.css">
+    <link rel="stylesheet" href="css/standard/modal.css">
+    <link rel="stylesheet" href="css/standard/panel.css">
+    <link rel="stylesheet" href="css/standard/switch.css">
+    <link rel="stylesheet" href="css/standard/header.css">
+
+    <!-- アプリ固有（Stencile変換ウィンドウと共通の入力・ログ部品を使う） -->
+    <link rel="stylesheet" href="css/app/tokens_アプリ色.css">
+    <link rel="stylesheet" href="css/app/layout_画面レイアウト.css">
+    <link rel="stylesheet" href="css/app/table_物件一覧.css">
+    <link rel="stylesheet" href="css/app/cards_統計カード.css">
+    <link rel="stylesheet" href="css/app/chat_チャット.css">
+    <link rel="stylesheet" href="css/app/stencil_Stencile変換.css">
+    <link rel="stylesheet" href="css/app/ocr_AI-OCR.css">
+</head>
+<body>
+<div class="container">
+
+    <header class="top-menu app-header">
+        <div class="brand">
+            <h1>🧾 見積AI-OCR</h1>
+            <span>ESTIMATE PDF → AZURE AI OCR → STRUCTURED EXCEL</span>
+        </div>
+        <div class="st-steps" aria-label="手順">
+            <span class="st-step active" data-step="1">① PDFを選ぶ</span>
+            <span class="st-step" data-step="2">② OCR・構造化</span>
+            <span class="st-step" data-step="3">③ 結果を確認</span>
+        </div>
+
+        <!-- 利用枚数メーター（無料枠の目安。注意値超で黄、警告値超で赤） -->
+        <div class="ocr-meter safe" id="ocr-meter" title="">
+            <div class="ocr-meter-head">
+                <span class="ocr-meter-label" id="ocr-meter-label">本日の処理枚数</span>
+                <span class="ocr-meter-state" id="ocr-meter-state">余裕あり</span>
+            </div>
+            <div class="ocr-meter-value"><strong id="ocr-meter-used">0</strong> / <span id="ocr-meter-limit">500</span> 枚</div>
+            <div class="ocr-meter-track"><div class="ocr-meter-bar" id="ocr-meter-bar"></div><div class="ocr-meter-mark warn" id="ocr-mark-warn"></div><div class="ocr-meter-mark danger" id="ocr-mark-danger"></div></div>
+            <div class="ocr-meter-sub" id="ocr-meter-sub">この起動から 0 枚・PDF 0 件</div>
+        </div>
+
+        <nav class="header-actions">
+            <button type="button" id="ocr-settings-btn">⚙ Azure設定</button>
+            <span class="db-badge" id="ocr-azure-badge" title="">Azure 未設定</span>
+        </nav>
+    </header>
+
+    <div class="st-body ocr-body">
+        <!-- ============ 左: 入力 ============ -->
+        <aside class="pane st-input-pane">
+            <section class="st-section">
+                <div class="ocr-section-head">
+                    <h2>1. 見積PDF</h2>
+                    <span class="st-hint" id="ocr-pdf-count">0 件 / 0 ページ</span>
+                </div>
+                <div class="ocr-pdf-buttons">
+                    <button type="button" class="small-btn edit-btn" id="ocr-add">＋ PDFを追加</button>
+                    <button type="button" class="small-btn edit-btn" id="ocr-clear">選択をクリア</button>
+                </div>
+                <ul class="ocr-pdf-list" id="ocr-pdf-list"></ul>
+                <p class="ocr-forecast" id="ocr-forecast"></p>
+            </section>
+
+            <section class="st-section">
+                <h2>2. 保存先</h2>
+                <div class="st-path">
+                    <input type="text" id="ocr-output" placeholder="（PDF と同じ場所の OCR_結果）" readonly>
+                    <button type="button" class="small-btn edit-btn" id="ocr-output-pick">📁 選択</button>
+                </div>
+                <p class="st-hint">PDF ごとに「PDF名_日時」のフォルダを作り、01_OCR抽出・02_構造化 に分けて保存します。</p>
+            </section>
+
+            <section class="st-section" id="ocr-rules-section">
+                <h2>3. 構造化ルール</h2>
+                <label class="ocr-field-label">共通ルール JSON（必須）</label>
+                <div class="st-path">
+                    <input type="text" id="ocr-common" placeholder="同梱の共通ルール" readonly>
+                    <button type="button" class="small-btn edit-btn" id="ocr-common-pick">📄 選択</button>
+                    <button type="button" class="small-btn edit-btn" id="ocr-common-default" title="同梱の共通ルールに戻す">既定</button>
+                </div>
+                <label class="ocr-field-label">協力業者差分ルール JSON（任意）</label>
+                <div class="st-path">
+                    <input type="text" id="ocr-supplier" placeholder="なし" readonly>
+                    <button type="button" class="small-btn edit-btn" id="ocr-supplier-pick">📄 選択</button>
+                    <button type="button" class="small-btn edit-btn" id="ocr-supplier-clear">解除</button>
+                </div>
+            </section>
+
+            <section class="st-section">
+                <h2>4. 出力の内容</h2>
+                <label class="st-check big"><input type="checkbox" id="ocr-do-structure" checked> 構造化 Excel・JSON を作成する</label>
+                <label class="st-check"><input type="checkbox" id="ocr-keep-json" checked> 統合した Azure 生 JSON を保存する <span class="st-hint">（構造化のやり直しに使います）</span></label>
+                <label class="st-check"><input type="checkbox" id="ocr-keep-excel" checked> 統合した OCR 確認用 Excel を保存する</label>
+                <label class="st-check"><input type="checkbox" id="ocr-keep-chunks"> 2ページ分割 PDF も残す（通常は不要）</label>
+            </section>
+
+            <div class="st-run">
+                <button type="button" class="active-btn" id="ocr-run">▶ OCR・構造化を実行</button>
+                <button type="button" class="small-btn delete-btn ocr-cancel hidden" id="ocr-cancel">■ 中止（処理中のPDFで止める）</button>
+                <div class="st-progress hidden" id="ocr-progress"><div class="bar" id="ocr-progress-bar"></div><span id="ocr-progress-text"></span></div>
+            </div>
+
+            <section class="st-log-wrap">
+                <div class="st-log-head">
+                    <h2>処理ログ</h2>
+                    <button type="button" class="chip-clear" id="ocr-log-clear">クリア</button>
+                </div>
+                <div class="st-log" id="ocr-log"></div>
+            </section>
+        </aside>
+
+        <!-- ============ 中央: 結果 ============ -->
+        <main class="pane st-main">
+            <div class="ocr-alert hidden" id="ocr-alert"></div>
+
+            <section class="card ocr-results-card">
+                <div class="st-toolbar">
+                    <h2 class="ocr-card-title">処理結果</h2>
+                    <div class="ocr-toolbar-buttons">
+                        <button type="button" class="small-btn edit-btn" id="ocr-restructure" title="Azure は使わないので、利用枚数は増えません">📄 OCR済みJSONから構造化だけやり直す</button>
+                        <button type="button" class="small-btn edit-btn" id="ocr-import-existing" title="AI-OCR が出力した構造化JSON（と元PDF）を DB に取り込みます。Azure は使いません">📥 既存OCR結果を取り込む</button>
+                        <button type="button" class="small-btn edit-btn" id="ocr-open-saved" title="DB に保存した見積の一覧を開きます（再起動後・別PCでも使えます）">🗂 保存済み見積を開く</button>
+                    </div>
+                </div>
+                <div class="st-table-wrap">
+                    <table class="project-table st-table ocr-table" id="ocr-results">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="card ocr-detail-card hidden" id="ocr-detail">
+                <div class="st-toolbar">
+                    <h2 class="ocr-card-title" id="ocr-detail-title">明細</h2>
+                    <div class="segmented" id="ocr-detail-tabs">
+                        <button type="button" class="segmented-btn active" data-value="items">構造化明細</button>
+                        <button type="button" class="segmented-btn" data-value="review">要確認だけ</button>
+                        <button type="button" class="segmented-btn" data-value="audit">OCR行監査</button>
+                    </div>
+                    <button type="button" class="active-btn ocr-review-btn" id="ocr-estimate-review" title="この結果を DB に取り込み（登録済みならそのまま）、確認・取決めウィンドウを開きます">📋 内容確認・取決め確定</button>
+                    <button type="button" class="close-btn" id="ocr-detail-close" title="閉じる">&times;</button>
+                </div>
+                <div class="ocr-detail-meta" id="ocr-detail-meta"></div>
+                <div class="st-table-wrap">
+                    <table class="project-table st-table ocr-table" id="ocr-detail-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="status-bar" id="status-bar">準備完了</footer>
+</div>
+
+<!-- Azure 設定 -->
+<div class="modal hidden" id="ocr-settings-modal" role="dialog" aria-modal="true" aria-labelledby="ocr-settings-title">
+    <div class="modal-content ocr-settings-content">
+        <div class="modal-header">
+            <h4 id="ocr-settings-title">Azure AI Document Intelligence の設定</h4>
+            <button type="button" class="close-btn" data-close>&times;</button>
+        </div>
+        <form id="ocr-settings-form" autocomplete="off">
+            <div class="settings-grid">
+                <div class="form-group wide">
+                    <label for="az-endpoint">エンドポイント</label>
+                    <input id="az-endpoint" placeholder="https://xxxx.cognitiveservices.azure.com/">
+                </div>
+                <div class="form-group wide">
+                    <label for="az-key">キー</label>
+                    <input id="az-key" type="password" placeholder="変更しない場合は空欄">
+                    <p class="settings-note" id="az-source"></p>
+                </div>
+                <div class="form-group">
+                    <label for="az-chunk">1回に送るページ数</label>
+                    <input id="az-chunk" type="number" min="1" max="50">
+                    <p class="settings-note">無料枠（F0）は 1 回 2 ページまでしか読みません。</p>
+                </div>
+                <div class="form-group">
+                    <label>上限を数える期間</label>
+                    <div class="segmented" id="az-period">
+                        <button type="button" class="segmented-btn active" data-value="day">1日</button>
+                        <button type="button" class="segmented-btn" data-value="month">1か月</button>
+                    </div>
+                </div>
+                <div class="form-group"><label for="az-limit">上限（枚）</label><input id="az-limit" type="number" min="1"></div>
+                <div class="form-group"><label for="az-warn">黄色にする（枚を超えたら）</label><input id="az-warn" type="number" min="0"></div>
+                <div class="form-group"><label for="az-danger">赤にする（枚を超えたら）</label><input id="az-danger" type="number" min="0"></div>
+            </div>
+            <p class="settings-note">枚数は Azure が解析したページ数で数えます（失敗した送信は数えません）。記録は %AppData%\SimilaritySearchApp\ocr_usage.json に残ります。</p>
+            <div class="inline-row">
+                <button type="button" class="small-btn edit-btn" id="az-test">🔌 接続テスト（ページは消費しません）</button>
+            </div>
+            <div class="test-result" id="az-result"></div>
+            <div class="button-row">
+                <button type="button" class="cancel-btn" data-close>キャンセル</button>
+                <button type="submit" class="save-btn">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 見積DB への取込（確認） -->
+<div class="modal hidden" id="ocr-import-modal" role="dialog" aria-modal="true" aria-labelledby="ocr-import-title">
+    <div class="modal-content ocr-import-content">
+        <div class="modal-header">
+            <h4 id="ocr-import-title">見積DB への取込</h4>
+            <button type="button" class="close-btn" data-close>&times;</button>
+        </div>
+        <div id="ocr-import-body"></div>
+        <div class="ocr-import-options">
+            <button type="button" class="small-btn edit-btn" id="ocr-import-pdf">📄 元PDFを選ぶ</button>
+            <label class="st-check"><input type="checkbox" id="ocr-import-test"> 試験データとして登録する（本番の検索から除外）</label>
+        </div>
+        <div class="button-row">
+            <button type="button" class="cancel-btn" data-close>キャンセル</button>
+            <button type="button" class="save-btn" id="ocr-import-run">取り込んで開く</button>
+        </div>
+    </div>
+</div>
+
+<div class="loading-overlay hidden" id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">処理中...</p>
+</div>
+<div class="toast-area" id="toast-area"></div>
+
+<script type="module" src="js/ocr_AI-OCR.js"></script>
+</body>
+</html>
