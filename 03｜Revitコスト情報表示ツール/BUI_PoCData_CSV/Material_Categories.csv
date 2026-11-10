@@ -1,0 +1,14 @@
+﻿material_category_id,parent_category_id,category_name_ja,category_name_en,display_order,status_id,legacy_priority,legacy_aliases,note
+MAT-GYPSUM-BOARD,,せっこうボード,Gypsum board,10,,7,石膏ボード,元GoldStandard実データ。旧Step1では「石膏ボード」表記。
+MAT-VINYL-FLOOR,,床材（塩ビシート）,Vinyl sheet flooring,20,,4,,元GoldStandard実データ。
+MAT-ALC,,ALC,Autoclaved lightweight concrete,30,,6,,元GoldStandard実データおよび旧Step1。
+MAT-WALLPAPER,,壁紙,Wallpaper,40,,5,,旧Gold Standard Step1対象製品に記載。実データなし。
+MAT-METAL-ROOF,,金属屋根材,Metal roofing,50,,8,,旧Gold Standard Step1対象製品に記載。実データなし。
+MAT-GLASS-BLOCK,,ガラスブロック,Glass block,60,,9,,旧Gold Standard Step1対象製品に記載。実データなし。
+MAT-COATING,,塗装材,Coating material,70,,10,,237行目以降の追加GoldStandard実データからマスター化。
+MAT-FABRICATED-METAL,,製作金物,Fabricated metal,80,,11,,237行目以降の追加GoldStandard実データからマスター化。
+MAT-FLOOR,,床材,Floor material,90,,1,,237行目以降の追加GoldStandard実データからマスター化。
+MAT-WALL-CEILING,,壁・天井材,Wall and ceiling material,100,,3,,237行目以降の追加GoldStandard実データからマスター化。
+MAT-WALL,,壁材,Wall material,110,,2,,237行目以降の追加GoldStandard実データからマスター化。
+CAT-0001,,建具,,,,,,
+CAT-0002,,軽量鉄骨,,,,,,

@@ -1,0 +1,4 @@
+﻿reliability_rank_id,rank_code,rank_name_ja,score,description,display_order
+REL-A,A,高信頼,3,元設計のA/B/C。現行実データはAのみ。詳細な判定基準は今後確定。,10
+REL-B,B,中信頼,2,元設計のA/B/C。詳細な判定基準は今後確定。,20
+REL-C,C,要確認,1,元設計のA/B/C。詳細な判定基準は今後確定。,30

@@ -1,0 +1,7 @@
+﻿<!-- 点検タブ：問題の分類とRevit要素表示のみを行い、自動修正は提供しません。 -->
+<UserControl x:Class="Bui.UI.Tabs.AuditView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <Grid Margin="12"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+  <DockPanel><Button DockPanel.Dock="Right" Content="取消" Command="{Binding AuditCommand.CancelCommand}" MinWidth="52" Margin="6,0,0,0"/><Button DockPanel.Dock="Right" Content="点検実行" Command="{Binding AuditCommand}" MinWidth="80"/><Button DockPanel.Dock="Right" Content="結果をリセット" Command="{Binding ResetAuditTabCommand}" MinWidth="100" Margin="6,0,0,0" ToolTip="点検結果の表示を空にします。モデルとCSVには触れません。"/><StackPanel><TextBlock Text="ID点検" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="結果を表示するだけで、自動修正はしません。" TextWrapping="Wrap"/></StackPanel></DockPanel>
+  <Grid Grid.Row="1" Margin="0,8,0,0"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions><ListBox ItemsSource="{Binding AuditIssues}" SelectedItem="{Binding SelectedAuditIssue}"><ListBox.ItemTemplate><DataTemplate><StackPanel Margin="2,5"><TextBlock Text="{Binding Group}" FontWeight="SemiBold"/><TextBlock Text="{Binding Message}" TextWrapping="Wrap"/><TextBlock Text="{Binding NavigationLabel}" TextWrapping="Wrap"/></StackPanel></DataTemplate></ListBox.ItemTemplate></ListBox><Button Grid.Row="1" Content="選択要素をRevitで表示" Command="{Binding NavigateAuditIssueCommand}" HorizontalAlignment="Left" Margin="0,6,0,0"/></Grid>
+ </Grid>
+</UserControl>

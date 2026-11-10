@@ -1,0 +1,220 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Revit 2025.5（2026-09-16公開、ビルド25.5.0.x）から、Revit本体が.NET 8ではなく
+    .NET 10で動くようになりました。2025.5のRevitAPI.dllはSystem.Runtime 10.0を参照するため、
+    net8.0-windowsのままだとCS1705でビルドできません（2026-10-13に会社PCで発生）。
+    配布先はRevit 2025.5以降にそろえる方針のため、net10.0-windowsに固定します。
+    このDLLは2025.4以前（.NET 8）のRevitでは読み込めません。
+    Bui.Curation と Bui.Tests はRevitに読み込まれないため net8.0 のままです。
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
+    <Version>0.1.0</Version>
+    <AssemblyName>Bui</AssemblyName>
+    <RootNamespace>Bui</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Revit2025Path Condition="'$(Revit2025Path)' == ''">C:\Program Files\Autodesk\Revit 2025</Revit2025Path>
+  </PropertyGroup>
+
+  <!--
+    RevitAPI.dll を参照すると、MSBuild が依存アセンブリを Revit 2025 の
+    インストールフォルダーから芋づる式に解決しようとします。
+    その結果、Revit が同梱する古い System.Drawing / Microsoft.VisualBasic などが
+    .NET 8 の正規アセンブリを上書きし、System.IO.Path・File・IOException といった
+    基本の型まで解決できなくなります（IOException が「保護レベル」エラーになるのが典型症状）。
+
+    BUI が必要とするのは RevitAPI.dll と RevitAPIUI.dll の公開APIだけなので、
+    依存の自動追跡を止めて、フレームワークは .NET 8 のものだけを使わせます。
+    この2行を消すと上記のビルドエラーが再発します。
+  -->
+  <!--
+    Visual Studio は「変更が無い」と判断したプロジェクトのビルドを丸ごと省略します。
+    出力ウィンドウに「最新の状態」と出るのがその状態です。
+    省略されると下の配置同期ターゲットも実行されず、ビルドは成功しているのに
+    Revitは古いDLLを読み続ける、という非常に分かりにくい事故が起きます。
+    実際に会社PCで、配置先のDLLが4時間半古いまま作業が続く状態が発生しました。
+    このプロジェクトだけ省略を無効にし、毎回必ず配置先まで同期させます。
+  -->
+  <PropertyGroup>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <_FindDependencies>false</_FindDependencies>
+    <AutoUnifyAssemblyReferences>true</AutoUnifyAssemblyReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Bui.Shared_共有ロジック\**\*.cs"
+             Link="Shared\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\config_設定例\AddinMetadata_アドイン情報.json"
+             Link="Config\AddinMetadata_アドイン情報.json"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\config_設定例\Settings.Default_共通設定.json"
+             Link="Config\Settings.Default_共通設定.json"
+             CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\仕上表_雛型.xlsx"
+             Link="Resources_画像と定義\仕上表_雛型.xlsx"
+             CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>$(Revit2025Path)\RevitAPI.dll</HintPath>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(Revit2025Path)\RevitAPIUI.dll</HintPath>
+      <Private>false</Private>
+      <SpecificVersion>false</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+
+  <!--
+    F5デバッグ用。DeployDev_開発用配置.ps1 を一度実行して配置先フォルダーを
+    作った場合だけ、ビルド出力をそこへ同期します。
+    これにより「F5 → ビルド → 配置 → Revit起動 → ブレークポイント」が1操作で回ります。
+    配置先が無い環境（Revit未導入のPCやCI）では何もしません。
+    Revitを開いたままビルドするとDLLがロックされて同期できません。
+    以前はここを警告に留めていましたが、ビルドが成功したように見えるのに
+    Revitは古いDLLを読み続けるため、「直したはずの画面が変わらない」という
+    非常に分かりにくい状態を招きました。そのためビルドを失敗させます。
+    失敗したらRevitを完全に終了して、もう一度ビルドしてください。
+  -->
+  <!--
+    Microsoft.Data.SqlClient は、出力直下に「facade」（約900KB）を置き、
+    Windows用の実体（約2.1MB）を runtimes\win\lib\net8.0\ に置きます。
+    （このプロジェクトはnet10.0-windowsですが、SqlClient 5.2.2にはnet10.0向けが無く、
+    NuGetは最も近いnet8.0向けを選ぶため、フォルダ名はnet8.0のままで正しい動作です。）
+    通常は .deps.json の runtimeTargets が実行時にどちらを読むかを振り分けますが、
+    Revitアドインは Revit.exe に読み込まれ、その deps context にアドインの
+    .deps.json は含まれません。facade が読み込まれると、接続を試みた瞬間に
+    「Microsoft.Data.SqlClient is not supported on this platform.」で失敗します。
+
+    ここで出力直下を実体で上書きしておくと、この後のすべて（下の配置同期、
+    DeployDev_開発用配置.ps1、配置診断）が自動的に正しいDLLを扱います。
+    この事情を知っている場所を1か所に閉じ込めるための処理です。
+  -->
+  <Target Name="BuiPreferWindowsSqlClient" AfterTargets="Build"
+          Condition="Exists('$(TargetDir)runtimes\win\lib\net8.0')">
+    <ItemGroup>
+      <BuiWindowsRuntimeDll Include="$(TargetDir)runtimes\win\lib\net8.0\*.dll" />
+    </ItemGroup>
+    <Message Importance="high"
+             Text="BUI: SQL Server用DLLを、出力直下のfacadeからWindows用の実体へ置き換えます。" />
+    <Copy SourceFiles="@(BuiWindowsRuntimeDll)"
+          DestinationFolder="$(TargetDir)"
+          OverwriteReadOnlyFiles="true" />
+    <!--
+      ネイティブのSNI DLLも、Revitからは runtimes\win-x64\native 配下を
+      探しに行けないことがあるため、出力直下へ平置きします。
+    -->
+    <ItemGroup>
+      <BuiNativeSqlDll Include="$(TargetDir)runtimes\win-x64\native\*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuiNativeSqlDll)"
+          DestinationFolder="$(TargetDir)"
+          OverwriteReadOnlyFiles="true" />
+  </Target>
+
+  <Target Name="BuiSyncDevDeployment" AfterTargets="BuiPreferWindowsSqlClient"
+          Condition="'$(Configuration)' == 'Debug' And Exists('$(AppData)\Autodesk\Revit\Addins\2025\BUI')">
+    <ItemGroup>
+      <BuiDeployFile Include="$(TargetDir)**\*" />
+    </ItemGroup>
+    <Message Importance="high"
+             Text="BUI: 配置先へ同期します。失敗する場合はRevit 2025を終了してから再ビルドしてください。" />
+    <Copy SourceFiles="@(BuiDeployFile)"
+          DestinationFiles="@(BuiDeployFile->'$(AppData)\Autodesk\Revit\Addins\2025\BUI\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <ItemGroup>
+    <None Update="Resources_画像と定義\BUI.addin"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources_画像と定義\SharedParameters_共有パラメータ.txt"
+          CopyToOutputDirectory="PreserveNewest" />
+    <!-- リボンのアイコンです。出力へ運ばないと、リボンにアイコンが出ません。 -->
+    <None Update="Resources_画像と定義\リボン_01_パネル表示.ico"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources_画像と定義\リボン_02_パラメータ作成.ico"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources_画像と定義\リボン_03_AI.ico"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Resources_画像と定義\リボン_04_仕上表出力.ico"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!--
+    SQL Serverへの接続に使います。Revitのプロセスへ読み込まれるため、
+    Revitが同梱する別バージョンとぶつかる可能性があります。
+    ぶつかっても起動が止まらないよう、この参照に触れるのは
+    利用者が設定タブでSQL Serverへ切り替えたときだけにしています。
+    起動経路（BuiDockPaneComposition）からは呼びません。
+  -->
+  <PropertyGroup>
+    <!--
+      クラスライブラリは、NuGetパッケージのDLLをビルド出力へコピーしません。
+      実行可能プロジェクトなら .deps.json を見て実行時に解決できますが、
+      Revitアドインは Revit.exe に読み込まれるため、その仕組みが働きません。
+      これを true にしないと bin\Debug に Microsoft.Data.SqlClient.dll が
+      1つも現れず、配置スクリプトは何も配らず、配置診断は
+      「配置されていません」としか言えません（実際にその状態で詰まりました）。
+    -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+    <!--
+      2026-09-15、別PCでSQL Serverへ切り替えた際に
+      「The type initializer for 'Microsoft.Data.SqlClient.SqlAuthenticationProviderManager'
+      threw an exception.」で失敗しました。SqlAuthenticationProviderManagerの
+      静的初期化がこの4パッケージへ触れるため、Windows認証のみの利用でも必要です。
+
+      これらはnet8.0-windows（WPF）向けのビルドでは、CopyLocalLockFileAssemblies
+      =trueでも出力へコピーされません。MSBuildの「PlatformManifestによる競合解決」が、
+      同名アセンブリはMicrosoft.WindowsDesktop.App共有フレームワーク側にあるとみなし、
+      パッケージ側のDLLを意図的に除外するためです（2026-09-15に実機のNuGetキャッシュで
+      lib\net8.0配下に実体があることを確認済み。除外は「無い」のではなく「意図的に
+      配らない」動作）。Revitはこの共有フレームワークを必ずしも読み込まないため、
+      実行時に見つからず落ちます。
+
+      GeneratePathProperty="true"でNuGetキャッシュ上のパスをMSBuildプロパティ化し、
+      下のNoneアイテムで競合解決を経由せず直接コピーします。
+    -->
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" GeneratePathProperty="true" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" GeneratePathProperty="true" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.0" GeneratePathProperty="true" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" GeneratePathProperty="true" />
+  </ItemGroup>
+
+  <!-- 上のPlatformManifest除外を回避し、NuGetキャッシュから出力直下へ強制的にコピーします。 -->
+  <ItemGroup>
+    <None Include="$(PkgSystem_Configuration_ConfigurationManager)\lib\net8.0\System.Configuration.ConfigurationManager.dll"
+          Condition="Exists('$(PkgSystem_Configuration_ConfigurationManager)\lib\net8.0\System.Configuration.ConfigurationManager.dll')"
+          CopyToOutputDirectory="PreserveNewest" Link="System.Configuration.ConfigurationManager.dll" Visible="false" />
+    <None Include="$(PkgSystem_Security_Cryptography_ProtectedData)\lib\net8.0\System.Security.Cryptography.ProtectedData.dll"
+          Condition="Exists('$(PkgSystem_Security_Cryptography_ProtectedData)\lib\net8.0\System.Security.Cryptography.ProtectedData.dll')"
+          CopyToOutputDirectory="PreserveNewest" Link="System.Security.Cryptography.ProtectedData.dll" Visible="false" />
+    <None Include="$(PkgSystem_Diagnostics_EventLog)\lib\net8.0\System.Diagnostics.EventLog.dll"
+          Condition="Exists('$(PkgSystem_Diagnostics_EventLog)\lib\net8.0\System.Diagnostics.EventLog.dll')"
+          CopyToOutputDirectory="PreserveNewest" Link="System.Diagnostics.EventLog.dll" Visible="false" />
+    <None Include="$(PkgSystem_Text_Encodings_Web)\lib\net8.0\System.Text.Encodings.Web.dll"
+          Condition="Exists('$(PkgSystem_Text_Encodings_Web)\lib\net8.0\System.Text.Encodings.Web.dll')"
+          CopyToOutputDirectory="PreserveNewest" Link="System.Text.Encodings.Web.dll" Visible="false" />
+  </ItemGroup>
+
+</Project>

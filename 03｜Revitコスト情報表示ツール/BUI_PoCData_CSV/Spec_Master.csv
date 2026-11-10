@@ -1,0 +1,213 @@
+﻿spec_key,display_name_ja,display_name_en,display_group_id,display_order,category,data_type,standard_unit,synonyms_ja,applicable_material_type,required_level,validation_rule,source_required,status_id,version,example_value,dimension_key_rule,note
+areal_weight,面密度,Areal weight,PERFORMANCE,70,weight,number,kg/m2,面重量,"board, panel, roofing",should,0以上の数値,1,STATUS-CONFIRMED,0.1,,,積算・遮音性能用
+bending_str_long,曲げ強さ（長手）,,,20,strength,number,,,,,,,,,,,
+bending_str_short,曲げ強さ（短手）,,,30,strength,number,,,,,,,,,,,
+bulk_density,かさ密度,Bulk density,PERFORMANCE,100,weight,number,kg/m3,密度,"insulation, ALC",should,0以上の数値,1,STATUS-CONFIRMED,0.1,,,LCA・構造計算用
+density,密度,,BASIC_SPEC,90,weight,number,kg/m³,かさ密度,"insulation, ALC",,,,STATUS-CONFIRMED,,,,
+fire_cert_no,防火認定番号,Fire certification number,PERFORMANCE,50,fire,string,-,認定番号、NM番号,interior,must,NM-・QM-・RM-から始まる形式,1,STATUS-CONFIRMED,0.1,不燃,,264
+fire_class,防火性能,Fire class,PERFORMANCE,40,fire,enum,-,不燃、準不燃、難燃,interior,must,"不燃,準不燃,難燃,対象外から選択",0,STATUS-CONFIRMED,0.1,NM-8619,,264
+height,高さ,,BASIC_SPEC,40,dimension,number,mm,H、高さ,"door, opening, wall",,,,STATUS-CONFIRMED,,,,
+jis_standard_no,JIS規格番号,JIS standard number,PERFORMANCE,60,standard,string,-,JIS番号,all,should,JIS A 6901などの規格番号,1,STATUS-CONFIRMED,0.1,,,264
+length,長さ,Length,BASIC_SPEC,30,dimension,number,mm,L、全長,"board, panel, roll",must,0より大きい数値,1,STATUS-CONFIRMED,0.1,, thickness / width / length ,ロール材の場合は巻長 / 壁紙など。length は巻長を意味する
+moisture_content,含水率,,BASIC_SPEC,120,material,number,,,,,,,,,,,
+piece_weight,1枚あたり重量,Piece weight,BASIC_SPEC,60,weight,number,kg/枚,重量,"board, panel",optional,0以上の数値,1,STATUS-DRAFT,0.1,,,搬入・施工用
+specific_gravity,比重,,,110,weight,number,ー,,,,,,,,,,
+surface_density,表面密度・音響用面密度,,,80,weight,number,kg/m2,,,,,,,,,,
+thermal_conductivity,熱伝導率,Thermal conductivity,PERFORMANCE,10,thermal,number,W/mK,熱伝導係数、入値,"board, insulation, ALC",should,0以上の数値,1,STATUS-CONFIRMED,0.1,0.17,,264
+thickness,厚さ,Thickness,BASIC_SPEC,10,dimension,number,mm,厚み、板厚、t,all,must,0より大きい数値,1,STATUS-CONFIRMED,0.1,, thickness / width / length ,長辺方向の厚み / 石膏ボード、ALC、金属屋根材など
+weight,重量,,BASIC_SPEC,50,weight,number,,,,,,,,,,,
+width,幅,Width,BASIC_SPEC,20,dimension,number,mm,巾、W,all,must,0より大きい数値,1,STATUS-CONFIRMED,0.1,,thickness / width / height ,264 / ドア、シャッター、窓など
+abrasion_resistance,耐摩耗性,Abrasion Resistance,PERFORMANCE,70,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+accelerated_weathering,促進耐候性,Accelerated Weathering,PERFORMANCE,80,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+acoustic_performance,音響性能,Acoustic Performance,PERFORMANCE,90,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+antibacterial,抗菌性,Antibacterial,PERFORMANCE,100,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+antistatic_performance,帯電防止性能,Antistatic Performance,PERFORMANCE,110,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+applicable_adhesive,適用接着剤,Applicable Adhesive,BASIC_SPEC,130,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+applicable_finish,適用仕上げ,Applicable Finish,BASIC_SPEC,140,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+applicable_primer,適用プライマー,Applicable Primer,BASIC_SPEC,150,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+applicable_substrates,適用下地,Applicable Substrates,BASIC_SPEC,160,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+applicable_topcoat,適用上塗り,Applicable Topcoat,BASIC_SPEC,170,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+application,用途・適用,Application,BASIC_SPEC,180,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+application_environment,施工環境,Application Environment,,190,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+application_method,施工方法,Application Method,BASIC_SPEC,200,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+application_tools,施工工具,Application Tools,BASIC_SPEC,210,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+backing,裏面材,Backing,,220,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+base_panel,基材パネル,Base Panel,BASIC_SPEC,230,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+base_panel_length,基材パネル長さ,Base Panel Length,BASIC_SPEC,240,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+base_panel_thickness,基材パネル厚さ,Base Panel Thickness,BASIC_SPEC,250,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+base_panel_width,基材パネル幅,Base Panel Width,BASIC_SPEC,260,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+board_classification,ボード分類,Board Classification,BASIC_SPEC,270,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+board_layers_room_side,室内側ボード層数,Board Layers Room Side,,280,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+board_layers_total,ボード総層数,Board Layers Total,,290,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+board_thickness,ボード厚さ,Board Thickness,BASIC_SPEC,300,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+board_type,ボード種類,Board Type,BASIC_SPEC,310,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_outlet,ケーブル取出口,Cable Outlet,BASIC_SPEC,320,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_outlet_height,ケーブル取出口高さ,Cable Outlet Height,BASIC_SPEC,330,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_outlet_quantity,ケーブル取出口数量,Cable Outlet Quantity,BASIC_SPEC,340,general,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_outlet_width,ケーブル取出口幅,Cable Outlet Width,BASIC_SPEC,350,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_space_height,配線空間高さ,Cable Space Height,BASIC_SPEC,360,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_space_height_max,配線空間高さ上限,Cable Space Height Max,BASIC_SPEC,370,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cable_space_height_min,配線空間高さ下限,Cable Space Height Min,BASIC_SPEC,380,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+caster_resistance,キャスター耐性,Caster Resistance,PERFORMANCE,120,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cavity_material,中空部材料,Cavity Material,BASIC_SPEC,390,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cavity_material_density,中空部材料密度,Cavity Material Density,BASIC_SPEC,400,weight,number,kg/m3,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cavity_material_thickness,中空部材料厚さ,Cavity Material Thickness,BASIC_SPEC,410,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+center_displacement,中央変位,Center Displacement,PERFORMANCE,130,performance,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coating_count,塗り回数,Coating Count,BASIC_SPEC,420,application,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+color,色,Color,,430,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+combined_cable_outlet_height,複合ケーブル取出口高さ,Combined Cable Outlet Height,BASIC_SPEC,440,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+combined_cable_outlet_width,複合ケーブル取出口幅,Combined Cable Outlet Width,BASIC_SPEC,450,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+compatible_cable_diameter,対応ケーブル径,Compatible Cable Diameter,BASIC_SPEC,460,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+component_type,構成部材種別,Component Type,BASIC_SPEC,470,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+concentrated_load,集中荷重,Concentrated Load,PERFORMANCE,140,weight,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+conformity,適合性,Conformity,PERFORMANCE,150,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+consumption,使用量,Consumption,BASIC_SPEC,480,application,number,kg/m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+consumption_smooth,使用量（平滑）,Consumption Smooth,BASIC_SPEC,490,application,number,kg/m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+consumption_yuzuhada,使用量（ゆず肌）,Consumption Yuzuhada,BASIC_SPEC,500,application,number,kg/m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+country_of_origin,原産国,Country Of Origin,,510,environment,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_smooth,施工可能面積（平滑）,Coverage Smooth,,520,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_spray,施工可能面積（吹付）,Coverage Spray,,530,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_thick,施工可能面積（厚付）,Coverage Thick,,540,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_thin,施工可能面積（薄付）,Coverage Thin,,550,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_yuzuhada,施工可能面積（ゆず肌）,Coverage Yuzuhada,BASIC_SPEC,560,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+crack_resistance,ひび割れ抵抗性,Crack Resistance,PERFORMANCE,160,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+cross_section,断面,Cross Section,,570,dimension,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+dent_resistance,耐へこみ性,Dent Resistance,PERFORMANCE,170,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+dilution,希釈剤,Dilution,BASIC_SPEC,580,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+dilution_ratio,希釈率,Dilution Ratio,BASIC_SPEC,590,application,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+dilution_ratio_base,希釈率（ベース）,Dilution Ratio Base,,600,application,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+dilution_ratio_pattern,希釈率（模様）,Dilution Ratio Pattern,,610,application,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+dilution_ratio_smooth,希釈率（平滑）,Dilution Ratio Smooth,,620,application,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+eco_mark,エコマーク,Eco Mark,PERFORMANCE,180,environment,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+eco_mark_cert_no,エコマーク認定番号,Eco Mark Cert No,PERFORMANCE,190,environment,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+edge_displacement,端部変位,Edge Displacement,PERFORMANCE,200,performance,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+electrostatic_performance,静電性能,Electrostatic Performance,PERFORMANCE,210,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+environmental_label,環境ラベル,Environmental Label,PERFORMANCE,220,environment,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+environmental_material,環境配慮材料,Environmental Material,PERFORMANCE,230,environment,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+expansion_ratio,膨張倍率,Expansion Ratio,,630,general,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+expansion_temperature,膨張開始温度,Expansion Temperature,,640,general,number,℃,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+expected_service_life,期待耐用年数,Expected Service Life,PERFORMANCE,240,general,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+finish_pattern,仕上げパターン,Finish Pattern,BASIC_SPEC,650,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+finish_shape,仕上げ形状,Finish Shape,BASIC_SPEC,660,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+fire_performance,防火性能,Fire Performance,PERFORMANCE,250,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+floor_heating,床暖房対応,Floor Heating,BASIC_SPEC,670,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+floor_height_max,床高さ上限,Floor Height Max,BASIC_SPEC,680,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+floor_height_min,床高さ下限,Floor Height Min,BASIC_SPEC,690,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+forming_method,成形方法,Forming Method,BASIC_SPEC,700,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+gloss,光沢,Gloss,BASIC_SPEC,710,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+green_purchase,グリーン購入法適合,Green Purchase,PERFORMANCE,260,environment,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+groove,溝,Groove,BASIC_SPEC,720,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+height_adjustable,高さ調整可否,Height Adjustable,BASIC_SPEC,730,dimension,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+hot_carpet,ホットカーペット対応,Hot Carpet,BASIC_SPEC,740,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+impact_absorption,衝撃吸収性,Impact Absorption,PERFORMANCE,270,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+impact_deformation_max,衝撃変形量上限,Impact Deformation Max,PERFORMANCE,280,performance,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+impact_drop_height,衝撃落下高さ,Impact Drop Height,PERFORMANCE,290,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+impact_load,衝撃荷重,Impact Load,PERFORMANCE,300,weight,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+indoor_shoes,上履き対応,Indoor Shoes,BASIC_SPEC,750,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+intermediate_consumption,中塗り使用量,Intermediate Consumption,,760,application,number,kg/m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+intermediate_coverage,中塗り施工可能面積,Intermediate Coverage,,770,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+intermediate_name,中塗り材名称,Intermediate Name,,780,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+intermediate_package,中塗り材荷姿,Intermediate Package,,790,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+jis_symbol,JIS記号,Jis Symbol,BASIC_SPEC,800,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+joint_finish,目地仕上げ,Joint Finish,BASIC_SPEC,810,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+joint_member_required,目地部材要否,Joint Member Required,BASIC_SPEC,820,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+joint_width,目地幅,Joint Width,BASIC_SPEC,830,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+leakage_resistance_min,漏えい抵抗下限,Leakage Resistance Min,PERFORMANCE,310,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+load_capacity_max,許容荷重上限,Load Capacity Max,PERFORMANCE,320,weight,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+load_capacity_min,許容荷重下限,Load Capacity Min,PERFORMANCE,330,weight,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+loaded_deformation_max,載荷時変形量上限,Loaded Deformation Max,,340,weight,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+lower_board_classification,下張りボード分類,Lower Board Classification,BASIC_SPEC,840,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+lower_board_thickness,下張りボード厚さ,Lower Board Thickness,BASIC_SPEC,850,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+lower_board_type,下張りボード種類,Lower Board Type,BASIC_SPEC,860,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+maintenance,維持管理方法,Maintenance,BASIC_SPEC,870,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+mixing_ratio,混合比,Mixing Ratio,,880,general,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+package_quantity,荷姿数量,Package Quantity,,890,general,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+package_type,荷姿種別,Package Type,,900,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+package_weight,荷姿重量,Package Weight,,910,weight,number,kg,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+panel_lock_system,パネル固定方式,Panel Lock System,BASIC_SPEC,920,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+panel_material,パネル材質,Panel Material,BASIC_SPEC,930,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+panel_removable,パネル取外し可否,Panel Removable,,940,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+panel_thickness,パネル厚さ,Panel Thickness,BASIC_SPEC,950,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+panel_type,パネル種類,Panel Type,BASIC_SPEC,960,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+pattern,柄・パターン,Pattern,BASIC_SPEC,970,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+pedestrian_class,歩行区分,Pedestrian Class,BASIC_SPEC,980,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+pest_treatment,防虫処理,Pest Treatment,PERFORMANCE,350,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+pile_density,パイル密度,Pile Density,BASIC_SPEC,990,weight,number,kg/m3,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+pile_height,パイル高さ,Pile Height,BASIC_SPEC,1000,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+pile_weight,パイル重量,Pile Weight,BASIC_SPEC,1010,weight,number,kg,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+primary_functions,主な機能,Primary Functions,BASIC_SPEC,1020,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+primer_consumption,プライマー使用量,Primer Consumption,,1030,application,number,kg/m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+primer_coverage,プライマー施工可能面積,Primer Coverage,,1040,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+primer_name,プライマー名称,Primer Name,BASIC_SPEC,1050,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+primer_package,プライマー荷姿,Primer Package,,1060,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+primer_type,プライマー種類,Primer Type,BASIC_SPEC,1070,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+product_category,製品カテゴリ,Product Category,BASIC_SPEC,1080,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+product_number,製品番号,Product Number,BASIC_SPEC,1090,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+product_status,製品状態,Product Status,BASIC_SPEC,1100,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+public_building_association_evaluated,公共建築協会評価対象,Public Building Association Evaluated,BASIC_SPEC,1110,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+public_building_evaluation_height_max,公共建築協会評価高さ上限,Public Building Evaluation Height Max,BASIC_SPEC,1120,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+public_building_evaluation_height_min,公共建築協会評価高さ下限,Public Building Evaluation Height Min,BASIC_SPEC,1130,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+recoat_time,塗り重ね時間,Recoat Time,BASIC_SPEC,1140,environment,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+residual_deformation_max,残留変形量上限,Residual Deformation Max,,360,performance,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+roll_weight,ロール重量,Roll Weight,BASIC_SPEC,1150,weight,number,kg,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+rolling_cycles,走行回数,Rolling Cycles,,1160,general,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+rolling_load,走行荷重,Rolling Load,,370,weight,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+rolling_residual_deformation_max,走行後残留変形量上限,Rolling Residual Deformation Max,,380,performance,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+runner_size_max,ランナー寸法上限,Runner Size Max,BASIC_SPEC,1170,dimension,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+runner_size_min,ランナー寸法下限,Runner Size Min,BASIC_SPEC,1180,dimension,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+scratch_resistance,耐擦傷性,Scratch Resistance,PERFORMANCE,390,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+seismic_acceleration,耐震加速度,Seismic Acceleration,PERFORMANCE,400,performance,number,%,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+seismic_resistance,耐震性能,Seismic Resistance,PERFORMANCE,410,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+seismic_test_weight,耐震試験重量,Seismic Test Weight,PERFORMANCE,420,weight,number,kg,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+sound_insulation_class,遮音等級,Sound Insulation Class,PERFORMANCE,430,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+sound_structure_cert_no,遮音構造認定番号,Sound Structure Cert No,PERFORMANCE,440,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+stain_resistance,耐汚染性,Stain Resistance,PERFORMANCE,450,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+standard_application_weight,標準塗布量,Standard Application Weight,BASIC_SPEC,1190,weight,number,kg,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+standard_coverage,標準施工可能面積,Standard Coverage,,1200,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+stud_size_max,スタッド寸法上限,Stud Size Max,BASIC_SPEC,1210,dimension,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+stud_size_min,スタッド寸法下限,Stud Size Min,BASIC_SPEC,1220,dimension,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+stud_type,スタッド種類,Stud Type,BASIC_SPEC,1230,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+substrate,下地,Substrate,BASIC_SPEC,1240,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_height_adjustable,支持脚高さ調整可否,Support Height Adjustable,BASIC_SPEC,1250,dimension,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_leg_pitch,支持脚ピッチ,Support Leg Pitch,BASIC_SPEC,1260,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_leg_quantity_max,支持脚数量上限,Support Leg Quantity Max,,1270,general,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_leg_quantity_min,支持脚数量下限,Support Leg Quantity Min,,1280,general,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_leg_type,支持脚種類,Support Leg Type,BASIC_SPEC,1290,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_material,支持材材質,Support Material,BASIC_SPEC,1300,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+support_type,支持方式,Support Type,BASIC_SPEC,1310,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+surface_finish,表面仕上げ,Surface Finish,BASIC_SPEC,1320,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+surface_finish_material,表面仕上げ材,Surface Finish Material,BASIC_SPEC,1330,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+surface_hardness,表面硬度,Surface Hardness,PERFORMANCE,460,performance,number,,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+surface_material,表面材質,Surface Material,BASIC_SPEC,1340,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+system_type,システム種類,System Type,BASIC_SPEC,1350,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+topcoat_consumption,上塗り使用量,Topcoat Consumption,,1360,application,number,kg/m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+topcoat_main_component,上塗り主成分,Topcoat Main Component,,1370,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+topcoat_name,上塗り材名称,Topcoat Name,,1380,application,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+type,種類,Type,BASIC_SPEC,1390,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+underfloor_space,床下空間,Underfloor Space,BASIC_SPEC,1400,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+underlay_length,下地材長さ,Underlay Length,BASIC_SPEC,1410,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+underlay_material,下地材材質,Underlay Material,BASIC_SPEC,1420,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+underlay_thickness,下地材厚さ,Underlay Thickness,BASIC_SPEC,1430,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+underlay_type,下地材種類,Underlay Type,BASIC_SPEC,1440,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+underlay_width,下地材幅,Underlay Width,BASIC_SPEC,1450,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+upper_board_classification,上張りボード分類,Upper Board Classification,,1460,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+upper_board_thickness,上張りボード厚さ,Upper Board Thickness,,1470,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+upper_board_type,上張りボード種類,Upper Board Type,,1480,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+use,用途,Use,BASIC_SPEC,1490,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+wall_height_max,壁高さ上限,Wall Height Max,,1500,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+wall_height_min,壁高さ下限,Wall Height Min,,1510,dimension,number,mm,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+water_area,水回り対応,Water Area,BASIC_SPEC,1520,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+water_resistance,耐水性,Water Resistance,PERFORMANCE,470,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+water_solvent_type,水系・溶剤系区分,Water Solvent Type,BASIC_SPEC,1530,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+wax,ワックス対応,Wax,BASIC_SPEC,1540,general,boolean,-,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+wheelchair_resistance,車椅子耐性,Wheelchair Resistance,PERFORMANCE,480,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づきマスター追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_sp_tile,施工可能面積（SPタイル）,Coverage Sp Tile,,1550,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_stipple,施工可能面積（スタッコ・凹凸）,Coverage Stipple,,1560,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+coverage_yuzuhada_roller,施工可能面積（ゆず肌ローラー）,Coverage Yuzuhada Roller,,1570,application,number,m2,,all,optional,0以上の数値,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+delta_lh_class,ΔLH等級,Delta Lh Class,PERFORMANCE,490,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+delta_ll_class,ΔLL等級,Delta Ll Class,PERFORMANCE,500,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+estimated_lh_class,推定LH等級,Estimated Lh Class,PERFORMANCE,510,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+estimated_ll_class,推定LL等級,Estimated Ll Class,PERFORMANCE,520,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+formaldehyde_emission_class,ホルムアルデヒド放散等級,Formaldehyde Emission Class,PERFORMANCE,530,performance,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+general_name,一般名称,General Name,BASIC_SPEC,1580,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。
+main_component,主成分,Main Component,BASIC_SPEC,1590,general,string,,,all,optional,,1,STATUS-DRAFT,0.1,,,2026-09-17 Product_Specs使用キーに基づき追加。単位・型・表示分類は初期整理値のため運用確認後に確定。

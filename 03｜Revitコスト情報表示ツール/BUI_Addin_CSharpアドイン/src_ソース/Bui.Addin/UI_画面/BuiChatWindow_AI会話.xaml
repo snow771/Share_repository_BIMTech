@@ -1,0 +1,81 @@
+<!-- AIチャット：別ウィンドウ。Revitを操作しながら使える非モーダルです。 -->
+<!-- データ元と選択中の情報を常に上へ出します。どのデータで、どの部材について -->
+<!-- 答えているのかが分からないまま会話が進むのが、この機能でいちばん危ないためです。 -->
+<Window x:Class="Bui.UI.BuiChatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="BUI AIチャット" Width="640" Height="720"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+ <Window.Resources>
+  <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+ </Window.Resources>
+ <DockPanel Margin="12">
+  <StackPanel DockPanel.Dock="Top">
+   <TextBlock Text="{Binding DataSourceDescription, StringFormat=データ元: {0}}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+   <TextBlock Text="{Binding SelectionContextText}" TextWrapping="Wrap" Foreground="#FF616161" Margin="0,2,0,0"/>
+   <Separator Margin="0,8"/>
+  </StackPanel>
+
+  <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+   <!-- LLMが無効なときは入力欄をグレーアウトし（隠さない）、理由と次の操作を出します。
+        入力欄ごと消すと「AIチャットが壊れている」ように見えるためです。 -->
+   <TextBlock Text="{Binding LlmDisabledNotice}" TextWrapping="Wrap" Foreground="#FFB00020" FontWeight="SemiBold"
+              Visibility="{Binding IsLlmDisabled, Converter={StaticResource BoolToVisibility}}"/>
+   <!-- 設定タブのチェックを変えただけではこの画面には反映されません（起動時固定の値で動くため）。
+        変わっているときだけ、再起動が要る旨を出します。 -->
+   <TextBlock Text="{Binding LlmSettingsChangedNotice}" TextWrapping="Wrap" Foreground="#FF8A6D00" FontWeight="SemiBold"
+              Visibility="{Binding HasLlmSettingsChangedNotice, Converter={StaticResource BoolToVisibility}}"/>
+   <DockPanel IsEnabled="{Binding CanChat}">
+    <Button DockPanel.Dock="Right" Content="送信" Width="72" Margin="6,0,0,0" Command="{Binding SendCommand}"/>
+    <TextBox Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"
+             MinHeight="56" VerticalScrollBarVisibility="Auto"/>
+   </DockPanel>
+   <DockPanel Margin="0,6,0,0">
+    <Button DockPanel.Dock="Left" Content="会話をリセット" Command="{Binding ResetCommand}"/>
+    <Button DockPanel.Dock="Left" Content="中断" Margin="6,0,0,0"
+            Command="{Binding SendCommand.CancelCommand}"
+            IsEnabled="{Binding IsBusy}"/>
+    <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Margin="8,0,0,0" VerticalAlignment="Center"/>
+   </DockPanel>
+  </StackPanel>
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+   <ItemsControl ItemsSource="{Binding Messages}">
+    <ItemsControl.ItemTemplate>
+     <DataTemplate>
+      <!-- 質問は右、回答は左に寄せます。左右で話し手が分かるとチャットとして読めます。 -->
+      <!-- 振り分けはIsFromUser（真偽値）で行います。話し手の文字列をここで比較すると、
+           Bui.Addinはこちらでコンパイルできないため、間違いに気づけません。 -->
+      <!-- 既定値はBorder要素の属性ではなく、必ずこのStyleのSetterとして書きます。
+           WPFの優先順位ではローカル値（要素の属性）がスタイルのトリガーより勝つため、
+           属性でHorizontalAlignment/Backgroundを設定するとDataTriggerのSetterが
+           一生効きません（レビュー指摘: 質問が常に左寄せ・透明のまま表示される不具合）。 -->
+      <Border Margin="0,0,0,10" CornerRadius="6" Padding="8" MaxWidth="460">
+       <Border.Style>
+        <Style TargetType="Border">
+         <Setter Property="HorizontalAlignment" Value="Left"/>
+         <Setter Property="Background" Value="Transparent"/>
+         <Style.Triggers>
+          <DataTrigger Binding="{Binding IsFromUser}" Value="True">
+           <Setter Property="HorizontalAlignment" Value="Right"/>
+           <Setter Property="Background" Value="#FFE3F2FD"/>
+          </DataTrigger>
+         </Style.Triggers>
+        </Style>
+       </Border.Style>
+       <StackPanel>
+       <TextBlock Text="{Binding Speaker}" FontWeight="SemiBold"/>
+       <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,2,0,0"/>
+       <TextBlock Text="{Binding FilterSummary}" TextWrapping="Wrap" Foreground="#FF0B6E4F" Margin="0,4,0,0"
+                  Visibility="{Binding CanSendToSearchTab, Converter={StaticResource BoolToVisibility}}"/>
+       <Button Content="この条件を検索タブへ送る" HorizontalAlignment="Left" Margin="0,4,0,0"
+               Click="OnSendPlanToSearchTab" Tag="{Binding}"
+               Visibility="{Binding CanSendToSearchTab, Converter={StaticResource BoolToVisibility}}"/>
+       </StackPanel>
+      </Border>
+     </DataTemplate>
+    </ItemsControl.ItemTemplate>
+   </ItemsControl>
+  </ScrollViewer>
+ </DockPanel>
+</Window>

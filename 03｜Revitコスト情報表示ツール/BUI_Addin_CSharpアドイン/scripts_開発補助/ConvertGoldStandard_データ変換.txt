@@ -1,0 +1,18 @@
+﻿【GoldStandardのExcelをCSVへ変換する】
+
+1. Visual Studio の「表示」→「ターミナル」を開く
+
+2. 次の1行を貼り付けて実行する
+   （出力先を変えたい場合は -OutputFolder のパスだけ書き換える）
+
+powershell -ExecutionPolicy Bypass -File ".\BUI_Addin_CSharpアドイン\scripts_開発補助\ConvertGoldStandard_データ変換.ps1" -OutputFolder "C:\BUI_PoCData"
+
+3. [OK] が13行出れば成功。次の件数になっていることを確認する
+   Products.csv        30 行
+   Product_Specs.csv  230 行
+   Manufacturers.csv    7 行
+
+4. BUIの「設定」タブを開き、「データフォルダ」に手順2で指定したフォルダを入れて保存する
+
+※ 出力先には必ず複製用のフォルダを指定してください。
+   会社の元データが入っているフォルダを指定しないでください。

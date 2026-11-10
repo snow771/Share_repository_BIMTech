@@ -1,0 +1,11 @@
+﻿<!-- 比較タブ：2～4候補の製品、単価、情報源、基準日と不足項目を色以外の文字で表示します。 -->
+<UserControl x:Class="Bui.UI.Tabs.CompareView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <Grid Margin="12"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+  <DockPanel><Button DockPanel.Dock="Right" Content="一覧をリセット" Command="{Binding ResetCompareTabCommand}" MinWidth="100" VerticalAlignment="Top" ToolTip="比較へ追加した製品の一覧を空にします。CSVとRevitには触れません。"/><StackPanel><TextBlock Text="製品比較（2～4件）" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="検索結果から比較へ追加します。" TextWrapping="Wrap"/></StackPanel></DockPanel>
+  <ListBox Grid.Row="1" ItemsSource="{Binding CompareItems}" Margin="0,8,0,0"><ListBox.ItemTemplate><DataTemplate><Border BorderBrush="Gray" BorderThickness="0,0,0,1" Padding="3,6"><StackPanel>
+   <TextBlock Text="{Binding Product.ProductName}" FontWeight="SemiBold" TextWrapping="Wrap"/><TextBlock Text="{Binding Product.ProductId, StringFormat=ID: {0}}"/><TextBlock Text="{Binding Product.Manufacturer, StringFormat=メーカー: {0}}" TextWrapping="Wrap"/>
+   <TextBlock Text="{Binding Product.Unit, StringFormat=製品単位: {0}}"/><TextBlock Text="{Binding Price.UnitPrice, StringFormat=単価: {0:N0}}"/><TextBlock Text="{Binding Price.Currency, StringFormat=通貨: {0}}"/><TextBlock Text="{Binding Price.InformationSource, StringFormat=情報源: {0}}" TextWrapping="Wrap"/><TextBlock Text="{Binding Price.ValidFrom, StringFormat=価格基準日: {0}}"/><TextBlock Text="{Binding Product.SourceUpdatedAt, StringFormat=製品データ更新: {0}}"/>
+   <ItemsControl ItemsSource="{Binding MissingFields}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding StringFormat=不足: {0}}" TextWrapping="Wrap"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+  </StackPanel></Border></DataTemplate></ListBox.ItemTemplate></ListBox>
+ </Grid>
+</UserControl>

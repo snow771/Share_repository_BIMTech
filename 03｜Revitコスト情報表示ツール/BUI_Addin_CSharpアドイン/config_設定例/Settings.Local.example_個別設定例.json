@@ -1,0 +1,38 @@
+{
+  "data": {
+    "provider": "GoldStandard",
+    "dataFolderPath": "C:\\BUI_PoCData",
+    "priceCsvPath": "C:\\BUI-PoC\\Prices.csv",
+    "assemblyCsvPath": "C:\\BUI-PoC\\Assemblies.csv",
+    "idAliasCsvPath": null,
+    "productColumns": {
+      "productIdColumn": "product_id",
+      "productNameColumn": "製品名",
+      "manufacturerColumn": "メーカー名",
+      "modelNumberColumn": "型番",
+      "unitColumn": "単位",
+      "updatedAtColumn": "更新日"
+    },
+    "priceColumns": {
+      "productIdColumn": "建材コード",
+      "unitPriceColumn": "単価",
+      "currencyColumn": "通貨",
+      "validFromColumn": "適用開始日",
+      "regionColumn": "地域",
+      "informationSourceColumn": "情報源"
+    },
+    "candidateFilterColumns": ["建材分類", "メーカー名", "製品名", "防火性能", "厚さ"],
+    "newProductColumns": ["建材分類", "メーカー名", "製品名"],
+    "newProductRequiredColumns": ["建材分類", "メーカー名", "製品名"],
+    "duplicateCompareColumns": ["建材分類", "メーカー名", "製品名"],
+    "newProductIdPrefix": "BM_NEW-",
+    "newProductIdDigits": 4
+  },
+  "llm": {
+    "enabled": false,
+    "provider": "Ollama",
+    "baseUrl": "http://localhost:11434",
+    "model": "",
+    "timeoutSeconds": 30
+  }
+}

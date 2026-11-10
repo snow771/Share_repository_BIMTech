@@ -1,0 +1,3 @@
+﻿display_group_id,display_group_name_ja,display_group_name_en,display_order,description
+BASIC_SPEC,基本仕様,Basic specifications,10,寸法、重量、密度、材質に近い基礎属性をRevitアドインに表示するグループ。
+PERFORMANCE,性能,Performance,20,熱、防火、強度、規格等の性能・認定属性を表示するグループ。

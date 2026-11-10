@@ -1,0 +1,59 @@
+<!-- 設定タブ：Task 11で永続化するCSVとローカル/社内LAN LLMの非秘密値だけを入力します。 -->
+<UserControl x:Class="Bui.UI.Tabs.SettingsView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Bui.UI">
+ <UserControl.Resources>
+  <ui:InverseBooleanConverter x:Key="InverseBool"/>
+ </UserControl.Resources>
+ <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12">
+  <!-- DataConnectionText / DataProblemsTextは見出し（CSV接続/SQL接続、CSV詳細/SQL詳細）を
+       ビューモデル側で組み立て済みの文字列として返すため、ここではStringFormatで固定しません。
+       固定するとSQL Server接続中でも「CSV接続:」「CSV詳細:」と表示され、原因を取り違えます。 -->
+  <!-- DataUpdatedTextは概要タブから移動しました。CSV固定ではないタイムスタンプのみを返すため、
+       ここでは「最終更新」というデータ元によらない中立なラベルを付けています。 -->
+  <TextBlock Text="{Binding SettingsStatusMessage, StringFormat=状態: {0}}" TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,0,0,2"/><TextBlock Text="{Binding DataConnectionText}" TextWrapping="Wrap" Margin="0,4,0,0"/><TextBlock Text="{Binding DataUpdatedText, StringFormat=最終更新: {0}}" TextWrapping="Wrap" Margin="0,2,0,0"/><TextBlock Text="{Binding DataProblemsText}" TextWrapping="Wrap" Margin="0,2,0,0"/><Separator Margin="0,8"/><TextBlock Text="データ設定" FontSize="16" FontWeight="SemiBold"/>
+  <TextBlock Text="データ元" FontWeight="SemiBold" Margin="0,6,0,2"/>
+  <!--
+    CSVとSQLを何度も行き来して検証するため、Revitを再起動せずに切り替わります。
+    切り替えは「切り替えて読み直す」を押したときだけ起こります。
+    ラジオを選んだだけでは変わりません。押し忘れに気づけるよう、
+    いま読んでいる出どころを下に必ず表示します。
+  -->
+  <RadioButton Content="CSVフォルダ" GroupName="DataSourceKind"
+               IsChecked="{Binding UseSqlServer, Converter={StaticResource InverseBool}}"/>
+  <RadioButton Content="SQL Server" GroupName="DataSourceKind"
+               IsChecked="{Binding UseSqlServer}" Margin="0,2,0,0"/>
+  <Grid Margin="16,4,0,0" IsEnabled="{Binding UseSqlServer}">
+   <Grid.ColumnDefinitions>
+    <ColumnDefinition Width="120"/>
+    <ColumnDefinition Width="*"/>
+   </Grid.ColumnDefinitions>
+   <Grid.RowDefinitions>
+    <RowDefinition Height="Auto"/>
+    <RowDefinition Height="Auto"/>
+    <RowDefinition Height="Auto"/>
+   </Grid.RowDefinitions>
+   <TextBlock Grid.Row="0" Grid.Column="0" Text="サーバー名" VerticalAlignment="Center"/>
+   <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SqlServerName, UpdateSourceTrigger=PropertyChanged}"/>
+   <TextBlock Grid.Row="1" Grid.Column="0" Text="データベース名" VerticalAlignment="Center" Margin="0,4,0,0"/>
+   <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SqlDatabaseName, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,0"/>
+   <TextBlock Grid.Row="2" Grid.Column="0" Text="認証" VerticalAlignment="Center" Margin="0,4,0,0"/>
+   <TextBlock Grid.Row="2" Grid.Column="1" Text="Windows認証（固定）" VerticalAlignment="Center" Margin="0,4,0,0"/>
+  </Grid>
+  <WrapPanel Margin="16,6,0,0">
+   <Button Content="接続を確認" Command="{Binding TestSqlConnectionCommand}" Margin="0,0,6,0"
+           IsEnabled="{Binding UseSqlServer}"
+           ToolTip="接続できるかだけを試します。データ元は切り替えません。"/>
+   <Button Content="切り替えて読み直す" Command="{Binding SwitchDataSourceCommand}"
+           ToolTip="選んでいるデータ元へ実際に切り替えます。Revitの再起動は不要です。"/>
+  </WrapPanel>
+  <TextBlock Text="{Binding DataSourceDescription, StringFormat=いま読んでいるデータ元: {0}}"
+             TextWrapping="Wrap" Margin="16,4,0,8" FontWeight="SemiBold"/>
+  <Separator Margin="0,4,0,8"/>
+  <TextBlock Text="データフォルダ（Products.csv などが入ったフォルダ）"/><DockPanel LastChildFill="True"><Button DockPanel.Dock="Right" Content="参照..." Width="72" Margin="6,0,0,0" Command="{Binding BrowseDataFolderCommand}"/><TextBox Text="{Binding DataFolderPath}" VerticalContentAlignment="Center"/></DockPanel><TextBlock Text="単価CSV" Margin="0,6,0,0"/><DockPanel LastChildFill="True"><Button DockPanel.Dock="Right" Content="参照..." Width="72" Margin="6,0,0,0" Command="{Binding BrowsePriceCsvCommand}"/><TextBox Text="{Binding PriceCsvPath}" VerticalContentAlignment="Center"/></DockPanel><TextBlock Text="構成CSV（未作成でも可）" Margin="0,6,0,0"/><DockPanel LastChildFill="True"><Button DockPanel.Dock="Right" Content="参照..." Width="72" Margin="6,0,0,0" Command="{Binding BrowseAssemblyCsvCommand}"/><TextBox Text="{Binding AssemblyCsvPath}" VerticalContentAlignment="Center"/></DockPanel>
+  <Separator Margin="0,12"/><TextBlock Text="ローカル / 社内LAN LLM" FontSize="16" FontWeight="SemiBold"/><CheckBox Content="LLMを使用する" IsChecked="{Binding IsLlmEnabled}"/>
+  <TextBlock Text="プロバイダー"/><ComboBox SelectedValuePath="Tag" SelectedValue="{Binding LlmProvider}"><ComboBoxItem Content="Ollama" Tag="Ollama"/><ComboBoxItem Content="OpenAI互換API" Tag="OpenAICompatible"/></ComboBox>
+  <TextBlock Text="接続URL" Margin="0,6,0,0"/><TextBox Text="{Binding LlmBaseUrl}"/><TextBlock Text="モデル（接続テスト後に一覧から選択、または直接入力）" Margin="0,6,0,0"/><ComboBox ItemsSource="{Binding AvailableLlmModels}" DisplayMemberPath="DisplayName" SelectedValuePath="Id" SelectedValue="{Binding LlmModel, Mode=TwoWay}" IsEditable="True" Text="{Binding LlmModel, UpdateSourceTrigger=PropertyChanged}"/><TextBlock Text="タイムアウト（秒）" Margin="0,6,0,0"/><TextBox Text="{Binding LlmTimeoutSeconds}"/>
+  <WrapPanel Margin="0,10,0,0"><Button Content="保存" Command="{Binding SaveSettingsCommand}" Margin="0,0,6,0"/><Button Content="再読込" Command="{Binding ReloadSettingsCommand}" Margin="0,0,6,0"/><Button Content="接続確認・モデル一覧取得" Command="{Binding TestLlmConnectionCommand}"/></WrapPanel>
+  <TextBlock Text="保存した設定は次回起動時に反映されます。認証情報はこの画面やログに表示しません。" TextWrapping="Wrap" Margin="0,8,0,0"/>
+ </StackPanel></ScrollViewer>
+</UserControl>

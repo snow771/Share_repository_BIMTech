@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  このファイルの目的:
+    Visual Studioで F5 を押したときに Revit 2025 を自動起動させます。
+
+  なぜ必要か:
+    BUIはクラスライブラリ（DLL）なので、そのままでは実行できず
+    「クラス ライブラリの出力タイプを持つプロジェクトを直接開始することはできません」
+    となります。外部プログラムとして Revit.exe を起動する指定が要ります。
+
+    Properties\launchSettings.json でも同じ指定をしていますが、
+    Visual Studio のバージョンによってはそちらが使われないことがあるため、
+    昔から確実に動くこの方式を併記しています。どちらか一方が効けば F5 は動きます。
+
+  Revitが別の場所にある場合:
+    下の StartProgram と StartWorkingDirectory を実際のパスに書き換えてください。
+
+  注意:
+    .user ファイルは通常Gitに入れませんが、会社PCで F5 をすぐ使えるように
+    このファイルだけ .gitignore で除外解除しています。
+-->
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files\Autodesk\Revit 2025\Revit.exe</StartProgram>
+    <StartWorkingDirectory>C:\Program Files\Autodesk\Revit 2025</StartWorkingDirectory>
+  </PropertyGroup>
+</Project>

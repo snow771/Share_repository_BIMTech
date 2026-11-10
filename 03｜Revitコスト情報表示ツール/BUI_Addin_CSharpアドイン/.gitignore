@@ -1,0 +1,22 @@
+**/bin/
+**/obj/
+.vs/
+config_設定例/Settings.Local_個別設定.json
+config_設定例/Secrets.Local_認証情報.json
+TestData_テストデータ/Company_会社データ/
+*.user
+# F5でRevitを自動起動させる設定。会社PCですぐ使えるようこれだけ追跡する。
+!src_ソース/Bui.Addin/Bui.Addin.csproj.user
+*.suo
+*.log
+*.bak
+*.tmp
+*.jsonl
+*.dll
+*.pdb
+*.deps.json
+*.rvt
+*.rfa
+*.csv
+TestResults/
+*.trx

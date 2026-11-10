@@ -1,0 +1,18 @@
+<!-- この画面は、承認済みA案の6タブを狭いRevitパネルでも切り替えて表示します。 -->
+<Page x:Class="Bui.UI.BuiDockPane"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:tabs="clr-namespace:Bui.UI.Tabs"
+      Title="BUI" MinWidth="280"
+      Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+    <Grid Margin="6">
+        <TabControl KeyboardNavigation.TabNavigation="Local">
+            <TabItem Header="概要"><tabs:OverviewView /></TabItem>
+            <TabItem Header="検索"><tabs:SearchView /></TabItem>
+            <TabItem Header="比較"><tabs:CompareView /></TabItem>
+            <TabItem Header="点検"><tabs:AuditView /></TabItem>
+            <TabItem Header="設定"><tabs:SettingsView /></TabItem>
+            <TabItem Header="ver情報"><tabs:VersionInfoView /></TabItem>
+        </TabControl>
+    </Grid>
+</Page>

@@ -1,0 +1,72 @@
+﻿product_id,product_name,manufacturer_id,material_category_id,primary_source_id,product_url,status_id,note
+ALC-AK-01,ヘーベル（厚形・平パネル）,MFR-ASAHIKASEI,MAT-ALC,SRC-ASAHI-TECH,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-AK-02,ヘーベルライト（薄形）,MFR-ASAHIKASEI,MAT-ALC,SRC-ASAHI-TECH,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-AK-03,アートミュール（意匠パネル）,MFR-ASAHIKASEI,MAT-ALC,SRC-ASAHI-TECH,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-AK-04,平パネル,MFR-ASAHIKASEI,MAT-ALC,SRC-ASAHI-TECH,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-AK-05,へーベル間仕切壁,MFR-ASAHIKASEI,MAT-ALC,SRC-ASAHI-TECH,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-CLION-01,クリオン（厚形・平パネル）,MFR-CLION,MAT-ALC,SRC-CLION-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-CLION-02,クリオンライト（薄形）,MFR-CLION,MAT-ALC,SRC-CLION-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-CLION-03,クリオンパネル,MFR-CLION,MAT-ALC,SRC-CLION-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-CLION-04,クリオンライトファッション,MFR-CLION,MAT-ALC,SRC-CLION-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+ALC-CLION-05,クリオンパネル,MFR-CLION,MAT-ALC,SRC-CLION-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-CHIYODA-01,チヨダせっこうボード,MFR-CHIYODA,MAT-GYPSUM-BOARD,SRC-CHIYODA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-CHIYODA-02,チヨダ強化せっこうボード,MFR-CHIYODA,MAT-GYPSUM-BOARD,SRC-CHIYODA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-CHIYODA-03,チヨダスーパーボード,MFR-CHIYODA,MAT-GYPSUM-BOARD,SRC-CHIYODA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-CHIYODA-04,チヨダ高気密ボード,MFR-CHIYODA,MAT-GYPSUM-BOARD,SRC-CHIYODA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-CHIYODA-05,さわやかボード,MFR-CHIYODA,MAT-GYPSUM-BOARD,SRC-CHIYODA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-YOSHINO-01,タイガーボード,MFR-YOSHINO,MAT-GYPSUM-BOARD,SRC-YOSHINO-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-YOSHINO-02,タイガーボード・タイプZ,MFR-YOSHINO,MAT-GYPSUM-BOARD,SRC-YOSHINO-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-YOSHINO-03,タイガースーパーハード,MFR-YOSHINO,MAT-GYPSUM-BOARD,SRC-YOSHINO-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-YOSHINO-04,タイガーハイパーハード,MFR-YOSHINO,MAT-GYPSUM-BOARD,SRC-YOSHINO-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+BD-YOSHINO-05,タイガーグラスロック,MFR-YOSHINO,MAT-GYPSUM-BOARD,SRC-YOSHINO-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-SANGETSU-01,Sフロア,MFR-SANGETSU,MAT-VINYL-FLOOR,SRC-SANGETSU-FLOOR,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-SANGETSU-02,ノンスキッド,MFR-SANGETSU,MAT-VINYL-FLOOR,SRC-SANGETSU-FLOOR,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-SANGETSU-03,わんにゃん招消臭フロア,MFR-SANGETSU,MAT-VINYL-FLOOR,SRC-SANGETSU-FLOOR,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TAJIMA-01,パーマリューム,MFR-TAJIMA,MAT-VINYL-FLOOR,SRC-TAJIMA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TAJIMA-02,メディウェル,MFR-TAJIMA,MAT-VINYL-FLOOR,SRC-TAJIMA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TAJIMA-03,消臭クリンセフ,MFR-TAJIMA,MAT-VINYL-FLOOR,SRC-TAJIMA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TAJIMA-04,移動耐荷重用フロア,MFR-TAJIMA,MAT-VINYL-FLOOR,SRC-TAJIMA-MAIN,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TOLI-01,フロアリューム プレーン,MFR-TOLI,MAT-VINYL-FLOOR,SRC-TOLI-FLOOR,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TOLI-02,NSシート NS800,MFR-TOLI,MAT-VINYL-FLOOR,SRC-TOLI-FLOOR,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+FL-TOLI-03,ホスピリュームNW,MFR-TOLI,MAT-VINYL-FLOOR,SRC-TOLI-FLOOR,,,元データには製品ライフサイクル状態・単一product_urlの確定情報なし。属性行のURLはProduct_Specs.source_url_snapshotに保持。
+CAM_219_1,セラミクリーン,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-1,https://www.sk-kaken.co.jp/product/exterior-finish-materials/ceramiclean/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_2,レナフレンド,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-2,https://www.sk-kaken.co.jp/product/exterior-finish-materials/lenafriend/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_3,水性ソフトサーフSG,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-3,https://www.sk-kaken.co.jp/product/undercoating-materials/softsurf-sg/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_4,キクスイ セルナノフィラーＤ,MFR-KIKUSUI,MAT-COATING,SRC-WEB-CAM-219-4,https://www.kikusui-chem.co.jp/products/post_40.html,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_5,シポカケンDO,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-5,https://www.sk-kaken.co.jp/product/exterior-finish-materials/sipokaken/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_6,レナコート,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-6,https://www.sk-kaken.co.jp/product/interior-finish-materials/lenacoat/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_7,ポルトガードAF,MFR-CENTRAL-CONCRETE,MAT-COATING,SRC-WEB-CAM-219-7,https://www.central-c.co.jp/wp-content/themes/central-c/PDF/AF-out.pdf,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_8,セラタイトF,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-8,https://www.sk-kaken.co.jp/product/overcoat-materials/ceratight-f/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_9,ランデックスコードWS,MFR-DAINICHI-GIKEN,MAT-COATING,SRC-WEB-CAM-219-9,https://www.dainichi-g.co.jp/lineup/wssosuizai/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_10,エコフレッシュ,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-10,https://www.sk-kaken.co.jp/product/interior-finish-materials/ecofresh/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_11,ジョリパットJP100/エンシェントブリックS,MFR-AICA,MAT-COATING,SRC-WEB-CAM-219-11,https://www.aica.co.jp/products/detail/wall-material/?pattern_name=%E3%82%A8%E3%83%B3%E3%82%B7%E3%82%A7%E3%83%B3%E3%83%88%E3%83%96%E3%83%AA%E3%83%83%E3%82%AF%EF%BC%B3&series_number=JP-100,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_12,ジョリパットクリーンウォッシュJC-900C,MFR-AICA,MAT-COATING,SRC-WEB-CAM-219-12,https://www.aica.co.jp/products/wall-material/jolypate/jc-900c/feature/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_13,ベルアートSi/プレスS,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-13,https://www.sk-kaken.co.jp/product/exterior-finish-materials/bellart-si/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_14,ジョリパットJQ200/エンシェントブリックS,MFR-AICA,MAT-COATING,SRC-WEB-CAM-219-14,https://www.aica.co.jp/products/wall-material/jolypate/jq-200/feature/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_15,サンドエレガンテ,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-15,https://www.sk-kaken.co.jp/nfd/products/item/sandelegante/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_219_16,SKタイカコード,MFR-SK-KAKEN,MAT-COATING,SRC-WEB-CAM-219-16,https://fai.sk-kaken.co.jp/tighca_coat,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_214_1,アルミスパンドレル,MFR-ASAHI-KINZOKU,MAT-FABRICATED-METAL,SRC-WEB-CAM-214-1,https://www.asahi-kinzoku.co.jp/product/extrusion.html,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_1,ポンリューム プロ,MFR-SINCOL,MAT-FLOOR,SRC-WEB-CAM-220-1,,,237行目以降の追加GoldStandardデータから作成。元ExcelのサイトURLは空欄。メーカーは製品名から確認。
+CAM_220_2,QA,MFR-TAKIRON-CI,MAT-FLOOR,SRC-WEB-CAM-220-2,https://www.takiron-ci.co.jp/product/product_04/pdf/flooring_m.pdf,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_3,テラウッド,MFR-TOLI,MAT-FLOOR,SRC-WEB-CAM-220-3,https://www.toli.co.jp/product/search/floor_product/185,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_4,タイルカーペット,MFR-TOLI,MAT-FLOOR,SRC-WEB-CAM-220-4,https://www.toli.co.jp/product/search/carpet_number/GA163,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_5,エポルカフロア,MFR-ORIENT,MAT-FLOOR,SRC-WEB-CAM-220-5,https://www.orient-corp.jp/index.php/1157-2/1273-2/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_6,アーキスペックフロアー,MFR-PANASONIC-HS,MAT-FLOOR,SRC-WEB-CAM-220-6,https://sumai.panasonic.jp/interior/floor/lineup/flooring.php?name=6mm_reformfloor_naturalwoodtype,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_7,Dフロア,MFR-LIXIL,MAT-FLOOR,SRC-WEB-CAM-220-7,https://webcatalog.lixil.co.jp/iportal/CatalogViewInterfaceStartUpAction.do?method=startUp&mode=PAGE&catalogId=16625860000&pageGroupId=169&volumeID=LXL13001&designID=newinter&pagePosition=L,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_8,ジョイハードフロア,MFR-PANASONIC-HS,MAT-FLOOR,SRC-WEB-CAM-220-8,https://sumai.panasonic.jp/interior/floor/lineup/flooring.php?name=veritis_double,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_9,アネックスST,MFR-ASAHI-WOODTEC,MAT-FLOOR,SRC-WEB-CAM-220-9,https://www.woodtec.co.jp/products/lineup/flooring/anex/st/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_10,NT-350,MFR-SANGETSU,MAT-FLOOR,SRC-WEB-CAM-220-10,https://www.sangetsu.co.jp/product/detail/NT311S/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_11,プロス,MFR-SINCOL,MAT-WALL-CEILING,SRC-WEB-CAM-220-11,https://sincol-group.jp/digitalcatalog/sl2010/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_12,1000番台,MFR-SINCOL,MAT-WALL-CEILING,SRC-WEB-CAM-220-12,https://sincol-group.jp/products/search/detail/BB8001,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_13,タイガーボード,MFR-YOSHINO,MAT-WALL-CEILING,SRC-WEB-CAM-220-13,https://yoshino-gypsum.com/prdt/%E3%82%BF%E3%82%A4%E3%82%AC%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%89,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_14,不燃タイガーボード,MFR-YOSHINO,MAT-WALL-CEILING,SRC-WEB-CAM-220-14,https://yoshino-gypsum.com/prdt/%E4%B8%8D%E7%87%83%E3%82%BF%E3%82%A4%E3%82%AC%E3%83%BC%E3%83%9C%E3%83%BC%E3%83%899.5,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_18,セラール,MFR-AICA,MAT-WALL,SRC-WEB-CAM-220-18,https://www.aica.co.jp/products/wall/melamine-n-veneer/cerarl_virutect/feature/,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_20,YPEタイプ,MFR-TAISEI-BANKYO,MAT-FLOOR,SRC-WEB-CAM-220-20,https://www.bankyofloor.com/product/cat01/entry-63.html,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_21,WPタイプ,MFR-TAISEI-BANKYO,MAT-FLOOR,SRC-WEB-CAM-220-21,https://www.bankyofloor.com/product/cat03/entry-145.html,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_22,S12・WI,MFR-YOSHINO,MAT-WALL,SRC-WEB-CAM-220-22,https://yoshino-gypsum.com/system/S12%E3%83%BBWI,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_23,ハイパーウォールZ・WI,MFR-YOSHINO,MAT-WALL,SRC-WEB-CAM-220-23,https://yoshino-gypsum.com/system/%E3%83%8F%E3%82%A4%E3%83%91%E3%83%BC%E3%82%A6%E3%82%A9%E3%83%BC%E3%83%ABZ%E3%83%BBWI,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_24,A-2000・WI,MFR-YOSHINO,MAT-WALL,SRC-WEB-CAM-220-24,https://yoshino-gypsum.com/system/A-2000%E3%83%BBWI,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_25,クリーンOAフロア　TN-50,MFR-FUKUVI,MAT-FLOOR,SRC-WEB-CAM-220-25,https://www.fukuvi.co.jp/product/17/01/243,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_26,OP2-3R,MFR-OM-KIKI,MAT-FLOOR,SRC-WEB-CAM-220-26,https://www.omrex.co.jp/products/products/post-4.html,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+CAM_220_27,OAフロア　FP3000,MFR-FUKUVI,MAT-FLOOR,SRC-WEB-CAM-220-27,https://www.fukuvi.co.jp/product/17/01/241,,237行目以降の追加GoldStandardデータから作成。メーカーはサイトURLから特定。
+BM_NEW-0001,LGS65,MFR-0001,CAT-0002,,,,

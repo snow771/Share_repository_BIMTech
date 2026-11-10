@@ -1,0 +1,44 @@
+﻿確認項目,結果,詳細,Column4,Column5
+元ファイル,OK,D25-602🛜GoldStandard01_maruyama.xlsx_FMS_260710.xlsx を基準に再構築,,
+除外シート,OK,「調査リスト」のみユーザー指定により除外,,
+元GoldStandardデータ行数,OK,230,,
+Product_Specs移行行数,OK,230,,
+製品数,OK,30,,
+Spec_Master属性数,OK,18,,
+Sources件数,OK,元ソース13件 + GoldStandard参照から補完14件 = 27件,,
+元GoldStandardで参照されるsource_id,OK,25種類すべてSourcesに存在するよう補完,,
+元product_id空欄,注意,1行（商品名：タイガースーパーハード）,,
+SQL用product_id補完,OK,商品名が一意に一致するBD-YOSHINO-03を補完。元の空欄はoriginal_product_idに保持,,
+元gold_id空欄,注意,18,,
+元gold_id重複,注意,"GS-008, GS-009",,
+SQL用gold_id補正,OK,元IDはoriginal_gold_idに保存。重複/空欄の20行のみGS-MIG-xxxxを採番,,
+Product_Variants,準備済,元データに仕様組合せIDがないため、テーブルとvariant_id列のみ作成。既存Product_Specsのvariant_idは空欄で保持,,
+Product_Images,準備済,元データに画像URL/画像ファイルを明示する列がないため空テーブル。『サイト』URLはProduct_Specs.source_url_snapshotに全件保持,,
+Legacy_Notes,OK,旧設計4シートの非空セル309件を原文保存,,
+Publication_date,OK,元ソース管理表の発行日を日付型で保持,,
+補足,注意,複数認定書をカンマ区切りで1つのsource_idにした元データが1種類あり、現段階では複合Sourceとしてそのまま保持。将来は中間テーブル化を推奨,,
+元シート,元項目,移行先テーブル,移行先項目,備考
+GoldStandard一覧兼属性値リンク表シート(2),gold_id,Product_Specs,original_gold_id / gold_id,元ID保存＋SQL用一意化
+,product_id,Product_Specs,original_product_id / product_id,元値保存。空欄1行のみ一意な製品名から補完
+,product_name,Products,product_name,product_id単位で一意化
+,material_category,Material_Categories / Products,category_name_ja / material_category_id,マスター化
+,spec_key,Product_Specs,spec_key,Spec_Master.spec_keyへ参照予定
+,value_type,Product_Specs,value_type,そのまま
+,value_number,Product_Specs,value_number,そのまま
+,value_string,Product_Specs,value_string,そのまま
+,unit,Product_Specs,unit,そのまま
+,source_id,Product_Specs / Sources,source_id,未登録source_idもSourcesへ補完
+,source_page,Product_Specs,source_page,そのまま
+,table_no,Product_Specs,table_no,そのまま
+,source_text,Product_Specs,source_text,そのまま
+,extraction_condition,Product_Specs,extraction_condition,そのまま
+,reliability_rank,Product_Specs / Reliability_Ranks,original_reliability_rank / reliability_rank_id,原値と正規化IDを両方保持
+,reviewer,Product_Specs,reviewer,そのまま
+,reviewed_date,Product_Specs,reviewed_date,日付型へ変換
+,status,Product_Specs / Status_Master,original_status / status_id,原値と正規化IDを両方保持
+,note,Product_Specs,note,そのまま
+,サイト,Product_Specs,source_url_snapshot,全行そのまま保持
+,先頭〇列,Product_Specs,original_check_flag,全行そのまま保持
+speck_key辞書マスター,全14列,Spec_Master,各対応列,元マスターを基準。旧辞書にだけあるspec_keyも統合
+ソース管理表シート,全11列,Sources,各対応列,manufacturer/reliability/statusのみFK用IDを追加し、元文字列も保持
+旧4シート,設計メモ・旧辞書・命名規則等,Legacy_Notes,source_sheet/cell_address/original_value,非空セルを原文保存

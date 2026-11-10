@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>BUI</Name>
+    <Assembly>{{BUI_ASSEMBLY_PATH}}</Assembly>
+    <AddInId>62ba1d8c-426d-45f5-b1b9-9b6407284423</AddInId>
+    <FullClassName>Bui.Application.BuiApplication</FullClassName>
+    <VendorId>STARTSCAM</VendorId>
+    <VendorDescription>スターツCAM株式会社</VendorDescription>
+  </AddIn>
+</RevitAddIns>

@@ -1,0 +1,8 @@
+﻿status_id,status_group,status_code,status_name_ja,status_name_en,description,display_order,origin
+STATUS-CONFIRMED,record,confirmed,確認済,Confirmed,元データのstatusとして使用。,10,original
+STATUS-PENDING,record,pending,確認待ち,Pending,旧Gold Standard (2) の候補値。補完ソースにも使用。,20,original/design
+STATUS-CONFLICT,record,conflict,競合・要調整,Conflict,旧Gold Standard (2) の候補値。,30,original
+STATUS-DRAFT,record,draft,作成中,Draft,旧spec_Key辞書のpiece_weightで使用。,40,original
+STATUS-ACTIVE,product_lifecycle,active,現行,Active,製品ライフサイクル用。現時点の製品データには未設定。,50,design_added
+STATUS-DISCONTINUED,product_lifecycle,discontinued,廃番,Discontinued,製品ライフサイクル用。現時点の製品データには未設定。,60,design_added
+STATUS-INACTIVE,product_lifecycle,inactive,無効,Inactive,将来の論理削除・非表示用。,70,design_added

@@ -1,0 +1,15 @@
+﻿# This is a Revit shared parameter file.
+# Do not edit manually.
+*META	VERSION	MINVERSION
+META	2	1
+*GROUP	ID	NAME
+GROUP	1	BUI
+*PARAM	GUID	NAME	DATATYPE	DATACATEGORY	GROUP	VISIBLE	DESCRIPTION	USERMODIFIABLE	HIDEWHENNOVALUE
+PARAM	569e8df1-4ca6-448c-8fb9-496cb39b4458	Product_ID	TEXT		1	1	BUI product identifier	1	0
+PARAM	883267b2-8771-498a-a77e-a698e06b3453	Assembly_ID	TEXT		1	1	BUI assembly identifier	1	0
+PARAM	e10c429c-9ee1-4813-9e59-9178991af83a	Product_ID（仕上）	TEXT		1	1	BUI layer product identifier (finish)	1	0
+PARAM	3fcefbeb-ddcc-4f74-bd90-d8be05baf555	Product_ID（下地①）	TEXT		1	1	BUI layer product identifier (substrate 1)	1	0
+PARAM	ba9206e7-d7b1-47aa-894f-1eb71ceb4c53	Product_ID（下地②）	TEXT		1	1	BUI layer product identifier (substrate 2)	1	0
+PARAM	0cef352d-edbb-441c-9bd8-43ecf239eb4d	Product_ID（下地③）	TEXT		1	1	BUI layer product identifier (substrate 3)	1	0
+PARAM	5b008bd1-2630-4295-ab09-f7cf4cdbf764	Product_ID（下地④）	TEXT		1	1	BUI layer product identifier (substrate 4)	1	0
+PARAM	79b24248-89df-460d-bbcc-95af64515a63	Product_ID（下地⑤）	TEXT		1	1	BUI layer product identifier (substrate 5)	1	0

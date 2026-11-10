@@ -1,0 +1,270 @@
+<!-- 検索タブ：CSVの決定的検索と型付きの完全一致フィルターを主とし、結果を比較へ渡します。 -->
+<!-- パネルが狭いため単一列で縦に積み、全体をスクロール領域にまとめています（Task 10で候補選択・新規登録を追加）。 -->
+<UserControl x:Class="Bui.UI.Tabs.SearchView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Bui.UI">
+ <UserControl.Resources>
+  <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+ </UserControl.Resources>
+ <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <StackPanel Margin="12">
+   <TextBlock Text="製品検索" FontSize="16" FontWeight="SemiBold"/>
+
+   <!-- 対象要素の表示：選択中の要素のカテゴリ・タイプ・同一タイプ件数を示します。 -->
+   <TextBlock TextWrapping="Wrap" FontWeight="SemiBold" Margin="0,8,0,6">
+    <Run Text="対象: "/><Run Text="{Binding Selection.CategoryName, Mode=OneWay}"/>
+    <Run Text=" / "/><Run Text="{Binding Selection.TypeName, Mode=OneWay}"/>
+    <Run Text=" / 同一タイプ "/><Run Text="{Binding Selection.SameTypeCount, Mode=OneWay}"/><Run Text="件"/>
+   </TextBlock>
+   <!-- 「現在のProduct_ID」の6層分の一覧はここには出しません。 -->
+   <!-- 下の「層への割り当て」に、層ごとの現在値と書き込む値が並んで出ています。 -->
+   <!-- 付与範囲。既定は同一タイプすべて。1件だけ付けたいときに切り替えます。 -->
+   <TextBlock Text="付与範囲" Margin="0,6,0,2"/>
+   <ComboBox SelectedValue="{Binding AssignmentTarget}" SelectedValuePath="Tag" Margin="0,0,0,6">
+    <ComboBoxItem Content="同一タイプすべて" Tag="{x:Static ui:ProductAssignmentTarget.SameTypeAll}"/>
+    <ComboBoxItem Content="選択部材のみ" Tag="{x:Static ui:ProductAssignmentTarget.SelectionOnly}"/>
+   </ComboBox>
+
+   <!-- 候補の絞り込み：設定で決めた列ごとにComboBoxを並べ、絞り込んで候補を再取得します。 -->
+   <ItemsControl ItemsSource="{Binding CandidateFilters}">
+    <ItemsControl.ItemTemplate>
+     <DataTemplate>
+      <DockPanel Margin="0,0,0,4">
+       <TextBlock DockPanel.Dock="Left" Text="{Binding Column}" Width="90" VerticalAlignment="Center"/>
+       <ComboBox ItemsSource="{Binding Values}" SelectedItem="{Binding Selected, Mode=TwoWay}"/>
+      </DockPanel>
+     </DataTemplate>
+    </ItemsControl.ItemTemplate>
+   </ItemsControl>
+   <WrapPanel Margin="0,4,0,0">
+    <Button Content="絞り込む" Command="{Binding RefreshCandidatesCommand}" Margin="0,0,6,0"/>
+    <Button Content="絞り込みをリセット" Command="{Binding ClearCandidateFiltersCommand}" Margin="0,0,6,0"/>
+    <!-- 絞り込みだけでなく、検索文字列・検索結果・選んだ候補もまとめて消します。 -->
+    <Button Content="このタブを全部リセット" Command="{Binding ResetSearchTabCommand}"
+            ToolTip="絞り込み・検索文字列・検索結果・選択中の候補をすべて初期状態に戻します。CSVとRevitには触れません。"/>
+   </WrapPanel>
+   <TextBlock Text="{Binding CandidateSummary}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+
+   <!-- 候補一覧：絞り込み結果から1件選び、選択中要素と同一タイプの全インスタンスへ付与します。 -->
+   <ListBox ItemsSource="{Binding Candidates}" SelectedItem="{Binding SelectedCandidate, Mode=TwoWay}" MaxHeight="180">
+    <ListBox.ItemTemplate>
+     <DataTemplate>
+      <TextBlock TextWrapping="Wrap">
+       <Run Text="{Binding ProductName, Mode=OneWay}"/>
+       <Run Text=" / "/><Run Text="{Binding Manufacturer, Mode=OneWay}"/>
+       <Run Text=" / "/><Run Text="{Binding ModelNumber, Mode=OneWay}"/>
+      </TextBlock>
+     </DataTemplate>
+    </ListBox.ItemTemplate>
+   </ListBox>
+   <!-- 選択中の候補の詳細（仕様7.1-4）。付与する前にProduct_IDと主要項目を確認できるようにします。 -->
+   <Border BorderBrush="#C0C0C0" BorderThickness="1" Padding="6" Margin="0,6,0,0">
+    <StackPanel>
+     <TextBlock Text="選択中の候補" FontWeight="SemiBold"/>
+     <!-- 未選択のときはSelectedCandidate自体がnullで経路が解決できないため、FallbackValueで案内します。 -->
+     <TextBlock Text="{Binding SelectedCandidate.ProductId, Mode=OneWay, StringFormat=Product_ID: {0}, FallbackValue=候補を選択してください。}"
+                TextWrapping="Wrap"/>
+     <TextBlock Text="{Binding SelectedCandidate.ProductName, Mode=OneWay, StringFormat=製品名: {0}}" TextWrapping="Wrap"/>
+     <TextBlock Text="{Binding SelectedCandidate.Manufacturer, Mode=OneWay, StringFormat=メーカー: {0}}" TextWrapping="Wrap"/>
+     <TextBlock Text="{Binding SelectedCandidate.ModelNumber, Mode=OneWay, StringFormat=型番: {0}}" TextWrapping="Wrap"/>
+     <TextBlock Text="{Binding SelectedCandidate.Unit, Mode=OneWay, StringFormat=単位: {0}}" TextWrapping="Wrap"/>
+    </StackPanel>
+   </Border>
+
+   <!-- 層の割り当て:どの層がどのパラメータへ入るかを、書き込む前に必ず見せます。 -->
+   <!-- 室内側がどちら端かはRevitのカテゴリで決まり、こちらでは検証できません。 -->
+   <!-- 対応が意図と違えば、利用者がこの表で気づけるようにしています。 -->
+   <TextBlock Text="層への割り当て" FontWeight="SemiBold" Margin="0,10,0,2"/>
+   <TextBlock Text="{Binding LayerWarning}" TextWrapping="Wrap" Foreground="#FFB00020" Margin="0,0,0,4">
+    <TextBlock.Style>
+     <Style TargetType="TextBlock">
+      <Setter Property="Visibility" Value="Visible"/>
+      <Style.Triggers>
+       <DataTrigger Binding="{Binding LayerWarning}" Value="">
+        <Setter Property="Visibility" Value="Collapsed"/>
+       </DataTrigger>
+      </Style.Triggers>
+     </Style>
+    </TextBlock.Style>
+   </TextBlock>
+   <ListBox ItemsSource="{Binding LayerRows}" SelectedItem="{Binding SelectedLayerRow, Mode=TwoWay}"
+            MaxHeight="180" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    <ListBox.ItemTemplate>
+     <DataTemplate>
+      <StackPanel Margin="2,4">
+       <TextBlock FontWeight="SemiBold" TextWrapping="Wrap">
+        <Run Text="{Binding SlotName, Mode=OneWay}"/>
+       </TextBlock>
+       <TextBlock TextWrapping="Wrap" Foreground="#FF616161">
+        <Run Text="{Binding LayerLabel, Mode=OneWay}"/>
+        <Run Text="  "/><Run Text="{Binding MaterialName, Mode=OneWay}"/>
+        <Run Text="  "/><Run Text="{Binding ThicknessMillimeters, Mode=OneWay}"/><Run Text=" mm"/>
+       </TextBlock>
+       <TextBlock TextWrapping="Wrap">
+        <Run Text="現在: "/><Run Text="{Binding CurrentProductId, Mode=OneWay}"/>
+        <Run Text="  →  "/><Run Text="{Binding SelectedProductId, Mode=OneWay}"/>
+       </TextBlock>
+      </StackPanel>
+     </DataTemplate>
+    </ListBox.ItemTemplate>
+   </ListBox>
+   <Button Content="選んだ候補をこの層に入れる" Command="{Binding ApplySelectedCandidateToLayerCommand}"
+           Margin="0,4,0,0"
+           ToolTip="候補一覧で製品を選び、上の表で層を選んでから押します。IDを手で打つ必要はありません。"/>
+
+   <!-- 付与は「プレビュー → 内訳を確認 → 実行」の2操作です（仕様8.1）。 -->
+   <!-- 実行ボタンをこのタブに置かないと、「実行ボタンを押してください」と案内されたのに -->
+   <!-- 画面上にそのボタンが無い状態になります（概要タブにしかありませんでした）。 -->
+   <Button Content="手順1: 付与する内容を確認する" Command="{Binding PreviewLayerAssignmentCommand}" Margin="0,6,0,0"
+           ToolTip="ここではまだRevitに書き込みません。下の内訳を見てから手順2を押します。"/>
+   <TextBlock Text="{Binding IdentifierPreviewText}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+   <!-- プレビューが手元に無いときは押せなくします。AsyncCommandは「実行中かどうか」しか見ないため、 -->
+   <!-- 使い切った内訳のまま押せてしまい、CSVに無いProduct_IDをRevitへ書き込む事故になり得ます。 -->
+   <Button Content="手順2: この内容をRevitに書き込む" Command="{Binding ApplyIdentifierPreviewCommand}"
+           IsEnabled="{Binding HasPendingIdentifierPreview}" Margin="0,4,0,4"
+           ToolTip="確認ダイアログで「はい」を選んだ場合だけRevitとCSVを更新します。"/>
+   <!-- 実行結果はここに出します。以前は画面のずっと下にあり、押した本人からは -->
+   <!-- 何も起きていないように見えていました。押した場所のすぐ下に出します。 -->
+   <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Margin="0,2,0,0" FontWeight="SemiBold"/>
+   <!-- 検索タブの付与は「プロジェクト全体の同じタイプ」が対象です。 -->
+   <!-- 対象範囲を選びたい場合は概要タブを使うため、ここに明記します。 -->
+   <TextBlock TextWrapping="Wrap" Foreground="#FF616161" Margin="0,4,0,10"
+              Text="※ 付与範囲で対象を選べます。件数と、どの層がどのパラメータへ入るかは手順1の内訳で確認できます。"/>
+
+   <!-- 既存の文字列検索：製品名・メーカー・型番などの部分一致検索と、型付きの完全一致フィルターです。 -->
+   <DockPanel Margin="0,8">
+    <Button DockPanel.Dock="Right" Content="取消" Command="{Binding SearchCommand.CancelCommand}" MinWidth="52" Margin="6,0,0,0"/>
+    <Button DockPanel.Dock="Right" Content="検索" Command="{Binding SearchCommand}" MinWidth="64" Margin="6,0,0,0"/>
+    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="製品名・メーカー・型番など"/>
+   </DockPanel>
+   <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+    <TextBlock Text="メーカー" VerticalAlignment="Center"/>
+    <TextBox Text="{Binding ManufacturerFilter}" Width="90" Margin="5,0,10,0"/>
+    <TextBlock Text="単位" VerticalAlignment="Center"/>
+    <TextBox Text="{Binding UnitFilter}" Width="55" Margin="5,0,0,0"/>
+   </StackPanel>
+   <ListBox ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedSearchProduct}" MaxHeight="220" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    <ListBox.ItemTemplate>
+     <DataTemplate>
+      <StackPanel Margin="2,4">
+       <TextBlock Text="{Binding ProductName}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+       <TextBlock Text="{Binding ProductId, StringFormat=ID: {0}}"/>
+       <TextBlock Text="{Binding Manufacturer}" TextWrapping="Wrap"/>
+      </StackPanel>
+     </DataTemplate>
+    </ListBox.ItemTemplate>
+   </ListBox>
+   <StackPanel>
+    <Button Content="選択製品を比較へ追加" Command="{Binding AddComparisonCommand}" HorizontalAlignment="Left" Margin="0,6"/>
+    <TextBlock Text="{Binding LlmSummary}" TextWrapping="Wrap"/>
+    <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap"/>
+   </StackPanel>
+
+   <!-- 新規登録：候補に無い製品をCSVへ追記します。折りたたんでおき、通常は候補選択の邪魔をしません。 -->
+   <Expander Header="候補が無いので新規登録" Margin="0,10,0,0">
+    <StackPanel Margin="0,6,0,0">
+     <!--
+       読み取り専用のデータ元（SQL接続中）では、押せないボタンを黙って置きません。
+       なぜ押せないかと、どうすれば押せるかを必ず添えます。
+     -->
+     <TextBlock Text="{Binding DataSourceReadOnlyNotice}" TextWrapping="Wrap"
+                Foreground="#FFB00020" FontWeight="SemiBold" Margin="0,0,0,6"
+                Visibility="{Binding IsDataSourceReadOnly, Converter={StaticResource BoolToVisibility}}"/>
+     <StackPanel IsEnabled="{Binding CanRegisterNewProductHere}">
+     <!--
+       メーカー名と建材分類はマスタ表を参照する欄です（Products.csvはIDしか持ちません）。
+       自由入力にすると、全部入力し終えてから「マスタに登録されていません」と断られ、
+       その先へ進む道がありませんでした。既定は一覧からの選択にし、
+       本当に新しいときだけチェックを入れて名前を入力します。
+     -->
+     <ItemsControl ItemsSource="{Binding NewProductFields}">
+      <ItemsControl.ItemTemplate>
+       <DataTemplate>
+        <StackPanel Margin="0,0,0,6">
+         <DockPanel>
+          <TextBlock DockPanel.Dock="Left" Text="{Binding Column}" Width="90" VerticalAlignment="Center"/>
+          <!-- 自由入力の欄（マスタを参照しない列） -->
+          <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}">
+           <TextBox.Style>
+            <Style TargetType="TextBox">
+             <Setter Property="Visibility" Value="Visible"/>
+             <Style.Triggers>
+              <DataTrigger Binding="{Binding IsMasterBacked}" Value="True">
+               <Setter Property="Visibility" Value="Collapsed"/>
+              </DataTrigger>
+             </Style.Triggers>
+            </Style>
+           </TextBox.Style>
+          </TextBox>
+          <!-- マスタ欄：既存から選ぶ -->
+          <ComboBox ItemsSource="{Binding AvailableValues}"
+                    SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                    IsEditable="False">
+           <ComboBox.Style>
+            <Style TargetType="ComboBox">
+             <Setter Property="Visibility" Value="Collapsed"/>
+             <Style.Triggers>
+              <MultiDataTrigger>
+               <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding IsMasterBacked}" Value="True"/>
+                <Condition Binding="{Binding RegisterAsNew}" Value="False"/>
+               </MultiDataTrigger.Conditions>
+               <Setter Property="Visibility" Value="Visible"/>
+              </MultiDataTrigger>
+             </Style.Triggers>
+            </Style>
+           </ComboBox.Style>
+          </ComboBox>
+          <!-- マスタ欄：新しい名前を入力する -->
+          <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}">
+           <TextBox.Style>
+            <Style TargetType="TextBox">
+             <Setter Property="Visibility" Value="Collapsed"/>
+             <Style.Triggers>
+              <MultiDataTrigger>
+               <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding IsMasterBacked}" Value="True"/>
+                <Condition Binding="{Binding RegisterAsNew}" Value="True"/>
+               </MultiDataTrigger.Conditions>
+               <Setter Property="Visibility" Value="Visible"/>
+              </MultiDataTrigger>
+             </Style.Triggers>
+            </Style>
+           </TextBox.Style>
+          </TextBox>
+         </DockPanel>
+         <CheckBox Content="一覧に無いので新しく登録する"
+                   IsChecked="{Binding RegisterAsNew}"
+                   Margin="94,2,0,0"
+                   Visibility="{Binding IsMasterBacked, Converter={StaticResource BoolToVisibility}}"
+                   ToolTip="チェックすると、この名前をマスタ表（Manufacturers.csv / Material_Categories.csv）へ1行追加します。"/>
+        </StackPanel>
+       </DataTemplate>
+      </ItemsControl.ItemTemplate>
+     </ItemsControl>
+     <TextBlock Text="{Binding NewProductIdPreview, StringFormat=採番予定: {0}}" Margin="0,4,0,0"/>
+     <TextBlock Text="重複候補" Margin="0,6,0,0"/>
+     <ListBox ItemsSource="{Binding DuplicateCandidates}" MaxHeight="100" DisplayMemberPath="Product.ProductName"/>
+     <Button Content="内容を確認" Command="{Binding CheckNewProductCommand}"
+             HorizontalAlignment="Left" Margin="0,6,0,0"
+             ToolTip="入力の不足と採番予定IDを確認します。まだCSVには何も書きません。"/>
+
+     <!-- 新規登録も層への付与と同じ「手順1 → 内訳を見る → 手順2」の形にします。 -->
+     <!-- 以前はこの1ボタンが確認ダイアログを出して書込みまで済ませていたため、 -->
+     <!-- 上の「手順2」を押す場面が無く、手順書との食い違いで詰まりました。 -->
+     <Separator Margin="0,8,0,6"/>
+     <Button Content="手順1: 新規登録してこの層に入れる" Command="{Binding RegisterNewProductCommand}"
+             IsEnabled="{Binding CanRegisterNewProduct}"
+             ToolTip="製品CSVへ1行追加し、上の「層への割り当て」表で選んだ層へ入れる内訳を作ります。ここではまだRevitに書き込みません。先に表で層を1行選んでください。"/>
+     <TextBlock Text="{Binding IdentifierPreviewText}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+     <Button Content="手順2: この内容をRevitに書き込む" Command="{Binding ApplyIdentifierPreviewCommand}"
+             IsEnabled="{Binding HasPendingIdentifierPreview}" Margin="0,4,0,0"
+             ToolTip="確認ダイアログで「はい」を選んだ場合だけRevitを更新します。上の「手順2」と同じボタンです。"/>
+     <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" Margin="0,4,0,0" FontWeight="SemiBold"/>
+     <TextBlock TextWrapping="Wrap" Foreground="#FF616161" Margin="0,4,0,0"
+                Text="※ 手順1で製品CSVへの追加は完了しています。手順2を押し忘れても製品は残るので、Revitへの書き込みだけ後から実行できます。"/>
+     </StackPanel>
+    </StackPanel>
+   </Expander>
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

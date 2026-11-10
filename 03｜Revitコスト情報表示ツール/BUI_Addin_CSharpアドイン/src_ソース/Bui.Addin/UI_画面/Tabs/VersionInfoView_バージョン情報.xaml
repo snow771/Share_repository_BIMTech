@@ -1,0 +1,7 @@
+<!-- ver情報タブ：メタデータJSONとDLLから読んだ情報のみを表示し、値をXAMLに重複記載しません。 -->
+<UserControl x:Class="Bui.UI.Tabs.VersionInfoView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+ <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="12" DataContext="{Binding VersionInfo}">
+  <TextBlock Text="{Binding DisplayName}" FontSize="22" FontWeight="SemiBold"/><TextBlock Text="{Binding EnglishName}" FontSize="14"/><TextBlock Text="{Binding DescriptionJa}" TextWrapping="Wrap" Margin="0,4,0,12"/>
+  <TextBlock Text="{Binding Version, StringFormat=バージョン: {0}}"/><TextBlock Text="{Binding RevitVersion, StringFormat=対応Revit: {0}}"/><TextBlock Text="{Binding Company, StringFormat=会社: {0}}" TextWrapping="Wrap"/><TextBlock Text="{Binding Department, StringFormat=部署: {0}}" TextWrapping="Wrap"/><TextBlock Text="{Binding Author, StringFormat=作成者: {0}}" TextWrapping="Wrap"/><TextBlock Text="{Binding BuildTimestampUtc, StringFormat=ビルド日時: {0}}" TextWrapping="Wrap"/>
+ </StackPanel></ScrollViewer>
+</UserControl>

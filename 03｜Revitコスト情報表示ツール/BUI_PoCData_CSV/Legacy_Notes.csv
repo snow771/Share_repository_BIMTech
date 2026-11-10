@@ -1,0 +1,310 @@
+﻿source_sheet,cell_address,original_value,migration_note
+spec_key,A1,標準属性辞書,旧設計・検討情報を欠落防止のため原文保存
+spec_key,G1,寸法系spec_key の統一,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B2,表示名,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C2,spec_key（建材属性の標準用語集）,旧設計・検討情報を欠落防止のため原文保存
+spec_key,D2,value_type,旧設計・検討情報を欠落防止のため原文保存
+spec_key,E2,value,旧設計・検討情報を欠落防止のため原文保存
+spec_key,F2,単位,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H2,建材カテゴリ ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I2,使う寸法キー,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J2, 備考,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B3,厚さ ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C3,thickness,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H3,ボード・パネル類,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I3, thickness / width / length ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J3,石膏ボード、ALC、金属屋根材など,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B4,幅 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C4,width,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H4,建具・開口部類 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I4,thickness / width / height ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J4,ドア、シャッター、窓など,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B5,長さ ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C5,length,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H5,ロール・シート類,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I5, thickness / width / length ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J5,壁紙など。length は巻長を意味する,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B6,高さ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C6,height,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B7,重量 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C7,weight,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B8,熱伝導率、λ値、熱伝導係数,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C8,thermal_conductivity,旧設計・検討情報を欠落防止のため原文保存
+spec_key,D8,number,旧設計・検討情報を欠落防止のため原文保存
+spec_key,E8,0.17,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B9,比重,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C9,specific_gravity,旧設計・検討情報を欠落防止のため原文保存
+spec_key,F9,ー,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B10,含水率 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C10,moisture_content,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B11,曲げ強さ（長手） ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C11,bending_str_long,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B12,曲げ強さ（短手）,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C12,bending_str_short,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B13,不燃認定,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C13,fire_class,旧設計・検討情報を欠落防止のため原文保存
+spec_key,D13,enum,旧設計・検討情報を欠落防止のため原文保存
+spec_key,E13,NM-8619,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B14,認定番号,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C14,fire_cert_no,旧設計・検討情報を欠落防止のため原文保存
+spec_key,D14,string,旧設計・検討情報を欠落防止のため原文保存
+spec_key,E14,不燃,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B15,密度・かさ密度,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C15,density,旧設計・検討情報を欠落防止のため原文保存
+spec_key,F15,kg/m3,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B16,面密度,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C16,areal_weight,旧設計・検討情報を欠落防止のため原文保存
+spec_key,F16,kg/m2,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B17,表面密度・音響用面密度,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C17,surface_density,旧設計・検討情報を欠落防止のため原文保存
+spec_key,F17,kg/m2,旧設計・検討情報を欠落防止のため原文保存
+spec_key,A19,データの出典管理,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B20,値,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C20,出典,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B21,0.17,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C21,吉野石膏カタログ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B22,0.17,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C22,JIS文献,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B23,0.18,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C23,技術資料,旧設計・検討情報を欠落防止のため原文保存
+spec_key,A25,sourceteテーブル,旧設計・検討情報を欠落防止のため原文保存
+spec_key,G25,source_id命名規則の統一,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B26,source_id,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C26,出典,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H26,項目,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I26,採用ルール,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J26,例,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B27,SRC-YOSHINO-WEB,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C27,吉野石膏公式サイト,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H27,基本形 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I27,SRC-発行者-資料種別-番号,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J27,SRC-YOSHINO-CATALOG-001,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B28,SRC-JIS-A6901,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C28,JIS A6901,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H28,国交省認定書 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I28,SRC-MLIT-認定種別-番号 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J28,SRC-MLIT-NM-8619,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B29,SRC-MLIT-NM-8619,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C29,国交省認定書,旧設計・検討情報を欠落防止のため原文保存
+spec_key,H29,JIS ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,I29,SRC-JIS-規格番号 ,旧設計・検討情報を欠落防止のため原文保存
+spec_key,J29,SRC-JIS-A6901,旧設計・検討情報を欠落防止のため原文保存
+spec_key,B30,SRC-ASAHIKASEI-WEB,旧設計・検討情報を欠落防止のため原文保存
+spec_key,C30,旭化成公式サイト,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B1,項目,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C1,内容,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B2,対象製品 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C2,例：吉野石膏タイガーボードR50,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B3,対象資料 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C3,カタログ、技術資料、認定書、JIS 資料など,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B4,spec_key ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C4,"thickness, thermal_conductivity, fire_cert_no など",旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B5,正解値 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C5,人間が確認した値,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B6,単位,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C6,mm、W/mK、kg/m²など,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B7,source_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C7,どの資料に書いてあるか,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B8,ページ・表番号 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C8,p.17、表3 など,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B9,確認者 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C9,誰が確認したか,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B10,確認日,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C10,いつ確認したか,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B11,信頼度,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C11,A/B/C など,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B12,備考 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C12,条件付きの値、範囲値、注記など,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B14,※値＋spec_key＋単位＋出典＋確認者＋確認日,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,A16,Step1対象製品,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B17,優先度 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C17,建材カテゴリ ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D17,製品例,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B18,1,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C18,石膏ボード ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D18,吉野石膏タイガーボードR50,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B19,2,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C19, 壁紙 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D19,サンゲツ壁紙,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B20,3,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C20,ALC ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D20,旭化成ALC,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B21,4,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C21,金属屋根材 ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D21,三晃金属丸はぜ折版,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B22,5,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C22,ガラスブロック ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D22,日本硝子建材ガラスブロック,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,A24,Step2対象資料,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B25,優先度,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C25,資料種別,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D25, 例,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B26,高,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C26,公的認定書,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D26,国交省防火認定書,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B27,高,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C27,JIS・ISO,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D27,JIS A 6901 など,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B28,高,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C28,メーカー技術資料,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D28,性能試験表、設計施工資料,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B29,中,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C29,メーカーカタログ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D29,製品カタログ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B30,中,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C30,公式Web ページ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D30,商品ページ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,B31,低,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,C31,販売店ページ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,D31,通販サイト等,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard,A33,Step3管理表を作成,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A1,spec_key,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B1,日本語名,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C1,型,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D1,単位,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E1,同義語,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F1,対象建材,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G1,状態,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A2,thickness,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B2,厚さ,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C2,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D2,mm,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E2,厚み、板厚、t,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F2,all,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G2,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A3,width,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B3,幅,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C3,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D3,mm,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E3,巾、W,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F3,all,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G3,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A4,length,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B4,長さ,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C4,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D4,mm,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E4,L、全長,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F4,"board, panel",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G4,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A5,thermal_conductivity,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B5,熱伝導率,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C5,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D5,W/mK,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E5,熱伝導係数、λ値,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F5,"board, insulation, ALC",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G5,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A6,density,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B6,密度,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C6,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D6,kg/m³,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E6,かさ密度,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F6,"insulation, ALC",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G6,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A7,fire_class,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B7,防火性能,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C7,enum,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D7,-,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E7,不燃、準不燃、難燃,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F7,interior,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G7,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A8,fire_cert_no,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B8,防火認定番号,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C8,string,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D8,-,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E8,認定番号、NM番号,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F8,interior,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G8,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A9,jis_standard_no,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B9,JIS規格番号,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C9,string,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D9,-,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E9,JIS番号、規格番号,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F9,all,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G9,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A10,height,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B10,高さ,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C10,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D10,mm,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E10,H、高さ,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F10,"door, opening, wall",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G10,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A11,bulk_density,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B11,かさ密度,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C11,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D11,kg/m³,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E11,密度,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F11,"insulation, ALC",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G11,confirmed,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A12,piece_weight,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B12,1枚あたり重量,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C12,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D12,kg/枚,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E12,重量、枚重量,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F12,"board, panel",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G12,draft,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,A13,areal_weight,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,B13,面密度,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,C13,number,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,D13,kg/m²,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,E13,面重量、単位面積質量,旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,F13,"board, panel, roofing",旧設計・検討情報を欠落防止のため原文保存
+spec_Key辞書,G13,confirmed,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B1,列名,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C1,内容,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B2,gold_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C2,正解データID,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B3,product_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C3,製品ID,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B4,product_name ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C4,製品名,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B5,manufacturer ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C5,メーカー名,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B6,material_category ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C6,建材カテゴリ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B7,spec_key ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C7,標準属性キー,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B8,display_name_ja ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C8,日本語表示名,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B9,correct_value ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C9,正解値,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B10,unit ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C10,単位,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B11,value_type ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C11,number / string / enum / boolean,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B12,source_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C12,出典ID,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B13,source_page ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C13,ページ番号,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B14,source_text ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C14,根拠となる原文,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B15,extraction_condition ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C15,条件、試験条件、適用範囲,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B16,reliability ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C16,A/B/C,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B17,reviewer ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C17,確認者,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B18,reviewed_date ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C18,確認日,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B19,status ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C19,confirmed / pending / conflict,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B20,note ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C20,備考,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),B22,gold_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),C22,product_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),D22,product_name ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),E22,manufacturer ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),F22,material_category ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),G22,spec_key ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),H22,display_name_ja ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),I22,correct_value ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),J22,unit ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),K22,value_type ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),L22,source_id ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),M22,source_page ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),N22,source_text ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),O22,extraction_condition ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),P22,reliability ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),Q22,reviewer ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),R22,reviewed_date ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),S22,status ,旧設計・検討情報を欠落防止のため原文保存
+Gold Standard (2),T22,note ,旧設計・検討情報を欠落防止のため原文保存
